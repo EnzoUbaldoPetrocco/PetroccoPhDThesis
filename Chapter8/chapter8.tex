@@ -1,0 +1,135 @@
+
+
+% **************************** Define Graphics Path **************************
+\ifpdf
+    \graphicspath{{Chapter8/Figs/Raster/}{Chapter8/Figs/PDF/}{Chapter8/Figs/}}
+\else
+    \graphicspath{{Chapter8/Figs/Vector/}{Chapter8/Figs/}}
+\fi
+
+%*******************************************************************************
+\chapter{Experimental Design}
+\label{ch7:sec:exp}
+
+To ground the theoretical framework and validate the proposed architecture, a use case study was developed within the domain of assistive robotics, specifically focusing on residential navigation. 
+SRs engage with humans through both physical and verbal modalities across diverse environments; the efficacy of these interactions is fundamentally influenced by the user's cultural background.
+
+Consequently, an experimental protocol was designed wherein a service robot must navigate between two distinct locations within a room while maintaining verbal interaction with a user. 
+For the purposes of this study, three primary adaptive parameters were identified and controlled: interaction distance (proxemics), language, and linguistic style.
+
+To evaluate the efficacy of the proposed architecture, three distinct operational strategies were compared: Baseline, Foreknowledge, and Adaptation.
+
+\begin{itemize}
+\item \textbf{Baseline:} In this configuration, no cultural competence or feedback mechanisms are utilized. 
+The robot executes navigation between designated points using a standard path-planning algorithm and conducts verbal interactions in English regarding predetermined topics, adhering to a neutral, non-specialized profile.
+
+\item \textbf{Foreknowledge:} This strategy integrates static cultural competency. 
+The robot utilizes a path-planning algorithm informed by national-specific parameters (e.g., $D_{pref}$) and conducts dialogue in the user's native language, applying predefined cultural communication markers established during the initialization phase.
+
+\item \textbf{Adaptation:} This mode implements dynamic cultural competency based on active user feedback and NLU analysis. 
+The robot initially navigates according to national-specific parameters but actively monitors and adjusts its internal state based on user comfort and conversational cues. 
+It may explicitly query the user regarding their preferences (e.g., "Should I maintain a greater distance?") using a linguistic style (direct/indirect, varying levels of formality) that aligns with both the identified cultural profile and real-time behavioral feedback.
+While the robot defaults to the user's native language, it retains the capability to modulate its linguistic synthesis dynamically.
+\end{itemize}
+
+To maintain experimental integrity and eliminate confounding variables, the conversational topics must consistently incorporate the specific parameters designated for user adaptation across all three strategies. 
+If the Adaptation strategy were the sole condition to address these parameters, it might be erroneously perceived as either the most or least culturally competent due to the content of the dialogue rather than the underlying architectural performance.
+
+To evaluate the proposed architecture within a specialized use case, the following primary \textbf{Research Question} is formulated:
+\textit{How is the user’s perception of a robot's cultural competence influenced during navigation within a residential assistive scenario?}
+
+\vspace{1em}
+\noindent
+\textbf{H1: } The integration of national-specific knowledge improves the perceived competence of the robot compared to the Baseline strategy (quantified via the RoSaS questionnaire).
+
+\noindent
+\textbf{H2: } Implementing dynamic user-feedback adaptation in conjunction with national knowledge significantly enhances the perception of competence relative to both the Baseline and Foreknowledge strategies (quantified via the RoSaS questionnaire).
+
+\noindent
+\textbf{H3: } The inclusion of national-specific knowledge increases the user's perceived sense of cultural proximity to the robot compared to the Baseline (quantified via the Inclusion of Other in the Self (IoS) scale).
+
+\noindent
+\textbf{H4: } The application of user-feedback adaptation on top of national knowledge improves the perceived cultural closeness relative to both the Baseline and Foreknowledge strategies (quantified via the IoS scale).
+
+Beyond the requirement of national cultural origin, no additional exclusion or inclusion criteria were applied during participant selection. 
+The specification of cultural background is essential to establish the a-priori knowledge required to initialize the navigational and communicative parameters. 
+This baseline cultural profile serves as the foundational state for the navigation algorithm, which is subsequently refined through real-time adaptation.
+
+\textbf{Required Cultural Cohorts:} Select at least two distinct cultural groups based on the following criteria:
+\begin{itemize}
+\item \textbf{Demographic Density:} The selected cohorts must have a sufficient population density within the Zurich area to ensure statistically significant participant recruitment.
+\item \textbf{Cross-Cultural Variance:} The cohorts must exhibit distinct characteristics across specific parameters, encompassing both verbal and non-verbal communication modalities (e.g., proxemic thresholds and linguistic formality).
+\end{itemize}
+
+The sample size requirements for each cultural group must now be determined. 
+The initial power analysis and participant estimation were conducted independently of cultural variables, as these constraints can be integrated \textit{a-posteriori}.
+
+
+\section{Experimental Protocol}
+
+The experimental procedure is structured as follows:
+
+\begin{itemize}
+\item \textbf{Reception and Identification:} Upon arrival, the participant is welcomed by the experimenter. 
+The experimenter verifies the participant's identity and confirms their primary cultural affiliation (Italian or German).
+
+\item \textbf{Initial Briefing:} The experimenter provides a brief introduction to the study and the Pepper robot. 
+During this phase, the robot is presented with its default Autonomous Life state enabled to demonstrate its social capabilities. 
+The experimenter designates the participant's station, specifying that while rotation is permitted, lateral translation within the space is restricted.
+
+\item \textbf{Procedural Overview:} The experimenter outlines the session structure: an initial questionnaire, followed by three distinct interaction blocks. Each block consists of a verbal interaction with the robot and a subsequent evaluation questionnaire. 
+Participants are informed that sessions are recorded for qualitative analysis; however, recordings are converted to grayscale and audio tracks are removed.
+
+\item \textbf{Informed Consent:} The participant reviews and signs the Information and Consent Form.
+
+\item \textbf{Pre-Test Assessment:} The participant completes the baseline (pre-session) questionnaire.
+
+\item \textbf{Interaction Guidelines:} The experimenter reiterates the following operational rules and interaction constraints:
+\begin{enumerate}
+    \item Active verbal engagement with the robot is expected.
+    \item The robot processes the specific language it is currently speaking.
+    \item In the event of code-switching (e.g., foreign lexicon with native phonology), the participant should respond in the language corresponding to the robot's current pronunciation.
+    \item If the robot switches to a language unknown to the participant, the participant should use English to request a language change.
+    \item Participants must speak loudly and clearly.
+    \item If the robot fails to acknowledge an utterance, the participant is encouraged to repeat the statement.
+    \item The interaction is strictly dyadic; the robot only responds upon successful speech recognition.
+    \item While the robot provides visual feedback during listening and processing phases, participants are encouraged to speak naturally. A lack of response within 3 seconds indicates a recognition failure.
+    \item Due to active navigation, the robot may not maintain continuous eye contact.
+    \item The robot operates in half-duplex mode; it does not process input while speaking.
+    \item A successful signal indicates the robot has reached its navigational goal, though the session formally concludes only upon the experimenter's instruction.
+\end{enumerate}
+
+\item \textbf{System Calibration and Execution:} The experimenter performs a final system check and initializes the software architecture to begin the first session.
+
+\item \textbf{Iterative Evaluation:} Following each session, the experimenter resets the experimental environment while the participant completes the corresponding questionnaire.
+
+\item \textbf{Debriefing:} After the final session, the participant is informed of the specific order in which the experimental paradigms (Baseline, Foreknowledge, Adaptation) were presented and completes a concluding qualitative inquiry.
+
+\item \textbf{Remuneration:} The participant receives compensation for their involvement.
+\end{itemize}
+
+\section{Data Collection and Analysis}
+This section details the formal methodology deployed for experimental data acquisition and the subsequent statistical and qualitative evaluation frameworks. 
+
+\subsection{Data Collection Methodology}
+The data acquisition protocol is executed across three chronologically decoupled phases: pre-session baseline profiling, in-session empirical tracking, and post-session qualitative debriefing.
+
+\begin{itemize}
+    \item \textbf{Pre-session Psychometric Baseline:} Prior to exposing participants to the robotic platform, an introductory psychometric intake instrument is administered. This phase establishes individual baseline parameters by gathering demographic information, assessing macro-level cultural background variables ($\mathit{Cult}$), evaluating subjective cultural identification profiles ($\mathit{S.\,Cult}$), and measuring the Big Five personality dimensions (Extraversion, Agreeableness, Conscientiousness, Neuroticism, and Openness) alongside initial systemic trust thresholds ($\mathit{S.\,Trust}$).
+    
+    \item \textbf{In-session Behavioral Tracking:} During active experimental navigation trials, real-time data capture is executed via a mixed-method approach. Objective proxemic adjustments, conversational pacing, and physical reactions to the robot’s autonomous adaptations are continually recorded using high-definition video captures. Concurrently, brief structured intra-experimental checkpoints capture real-time subjective validation metrics regarding the agent's behavior.
+    
+    \item \textbf{Post-session Phenomenological Evaluation:} Following the conclusion of the experimental trials, a comprehensive qualitative debriefing is conducted. Participants complete open-ended exit instruments designed to capture nuanced retrospective perceptions of the interaction, uncovering implicit experiential factors and phenomenological perspectives that standardized quantitative instruments may obscure.
+\end{itemize}
+
+Digital data collection, including psychometric and demographic metrics, is managed via a validated Google Forms infrastructure. Unobtrusive high-definition video documentation of the spatial and proxemic dynamics within the interaction environment is maintained continuously using localized GoPro cameras.
+
+To ensure strict methodological transparency, minimize evaluator bias, and guarantee adherence to institutional ethical oversight protocols, data processing is divided into decoupled quantitative and qualitative pipelines.
+
+The evaluation of non-verbal expressions, conversational engagement markers, and physical proxemic adaptations is grounded in established behavioral analysis paradigms in human-robot interaction (HRI), following methodology validated by \citep{9515502}. To operationalize these qualitative indicators into systematic data streams, a structured coding scheme is deployed to catalog the discrete behavioral signals defined in Table~\ref{tab:signals}.
+
+To systematically eliminate investigator expectancy bias, a double-blind annotation protocol was instituted. Two independent researchers, completely naive to the underlying experimental hypotheses, the algorithmic configurations, and the explicit objective of the study, served as behavioral annotators. The researchers independently evaluated the video data, assigning categorical descriptors and measuring behavioral frequencies across all experimental trials. 
+
+Quantitative analysis focuses on tracking how baseline psychometric properties modulate user evaluation of the robotic control architectures. This is achieved by computing an omnibus correlation matrix, to isolate cross-variable dependencies between user personality dimensions, a priori cultural categories, and subjective system trust. 
+
+Furthermore, structural validation of the experimental treatments is conducted by isolating the underlying item-level responses—specifically targeting the latent clusters of sub-cultural variances ($\mathit{Cult1}$ to $\mathit{Cult3}$) and architectural competence metrics ($\mathit{Comp1}$ to $\mathit{Comp6}$). By evaluating the covariance structure between the subjective cultural state variables ($\mathit{S.\,Cult}$) and the synthesized subjective competence vectors ($\mathit{S.\,Comp}$), the analysis explicitly maps how effectively the active algorithmic adaptations align with the idiosyncratic profiles of the human participants.

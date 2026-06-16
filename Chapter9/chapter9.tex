@@ -1,0 +1,687 @@
+\chapter{Results and Discussion}
+\label{sec:res_and_disc}
+
+% **************************** Define Graphics Path **************************
+\ifpdf
+    \graphicspath{{Chapter9/Figs/Raster/}{Chapter9/Figs/PDF/}{Chapter9/Figs/}}
+\else
+    \graphicspath{{Chapter9/Figs/Vector/}{Chapter9/Figs/}}
+\fi
+This chapter outlines the empirical findings derived from the experimental framework. 
+The analysis is structured sequentially to follow the participants' progression through the evaluation pipeline. 
+First, we examine the baseline metrics obtained prior to the interaction sessions with the robot. 
+This is followed by an assessment of the perceptual variations captured immediately after each paradigm. 
+Next, we incorporate behavioral data extracted from video-based tracking systems during the trials. 
+To contextualize these quantitative outcomes, a fluid qualitative appraisal of the open-ended responses is provided. 
+Finally, we explore cross-correlations across the complete dataset to isolate meaningful statistical relationships between participant profiles, behavioral paradigms, and perceptual shifts.
+
+As an initial baseline, the demographic distribution of the experimental corpus is summarized in Table~\ref{ch9:tab:metadata}, which outlines the total dataset size alongside the specific enrollment metrics for both the Italian and German cohorts.
+\begin{table}[]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+       \textbf{Name}  & \textbf{Value} \\
+       \hline
+        Total Samples & 81 \\
+        \hline
+        Italian Samples & 38 \\
+        \hline
+        German Samples & 43 \\
+        \hline
+    \end{tabular}
+    \caption{Number of samples for each national culture.}
+    \label{ch9:tab:metadata}
+\end{table}
+
+\section{Preliminary Questionnaire Analysis}
+This section details the empirical findings derived from the psychometric and demographic baseline instruments administered prior to the human-robot interaction sessions. 
+These initial questionnaires were deployed to map the participants' psychological profiles, baseline propensities toward automated systems, and cultural orientations across both target nationalities.
+
+Table~\ref{ch9:tab:intro} presents the item-level, normalized descriptive statistics ($\mu \pm \sigma$) alongside the corresponding inferential metrics—including significance ($p$-value), effect size indicators ($f$), and magnitude classifications—stratified by the German and Italian cohorts.
+\begin{table}[ht]
+\centering
+\begin{tabular}{lccccc}
+\toprule
+Question & German ($\mu \pm \sigma$) & Italian ($\mu \pm \sigma$) & $p-value$ & $f$ & Magnitude \\
+\midrule
+Culture Affinity Q1 & $0.484 \pm 0.232$ & $0.711 \pm 0.265$ & 0.0001 & 0.46 & \textbf{Large} \\
+Culture Affinity Q2 & $0.764 \pm 0.239$ & $0.921 \pm 0.172$ & 0.0012 & 0.38 & \textbf{Large} \\
+Culture Affinity Q3 & $0.593 \pm 0.237$ & $0.768 \pm 0.203$ & 0.0007 & 0.4 & \textbf{Large} \\
+BFM Q1 & $0.686 \pm 0.238$ & $0.579 \pm 0.297$ & 0.0759 & 0.2 & \textbf{Medium} \\
+BFM Q2 & $0.767 \pm 0.228$ & $0.651 \pm 0.270$ & 0.0388 & 0.24 & \textbf{Medium} \\
+BFM Q3 & $0.419 \pm 0.287$ & $0.428 \pm 0.328$ & 0.8953 & 0.015 & Small \\
+BFM Q4 & $0.541 \pm 0.313$ & $0.599 \pm 0.321$ & 0.4136 & 0.092 & Small \\
+BFM Q5 & $0.517 \pm 0.347$ & $0.572 \pm 0.284$ & 0.4416 & 0.087 & Small \\
+BFM Q6 & $0.622 \pm 0.275$ & $0.750 \pm 0.225$ & 0.0257 & 0.26 & \textbf{Medium} \\
+BFM Q7 & $0.372 \pm 0.246$ & $0.362 \pm 0.207$ & 0.8400 & 0.023 & Small \\
+BFM Q8 & $0.767 \pm 0.192$ & $0.730 \pm 0.196$ & 0.3919 & 0.097 & Small \\
+BFM Q9 & $0.587 \pm 0.313$ & $0.414 \pm 0.330$ & 0.01799 & 0.27 & \textbf{Medium} \\
+BFM Q10 & $0.762 \pm 0.211$ & $0.691 \pm 0.275$ & 0.1946 & 0.15 & Small \\
+Trust Q1 & $0.751 \pm 0.174$ & $0.716 \pm 0.135$ & 0.3135 & 0.11 & Small \\
+Trust Q2 & $0.744 \pm 0.152$ & $0.708 \pm 0.136$ & 0.263 & 0.13 & Small \\
+Trust Q3 & $0.693 \pm 0.186$ & $0.637 \pm 0.179$ & 0.1710 & 0.16 & Small \\
+Trust Q4 & $0.684 \pm 0.195$ & $0.771 \pm 0.164$ & 0.0335 & 0.24 & \textbf{Medium} \\
+Trust Q5 & $0.621 \pm 0.187$ & $0.632 \pm 0.214$ & 0.8120 & 0.027 & Small \\
+Trust Q6 & $0.791 \pm 0.136$ & $0.816 \pm 0.146$ & 0.4260 & 0.09 & Small \\
+Trust Q7 & $0.735 \pm 0.166$ & $0.745 \pm 0.152$ & 0.7823 & 0.031 & Small \\
+Trust Q8 & $0.728 \pm 0.212$ & $0.742 \pm 0.184$ & 0.7499 & 0.036 & Small \\
+Trust Q9 & $0.507 \pm 0.262$ & $0.650 \pm 0.279$ & 0.01980 & 0.27 & \textbf{Medium} \\
+Trust Q10 & $0.712 \pm 0.173$ & $0.718 \pm 0.135$ & 0.8461 & 0.022 & Small \\
+Trust Q11 & $0.414 \pm 0.237$ & $0.471 \pm 0.193$ & 0.2414 & 0.13 & Small \\
+Trust Q12 & $0.728 \pm 0.149$ & $0.779 \pm 0.151$ & 0.1296 & 0.17 & Small \\
+Trust Q13 & $0.656 \pm 0.155$ & $0.716 \pm 0.178$ & 0.1086 & 0.18 & \textbf{Medium} \\
+Trust Q14 & $0.335 \pm 0.186$ & $0.297 \pm 0.195$ & 0.3791 & 0.1 & Small \\
+\bottomrule
+\end{tabular}
+\caption{Normalized results for cultural affinity, personality and trust questions, for both German and Italian national cultures.}
+\label{ch9:tab:intro}
+\end{table}
+To synthesize these indicators into psychometrically validated parameters, discrete items were aggregated into high-level composite dimensions. 
+Table~\ref{ch9:tab:intro_high_level} summarizes these consolidated feature dimensions.
+\begin{table}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+Feature & German $\mu \pm \sigma$ & Italian $\mu \pm \sigma$  &$p-value$ & $f$ & Magnitude \\
+\midrule
+Cultural Affinity & $0.61370 \pm 0.18740$ & $0.79971 \pm 0.17688$ & 0.00002 & 0.51 & \textbf{Large} \\
+Extraversion & $0.65407 \pm 0.12149$ & $0.66447 \pm 0.15946$ & 0.74042 & 0.037 & Small \\
+Agreeableness & $0.56977 \pm 0.13989$ & $0.50658 \pm 0.15364$ & 0.05628 & 0.22 & \textbf{Medium} \\
+Conscientiousness & $0.59302 \pm 0.14458$ & $0.57895 \pm 0.17296$ & 0.69108 & 0.045 & Small \\
+Neuroticism & $0.56395 \pm 0.15520$ & $0.50658 \pm 0.14222$ & 0.08817 & 0.19 & \textbf{Medium} \\
+Openness & $0.63953 \pm 0.20451$ & $0.63158 \pm 0.16167$ & 0.84788 & 0.022 & Small \\
+Trust & $0.64983 \pm 0.09204$ & $0.67124 \pm 0.08384$  & 0.93439 & 0.0093 & Small \\
+\bottomrule
+\end{tabular}
+\caption{High-level features for cultural affinity, personality and trust questionnaires, for both German and Italian national cultures.}
+\label{ch9:tab:intro_high_level}
+\end{table}
+
+The preliminary psychometric profiles delineate a clear baseline configuration of the participant corpus, revealing critical areas of both homogeneity and significant divergence between the two national cohorts prior to the robotic interactions. 
+
+The most pronounced statistical variance is observed within the cultural dimensions. 
+As demonstrated in Table~\ref{ch9:tab:intro_high_level}, the Italian cohort exhibited a substantially higher baseline score in overall Cultural Affinity ($\mu = 0.79971 \pm 0.17688$) compared to the German cohort ($\mu = 0.61370 \pm 0.18740$).
+This difference is highly significant ($p < 0.001$) and carries a large effect size ($f = 0.5100$). 
+An item-level inspection from Table~\ref{ch9:tab:intro} reveals that this discrepancy is consistently driven across all three affinity indicators, peaking at Culture Affinity Q1 ($p = 0.0001, f = 0.460$). 
+Methodologically, this establishes that the Italian sample possessed a significantly stronger self-reported attachment to, or awareness of, their localized national identity and cultural customs at the outset of the study. 
+
+In contrast, the baseline personality traits—evaluated via the Big Five Inventory (BFI) matrix—demonstrate remarkable cross-cultural stability across the majority of dimensions. 
+Extraversion ($p = 0.74042$), Conscientiousness ($p = 0.69108$), and Openness ($p = 0.84788$) yield no statistically significant differences, with negligible effect sizes ($f < 0.05$). 
+This indicates that the two groups are balanced regarding core behavioral and communicative predispositions. 
+
+Minor variations emerge within Agreeableness ($p = 0.05628$) and Neuroticism ($p = 0.08817$), which trend toward a medium effect size magnitude. 
+At the item level, these trends are primarily anchored by BFM Q2 (measuring aspects of compliance or warmth, $p = 0.0388$), BFM Q6 (pertaining to socio-emotional expressiveness, $p = 0.0257$), and BFM Q9 (addressing structural anxiety or sensitivity, $p = 0.0180$). 
+On these specific dimensions, the German cohort scored descriptively higher, suggesting a slightly higher baseline orientation toward structured interactions and emotional caution.
+
+Finally, the metric for Trust reveals complete cross-cultural convergence ($p = 0.93439, f = 0.0093$). 
+Both the German ($\mu = 0.64983 \pm 0.09204$) and Italian ($\mu = 0.67124 \pm 0.08384$) groups began the experiment with statistically identical propensities to trust automated and social agents. 
+This uniform baseline is a critical methodological prerequisite for the overarching study; because the initial propensity to trust was perfectly aligned between nationalities, any subsequent divergence in trust metrics captured after the experimental sessions can be confidently attributed to the manipulation of the robot's behavioral paradigms rather than pre-existing demographic biases.
+\section{Paradigms Evaluation}
+This section details the empirical results obtained from each session questionnaires assessing the human-robot interaction across the three paradigms.
+The primary evaluative metrics include Culture Closeness and Competence, alongside an aggregated composite metric, Average, which captures the unified perceptual baseline of the participants. 
+
+Table~\ref{tab:nat_desc_stats} compiles the descriptive statistics ($\mu \pm \sigma$) for each metric, partitioned by the Global dataset as well as the isolated German and Italian national cohorts. 
+To determine the statistical significance of the observed variations, post-hoc pairwise comparisons were conducted within an $F$-distribution framework. 
+Table~\ref{tab:significance_stats} reports these inferential statistics, detailed by differences in means, computed $F$-statistics, critical threshold thresholds, exact $p$-values, and an explicit determination of the optimal paradigm per dimension.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Nationality & Paradigm & Culture Closeness & Competence & Average \\
+\midrule
+\multirow{3}{*}{Global}
+ & B & $0.294 \pm 0.232$ & $0.644 \pm 0.200$ & $0.469 \pm 0.192$ \\
+ & F & $0.346 \pm 0.225$ & $0.603 \pm 0.203$ & $0.474 \pm 0.193$ \\
+ & A & $0.273 \pm 0.209$ & $0.530 \pm 0.229$ & $0.401 \pm 0.186$ \\
+\midrule
+\multirow{3}{*}{German}
+ & B & $0.305 \pm 0.238$ & $0.616 \pm 0.196$ & $0.460 \pm 0.198$ \\
+ & F & $0.335 \pm 0.211$ & $0.590 \pm 0.202$ & $0.462 \pm 0.184$ \\
+ & A & $0.261 \pm 0.195$ & $0.499 \pm 0.221$ & $0.380 \pm 0.175$ \\
+\midrule
+\multirow{3}{*}{Italian}
+ & B & $0.282 \pm 0.227$ & $0.675 \pm 0.202$ & $0.479 \pm 0.188$ \\
+ & F & $0.358 \pm 0.241$ & $0.617 \pm 0.206$ & $0.487 \pm 0.206$ \\
+ & A & $0.287 \pm 0.227$ & $0.565 \pm 0.235$ & $0.426 \pm 0.198$ \\
+\bottomrule
+\end{tabular}
+\caption{Descriptive Statistics ($\mu \pm \sigma$) by Nationality and Paradigm.}
+\label{tab:nat_desc_stats}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Pair} & \textbf{Difference} & \textbf{F-statistics} & \textbf{Critical Value} & \textbf{p-value} & \textbf{Best} \\
+\midrule
+\multicolumn{6}{c}{Global Cultural Proximity} \\
+\midrule
+B-F & 0.05144 & 7.5324 & 5.9794 & \textbf{0.007479} & F \\
+B-A & 0.02126 & 1.6389 & 5.9794 & 0.2042& None \\
+F-A & 0.0727 & 24.0574 & 5.9794 & \textbf{0.000005}& F \\
+\midrule
+\multicolumn{6}{c}{Global Competence} \\
+\midrule
+B-F & 0.0409 & 4.165 & 5.9794 & \textbf{0.04456}& B \\
+B-A & 0.1137 & 22.4622 & 5.9794 & \textbf{0.000009}& B \\
+F-A & 0.07279 & 11.0041 & 5.9794 & \textbf{0.001369}& F \\
+\midrule
+\multicolumn{6}{c}{Global Average} \\
+\midrule
+B-F & 0.005273 & 0.09806 & 5.9794 & 0.755& None \\
+B-A & 0.06747 & 14.8462 & 5.9794 & \textbf{0.000234} & B \\
+F-A & 0.07275 & 20.4364 & 5.9794 & \textbf{0.000211} & F \\
+\midrule
+\multicolumn{6}{c}{German Cultural Proximity} \\
+\midrule
+B-F & 0.02972 & 1.4246 & 6.218 & 0.2393 & None\\
+B-A & 0.04393 & 4.8855 & 6.218 & \textbf{0.03259}& B \\
+F-A & 0.07364 & 15.4469 & 6.218 & \textbf{0.000311}& F \\
+\midrule
+\multicolumn{6}{c}{German Competence} \\
+\midrule
+B-F & 0.02568 & 0.7157 & 6.218 & 0.4024& None \\
+B-A & 0.1168 & 11.7691 & 6.218 & \textbf{0.001363}& B \\
+F-A & 0.09109 & 8.2312 & 6.218 & \textbf{0.006418}& F \\
+\midrule
+\multicolumn{6}{c}{German Average} \\
+\midrule
+B-F & 0.002019 & 0.006846 & 6.218 & 0.9345& None \\
+B-A & 0.08035 & 12.7635 & 6.218 & \textbf{0.000903}& B \\
+F-A & 0.08236 & 13.1652 & 6.218 & \textbf{0.000767}& F \\
+\midrule
+\multicolumn{6}{c}{Italian Cultural Proximity} \\
+\midrule
+B-F & 0.07602 & 7.2964 & 6.2883 & \textbf{0.01036}& F \\
+B-A & 0.004386 & 0.02633 & 6.2883 & 0.872& None \\
+F-A & 0.07164 & 9.1387 & 6.2883 & \textbf{0.004526}& F \\
+\midrule
+\multicolumn{6}{c}{Italian Competence} \\
+\midrule
+B-F & 0.05811 & 5.1793 & 6.2883 & \textbf{0.02874}& B \\
+B-A & 0.1102 & 10.4405 & 6.2883 & \textbf{0.00259}& B \\
+F-A & 0.05208 & 3.0058 & 6.2883 & 0.09129& None\\
+\midrule
+\multicolumn{6}{c}{Italian Average} \\
+\midrule
+B-F & 0.008955 & 0.1481 & 6.2883 & 0.7025& None \\
+B-A & 0.05291 & 3.7181 & 6.2883 & 0.06153& None \\
+F-A & 0.06186 & 7.282 & 6.2883 & \textbf{0.01043}& F \\
+\bottomrule
+\end{tabular}
+\caption{Pair-wise evaluation of results for robot national cultural proximity.}
+\label{tab:significance_stats}
+\end{table}
+
+The descriptive and inferential matrices unveil a structured, nuanced trade-off between perceived cultural proximity and task competence. 
+Rather than establishing a singular dominant behavioral paradigm across all criteria, the data isolates distinct perceptual vectors that are also sensitive to demographic backgrounds. 
+
+Globally, a systematic inversion is observed between the two primary dimensions. 
+For Cultural Proximity, Paradigm F significantly outperforms both Paradigm B ($p = 0.007479$) and Paradigm A ($p < 0.000005$). 
+This inferential dominance positions the non-verbal and contextual behaviors embedded within Paradigm F as highly effective at establishing cultural alignment. 
+Conversely, the Global Competence vector reveals a complete reversal of this hierarchy; Paradigm B achieves the highest descriptive scores ($\mu = 0.644 \pm 0.200$) and establishes a statistically significant advantage over both Paradigm F ($p = 0.04456$) and Paradigm A ($p < 0.000009$). 
+When evaluating the Global Average composite metric, the differences between Paradigms B and F cease to be statistically significant ($p = 0.755$), indicating that the gains achieved by F in cultural affinity are counterbalanced by its slight deficit in perceived operational competence.
+
+Cross-cultural stratification reveals that the German cohort exhibits a more conservative and binary evaluative framework.
+Within the German sample, no statistically significant differences are detected between Paradigm B and Paradigm F across Cultural Proximity ($p = 0.2393$), Competence ($p = 0.4024$), or the aggregated Average ($p = 0.9345$). 
+Instead, the German cohort's statistical variance is entirely driven by the rejection of Paradigm A. 
+Paradigm A significantly underperforms relative to both alternative configurations across all metrics, acting as an empirical lower bound for both capability and rapport.
+
+Conversely, the Italian cohort demonstrates heightened sensitivity to interactive variations, displaying clear preferences that diverge from the German baseline. 
+In terms of Cultural Proximity, Italian participants detect a pronounced, statistically significant advantage in Paradigm F over Paradigm B ($p = 0.01036$), asserting F as the optimal condition for social closeness. 
+This preference, however, introduces a distinct trade-off: for the Italian sample, any deviation from the baseline condition (B) induces a significant drop in perceived Competence. 
+This is substantiated by significant declines from B to F ($p = 0.02874$) and from B to A ($p = 0.00259$). 
+
+Crucially, the Italian composite Average metric synthesizes this tension. While the transition from the baseline configuration (B) to the expressive configuration (F) does not yield a significant difference ($p = 0.7025$), and the transition from B to A approaches but misses the significance threshold ($p = 0.06153$), Paradigm F emerges as the single configuration that achieves a statistically significant victory over Paradigm A ($p = 0.01043$).
+
+In summary, the empirical evidence demonstrates that Paradigm A consistently fails to meet both functional and social expectations across all demographics. 
+While Paradigm B remains the most resilient framework for establishing uncompromised, professional task competence, Paradigm F represents a critical instrument for maximizing perceived cultural proximity, yielding distinct socio-cognitive advantages that are particularly salient within the Italian cultural demographic.
+
+\section{Proximity Analysis}
+This section explores the objective behavioral metrics extracted from video-based tracking systems during the human-robot interaction sessions. 
+Unlike self-reported questionnaire data, these observations isolate the physiological and kinesic reactions of the participants—specifically monitoring head orientation, torso alignment, gestural configurations (arms and hands), facial affect, and micro-spatial positioning (proxemics). 
+These markers serve to index behavioral engagement, cognitive workload, and implicit defensiveness under each experimental paradigm.
+
+Tables~\ref{tab:main_pct_global}, \ref{tab:main_pct_german}, and \ref{tab:main_pct_italian} detail the percentage distribution of these behavior classes, establishing the empirical distributions across the Global sample, the German cohort, and the Italian cohort, respectively.
+\begin{table}[ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Paradigm B (\%) & Paradigm F (\%) & Paradigm A (\%) \\
+\midrule
+Head orientation & Away & 4.4\% & 7.5\% & 3.8\% \\
+~ & Neutral & 10.1\% & 11.9\% & 10.6\% \\
+~ & Tracking & 85.5\% & 80.6\% & 85.6\% \\
+\midrule
+Torso orientation & Neutral & 74.2\% & 71.9\% & 73.8\% \\
+~ & Tracking & 25.8\% & 28.1\% & 26.2\% \\
+\midrule
+Arms/Hands & Back & 25.2\% & 26.9\% & 31.2\% \\
+~ & Crossed & 32.7\% & 26.9\% & 26.2\% \\
+~ & Fidgeting & 1.3\% & 0.6\% & 1.9\% \\
+~ & Neutral/Side & 35.8\% & 39.4\% & 33.1\% \\
+~ & Self-touch & 5.0\% & 6.2\% & 7.5\% \\
+\midrule
+Facial affect & Frown & 3.1\% & 3.8\% & 2.5\% \\
+~ & Neutral & 56.0\% & 61.9\% & 58.8\% \\
+~ & Raised brows & 0.6\% & 0.6\% & 0.0\% \\
+~ & Smile & 40.3\% & 33.8\% & 38.8\% \\
+\midrule
+Proxemics & Comfortable & 98.7\% & 98.8\% & 98.1\% \\
+~ & Withdrawal signal & 1.3\% & 1.2\% & 1.9\% \\
+\bottomrule
+\end{tabular}
+\caption{Main Percentages: Global Results.}
+\label{tab:main_pct_global}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Paradigm B (\%) & Paradigm F (\%) & Paradigm A (\%) \\
+\midrule
+Head orientation & Away & 4.6\% & 9.3\% & 3.5\% \\
+~ & Neutral & 9.2\% & 12.8\% & 11.8\% \\
+~ & Tracking & 86.2\% & 77.9\% & 84.7\% \\
+\midrule
+Torso orientation & Neutral & 70.1\% & 67.4\% & 71.8\% \\
+~ & Tracking & 29.9\% & 32.6\% & 28.2\% \\
+\midrule
+Arms/Hands & Back & 25.3\% & 27.9\% & 28.2\% \\
+~ & Crossed & 23.0\% & 18.6\% & 17.6\% \\
+~ & Fidgeting & 1.1\% & 0.0\% & 0.0\% \\
+~ & Neutral/Side & 47.1\% & 45.3\% & 48.2\% \\
+~ & Self-touch & 3.4\% & 8.1\% & 5.9\% \\
+\midrule
+Facial affect & Frown & 4.6\% & 4.7\% & 3.5\% \\
+~ & Neutral & 55.2\% & 61.6\% & 54.1\% \\
+~ & Raised brows & 1.1\% & 1.2\% & 0.0\% \\
+~ & Smile & 39.1\% & 32.6\% & 42.4\% \\
+\midrule
+Proxemics & Comfortable & 97.7\% & 97.7\% & 97.6\% \\
+~ & Withdrawal signal & 2.3\% & 2.3\% & 2.4\% \\
+\bottomrule
+\end{tabular}
+\caption{Main Percentages: German Results.}
+\label{tab:main_pct_german}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Paradigm B (\%) & Paradigm F (\%) & Paradigm A (\%) \\
+\midrule
+Head orientation & Away & 4.2\% & 5.4\% & 4.0\% \\
+~ & Neutral & 11.1\% & 10.8\% & 9.3\% \\
+~ & Tracking & 84.7\% & 83.8\% & 86.7\% \\
+\midrule
+Torso orientation & Neutral & 79.2\% & 77.0\% & 76.0\% \\
+~ & Tracking & 20.8\% & 23.0\% & 24.0\% \\
+\midrule
+Arms/Hands & Back & 25.0\% & 25.7\% & 34.7\% \\
+~ & Crossed & 44.4\% & 36.5\% & 36.0\% \\
+~ & Fidgeting & 1.4\% & 1.4\% & 4.0\% \\
+~ & Neutral/Side & 22.2\% & 32.4\% & 16.0\% \\
+~ & Self-touch & 6.9\% & 4.1\% & 9.3\% \\
+\midrule
+Facial affect & Frown & 1.4\% & 2.7\% & 1.3\% \\
+~ & Neutral & 56.9\% & 62.2\% & 64.0\% \\
+~ & Smile & 41.7\% & 35.1\% & 34.7\% \\
+\midrule
+Proxemics & Comfortable & 100.0\% & 100.0\% & 98.7\% \\
+~ & Withdrawal signal & 0.0\% & 0.0\% & 1.3\% \\
+\bottomrule
+\end{tabular}
+\caption{Main Percentages: Italian Results.}
+\label{tab:main_pct_italian}
+\end{table}
+
+The observational metrics provide a window into the subconscious adjustments made by participants, clarifying how the structural adaptations of the paradigms altered human physical engagement. When cross-referenced with the psychometric conclusions documented in previous sections, the kinesic distributions expose distinct physiological correlates corresponding to cultural adaptation and conversational friction.
+
+A primary finding across the dataset relates to attentional tracking and head-gaze orientation. Dynamically across all demographics, the tracking behavior of the head remains remarkably stable and dominant, hovering consistently between 77.9\% and 86.7\%. 
+This persistent alignment confirms a high baseline of visual attention toward the robotic agent, irrespective of the interactive conditioning. 
+However, a localized fluctuation occurs inside the Foreknowledge paradigm (F). 
+Globally, and driven noticeably by the German cohort, Paradigm F registers a peak in head orientation directed ``Away'' (reaching 9.3\% within the German group) alongside a corresponding drop in continuous tracking to 77.9\%. 
+This structural shift may suggest that the narratives delivered by the robot under Paradigm F demanded higher internal cognitive processing or reflection from the users, causing micro-expressions of gaze aversion during speech synthesis.
+
+The gestural arrangements of the arms and hands reveal a compelling socio-cultural pattern regarding defensive or closed postures. 
+In the Italian cohort (Table~\ref{tab:main_pct_italian}), the ``Crossed'' arm configuration occupies a dominant portion of the interaction timeline, peaking at 44.4\% during the Baseline paradigm (B) and contracting to 36.5\% under Paradigm F. 
+Given that Italian communicators rely heavily on kinesic reciprocity, the high proportion of crossed arms under the clinical baseline condition suggests a defensive barrier or a state of evaluation. 
+The reduction of this closed posture under Paradigm F correlates with the increased perceived Cultural Proximity reported by the Italian group; as the robot adapted its narrative structures, participants physically unburdened their posture. 
+Conversely, the German cohort presents a stable preference for the ``Neutral/Side'' posture across all conditions ($\sim$45.3\%--48.2\%), reinforcing a standardized communicative posture less prone to immediate structural fluctuations.
+
+Facial affect distributions demonstrate that positive valence, captured via smiling behavior, remained robust across all interaction stages, consistently ranging between 32.6\% and 42.4\%.
+Interestingly, the highest descriptive proportions of smiling occur under the Adaptive paradigm (A) for the German sample (42.4\%) and under the Baseline paradigm (B) for the Italian sample (41.7\%). 
+In the case of Paradigm A, qualitative responses highlighted significant interactive delays and breakdowns; thus, the elevated smiling percentage observed among Germans under this condition may register as a coping mechanism or social masking in response to operational friction rather than genuine amusement. 
+This interpretation is reinforced by examining the Italian dataset for Paradigm A, where ``Fidgeting'' and ``Self-touch'' behaviors climb to their absolute maxima (4.0\% and 9.3\%, respectively), indicating localized physiological anxiety and discomfort when the agent failed to maintain semantic grounding.
+
+Finally, the proxemic data yields near-universal consistency. Across all cultures and experimental configurations, the physical distance maintained between the participants and the platform was classified as ``Comfortable'' in over 97\% of the tracked duration.
+Physical withdrawal signals remained negligible, never exceeding 2.4\% in any sub-population. 
+This behavioral baseline indicates that while the internal semantic and cultural configurations of Paradigms B, F, and A directly modulated attentional processing, gestural comfort, and emotional valence, they did not breach the boundaries of spatial safety or induce critical physical rejection of the interactive agent.
+
+\section{Open Question}
+In this section, we present a qualitative appraisal of the open-ended responses provided by participants regarding whether and why their subjective evaluations altered across consecutive interaction sessions. 
+To uncover the latent socio-cognitive mechanisms driving user experience, a thematic analysis was conducted directly on the grounding indicators and primary behavioral triggers extracted from the textual corpus. Rather than operating as isolated perspectives, the qualitative feedback highlights an interconnected divergence in user experience, dictated primarily by the interplay between perceived linguistic alignment and objective task competence.
+
+A primary narrative running through the responses centers on the psychological impact of explicit localized profiling. 
+For both demographic cohorts, encountering a system that adapted to or utilized their native language acted as a powerful anchor for psychological proximity. 
+Participants explicitly reported that conversing in their native tongue increased their individual preference for the platform, with some noting that communicating in German caused the agent to feel directly embedded within that specific national identity. 
+This linguistic alignment provides a crucial explanatory foundation for the elevated descriptive proximity scores observed in the expressive paradigms, demonstrating that speech localization successfully lowers the psychological distance between the human and the artifact.
+
+However, the qualitative data simultaneously establishes that this cultural alignment does not operate in a vacuum; its success is strictly bounded by the robot's functional behavior and task competence. 
+Perceptions of reliability and interactive flow heavily dictated whether a user's evaluative trajectory remained positive or deteriorated into frustration.
+When dialogic grounding was successful, users experienced a smooth, collaborative interaction. 
+Conversely, localized system failures or conversational rigidity—such as when the robot repeatedly ignored direct prompts to follow its own predetermined agenda—instantly induced user frustration. 
+This friction systematically undermined any rapport built by cultural adaptations, leading participants to downgrade their competence evaluations regardless of the language spoken.
+
+Furthermore, the transition between experimental conditions exposed a clear perceptual contrast regarding the behavioral authenticity of the machine. 
+The baseline neutral conditioning was frequently characterized as inducing a more clinical, mechanical, or distinctly ``robotic'' interactive style. 
+In contrast, the implementation of more expressive, foreknowledge-driven, or adaptive non-verbal structures caused the interaction to be perceived as noticeably more organic and natural.
+
+While these behavioral nuances were salient to the majority of the sample, the corpus also isolates a distinct subset of users who exhibited complete insensitivity to the underlying algorithmic variations. 
+These individuals maintained entirely static ratings across all conditions, explicitly stating that their evaluation criteria focused exclusively on core interactive mechanics and functional execution rather than localized or cultural framing.
+
+Ultimately, this qualitative corpus demonstrates that while native linguistic framing and natural non-verbal expressions are highly effective instruments for cultivating cultural proximity, they cannot compensate for perceived operational failures. 
+True relational alignment in social robotics is achieved only when expressive cultural behaviors are backed by consistent, responsive task competence.
+
+\section{Cross Correlations}
+This section investigates the directional relationships between participants' baseline psychometric traits—specifically dispositional trust, the Big Five personality dimensions, and initial cultural affinity—and their post-session subjective evaluations of the robotic agent (Cultural Affinity, Competence, and the composite Average). 
+To capture non-linear monotonic associations and mitigate the influence of potential distributional non-normality, a series of two-tailed Spearman rank correlation checks was executed. 
+
+Table~\ref{tab:meaningful_correlations} compiles the statistically significant coefficients ($r_s$) along with their exact asymptotic significance values ($p$-value), stratified across the entire sample (Global) and independently within the German and Italian cohorts.
+\begin{table}[ht]
+\centering
+\begin{tabular}{lllcc}
+\toprule
+\textbf{Group} & \textbf{Trait} & \textbf{Outcome} & \textbf{$r_s$} & \textbf{$p$-value} \\
+\midrule
+\multirow{4}{*}{Global} 
+ & Trust & Cultural Affinity & 0.177 & 0.0057 \\
+ & Trust & Competence & 0.164 & 0.0106 \\
+ & Trust & Average & 0.175 & 0.0064 \\
+ & Neuroticism & Competence & -0.159 & 0.0133 \\
+\midrule
+\multirow{7}{*}{German} 
+ & Trust & Cultural Affinity & 0.193 & 0.0284 \\
+ & Agreeableness & Cultural Affinity & -0.188 & 0.0327 \\
+ & Agreeableness & Competence & -0.257 & 0.0033 \\
+ & Agreeableness & Average & -0.276 & 0.0016 \\
+ & Conscientiousness & Cultural Affinity & -0.31 & 0.0004 \\
+ & Neuroticism & Competence & -0.276 & 0.0015 \\
+ & Neuroticism & Average & -0.248 & 0.0045 \\
+\midrule
+\multirow{7}{*}{Italian} 
+ & Trust & Competence & 0.201 & 0.0318 \\
+ & Agreeableness & Cultural Affinity & 0.387 & 0.0 \\
+ & Agreeableness & Competence & 0.221 & 0.0179 \\
+ & Agreeableness & Average & 0.35 & 0.0001 \\
+ & Openness & Cultural Affinity & 0.23 & 0.0138 \\
+ & Openness & Average & 0.246 & 0.0084 \\
+ & Cultural Affinity & Cultural Affinity & 0.281 & 0.0024 \\
+\bottomrule
+\end{tabular}
+\caption{Statistically Significant Spearman Correlations ($p < 0.05$).}
+\label{tab:meaningful_correlations}
+\end{table}
+The correlation matrix reveals structural relationships that clarify how pre-existing psychological variations modulate human perception of robotic systems. 
+Rather than manifesting uniformly across the global sample, the inferential patterns unveil a striking psychological divergence—and in some dimensions, a total semantic inversion—between the German and Italian cultural cohorts.
+
+A prominent baseline finding is the universal role of baseline Trust. 
+Globally, initial trust levels maintain a stable, weak-to-moderate positive correlation with all downstream outcomes: Cultural Affinity ($r_s = 0.177, p = 0.0057$), Competence ($r_s = 0.164, p = 0.0106$), and the aggregated Average ($r_s = 0.175, p = 0.0064$). Interestingly, when stratified by nationality, this baseline trait specializes along different axes. 
+For the German sample, baseline trust explicitly facilitates relational closeness, mapping directly onto post-session Cultural Affinity ($r_s = 0.193, p = 0.0284$). 
+Conversely, for the Italian sample, baseline trust operates primarily as a functional lens, tracking significantly with post-interaction perceived Competence ($r_s = 0.201, p = 0.0318$).
+
+The most mathematically significant discovery within this corpus is the complete polarity inversion of the \textit{Agreeableness} personality trait between nationalities. 
+For the German cohort, Agreeableness is systematically and negatively correlated with every post-interaction evaluation parameter, displaying moderate significance with Perceived Competence ($r_s = -0.257, p = 0.0033$) and the global Average ($r_s = -0.276, p = 0.0016$). 
+This indicates that highly agreeable German participants evaluated the robot more critically, possibly due to higher implicit expectations regarding social compliance and task execution which, if unmet, caused harsher downgrading. 
+
+In sharp contrast, the Italian cohort yields a pronounced, highly significant positive correlation between Agreeableness and evaluation outcomes, tracking strongly with post-session Cultural Affinity ($r_s = 0.387, p < 0.0001$) and the cumulative Average ($r_s = 0.350, p = 0.0001$). 
+For Italian participants, a prosocial and agreeable baseline disposition directly translates into a greater leniency and a heightened willingness to attribute rapport and competence to the social agent, highlighting a fundamental difference in how personality constructs interact with user satisfaction across cultures.
+
+Further structural divergences appear within the remaining Big Five axes. 
+The German cohort demonstrates a moderate negative correlation between Conscientiousness and post-session Cultural Affinity ($r_s = -0.310, p = 0.0004$), which stands as the strongest single trait-to-outcome link within that sub-population. 
+This suggests that highly structured, detail-oriented German individuals are less receptive to, or more detached from, the robot's cultural modifications. 
+
+Furthermore, Neuroticism within the German group acts as an active negative predictor for both Competence ($r_s = -0.276, p = 0.0015$) and the aggregate Average ($r_s = -0.248, p = 0.0045$). This demonstrates that individuals characterized by higher baseline socio-emotional anxiety or vulnerability are highly sensitive to interactive bottlenecks, leading to a severe downgrading of the system's operational viability.
+
+Conversely, the Italian cohort's evaluations are driven by intellectual curiosity and cultural predisposition. Openness to Experience positively correlates with both post-session Cultural Affinity ($r_s = 0.230, p = 0.0138$) and the Average score ($r_s = 0.246, p = 0.0084$). This confirms that more creative and adaptive Italian participants are significantly more receptive to experimental shifts in localized robotic paradigms. 
+
+Finally, the Italian group is uniquely characterized by a significant, positive auto-correlation between their Initial baseline Cultural Affinity and their post-interaction Perceived Cultural Affinity ($r_s = 0.281, p = 0.0024$). This baseline continuity establishes that for Italian users, their pre-existing attachment to national identity serves as a stable, predictive internal compass that actively reinforces and shapes their physiological and psychological closeness to a culturally localized SR.
+
+% INCLUSIVE PROXEMICS
+\begin{comment}
+    \begin{table}[ht]
+\centering
+\caption{Inclusive Percentages: Global Results}
+\label{tab:inclusive_pct_global}
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Paradigm B (\%) & Paradigm F (\%) & Paradigm A (\%) \\
+\midrule
+Head orientation & Away & 18.6\% & 16.9\% & 15.8\% \\
+~ & Neutral & 16.0\% & 16.5\% & 14.0\% \\
+~ & Tracking & 65.4\% & 66.7\% & 70.3\% \\
+\midrule
+Torso orientation & Away & 1.0\% & 0.5\% & 1.5\% \\
+~ & Neutral & 61.4\% & 63.1\% & 63.8\% \\
+~ & Tracking & 37.6\% & 36.4\% & 34.7\% \\
+\midrule
+Arms/Hands & Back & 19.1\% & 19.2\% & 21.6\% \\
+~ & Crossed & 24.6\% & 23.2\% & 23.1\% \\
+~ & Fidgeting & 4.3\% & 3.2\% & 6.0\% \\
+~ & Neutral/Side & 27.0\% & 28.8\% & 26.9\% \\
+~ & Self-touch & 25.0\% & 25.6\% & 22.4\% \\
+\midrule
+Facial affect & Frown & 9.8\% & 8.7\% & 10.0\% \\
+~ & Neutral & 35.8\% & 37.2\% & 36.5\% \\
+~ & Raised brows & 11.5\% & 12.1\% & 11.0\% \\
+~ & Smile & 42.9\% & 41.9\% & 42.5\% \\
+\midrule
+Proxemics & Comfortable & 95.8\% & 94.1\% & 90.2\% \\
+~ & Invasion & 0.0\% & 0.6\% & 0.6\% \\
+~ & Withdrawal signal & 4.2\% & 5.3\% & 9.2\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Inclusive Percentages: German Results}
+\label{tab:inclusive_pct_german}
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Paradigm B (\%) & Paradigm F (\%) & Paradigm A (\%) \\
+\midrule
+Head orientation & Away & 17.7\% & 16.3\% & 16.7\% \\
+~ & Neutral & 16.1\% & 18.6\% & 14.2\% \\
+~ & Tracking & 66.1\% & 65.1\% & 69.2\% \\
+\midrule
+Torso orientation & Away & 0.9\% & 0.0\% & 1.9\% \\
+~ & Neutral & 59.1\% & 60.7\% & 60.4\% \\
+~ & Tracking & 40.0\% & 39.3\% & 37.7\% \\
+\midrule
+Arms/Hands & Back & 20.8\% & 21.4\% & 20.0\% \\
+~ & Crossed & 17.6\% & 17.5\% & 16.2\% \\
+~ & Fidgeting & 2.4\% & 2.4\% & 3.8\% \\
+~ & Neutral/Side & 37.6\% & 34.1\% & 36.9\% \\
+~ & Self-touch & 21.6\% & 24.6\% & 23.1\% \\
+\midrule
+Facial affect & Frown & 11.6\% & 10.9\% & 9.9\% \\
+~ & Neutral & 36.1\% & 38.5\% & 35.2\% \\
+~ & Raised brows & 9.7\% & 10.9\% & 11.7\% \\
+~ & Smile & 42.6\% & 39.7\% & 43.2\% \\
+\midrule
+Proxemics & Comfortable & 93.5\% & 92.4\% & 89.2\% \\
+~ & Invasion & 0.0\% & 1.1\% & 0.0\% \\
+~ & Withdrawal signal & 6.5\% & 6.5\% & 10.8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Inclusive Percentages: Italian Results}
+\label{tab:inclusive_pct_italian}
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Paradigm B (\%) & Paradigm F (\%) & Paradigm A (\%) \\
+\midrule
+Head orientation & Away & 19.6\% & 17.6\% & 14.7\% \\
+~ & Neutral & 15.9\% & 13.7\% & 13.7\% \\
+~ & Tracking & 64.5\% & 68.6\% & 71.6\% \\
+\midrule
+Torso orientation & Away & 1.1\% & 1.1\% & 1.1\% \\
+~ & Neutral & 64.1\% & 65.9\% & 67.7\% \\
+~ & Tracking & 34.8\% & 33.0\% & 31.2\% \\
+\midrule
+Arms/Hands & Back & 17.6\% & 16.9\% & 23.2\% \\
+~ & Crossed & 31.3\% & 29.0\% & 29.7\% \\
+~ & Fidgeting & 6.1\% & 4.0\% & 8.0\% \\
+~ & Neutral/Side & 16.8\% & 23.4\% & 17.4\% \\
+~ & Self-touch & 28.2\% & 26.6\% & 21.7\% \\
+\midrule
+Facial affect & Frown & 7.8\% & 6.3\% & 10.1\% \\
+~ & Neutral & 35.5\% & 35.9\% & 38.1\% \\
+~ & Raised brows & 13.5\% & 13.4\% & 10.1\% \\
+~ & Smile & 43.3\% & 44.4\% & 41.7\% \\
+\midrule
+Proxemics & Comfortable & 98.6\% & 96.1\% & 91.4\% \\
+~ & Invasion & 0.0\% & 0.0\% & 1.2\% \\
+~ & Withdrawal signal & 1.4\% & 3.9\% & 7.4\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{comment}
+
+
+% OLD
+\begin{comment}
+    \section*{Introduction results of questionnaires}
+
+This section presents the descriptive statistics for the participants' baseline traits, including general trust, Big Five personality dimensions, and initial cultural affinity. These measures establish the starting state of the cohorts prior to the experimental interaction.
+
+Table \ref{tab:intro_stats_comparative} provides a comparative view of the mean ($\mu$) and standard deviation ($\sigma$) for the Global ($N=81$), German ($n=43$), and Italian ($n=38$) groups.
+
+\begin{table}[ht]
+\centering
+\caption{Descriptive Statistics: Baseline Traits and Initial Cultural Affinity}
+\label{tab:intro_stats_comparative}
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{Global}} & \multicolumn{2}{c}{\textbf{German}} & \multicolumn{2}{c}{\textbf{Italian}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+\textbf{Trait} & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
+\midrule
+Trust Overall & 0.660 & 0.088 & 0.650 & 0.092 & 0.671 & 0.084 \\
+Extraversion & 0.659 & 0.140 & 0.654 & 0.121 & 0.664 & 0.159 \\
+Agreeableness & 0.540 & 0.149 & 0.570 & 0.140 & 0.507 & 0.154 \\
+Conscientiousness & 0.586 & 0.158 & 0.593 & 0.145 & 0.579 & 0.173 \\
+Neuroticism & 0.537 & 0.151 & 0.564 & 0.155 & 0.507 & 0.142 \\
+Openness & 0.636 & 0.185 & 0.640 & 0.205 & 0.632 & 0.162 \\
+Culture Affinity & 0.701 & 0.204 & 0.614 & 0.187 & 0.800 & 0.177 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Observations}
+The initial results indicate that both cohorts share similar personality profiles, particularly regarding Extraversion and Openness. However, a notable discrepancy is observed in the \textbf{Initial Culture Affinity}, with the Italian cohort reporting a higher baseline affinity ($M=0.800, \sigma=0.177$) compared to the German cohort ($M=0.614, \sigma=0.187$). General trust remains relatively high and consistent across both nationalities, with Italians showing slightly higher average trust ($M=0.671$) than Germans ($M=0.650$).
+
+
+\section*{In process results of questionnaires}
+
+The statistical analysis of the in-process questionnaires evaluates the impact of three interaction paradigms—Baseline ($B$), Foreknowledge ($F$), and Adaptive ($A$)—on Perceived Cultural Affinity and Perceived Competence.
+
+\subsection*{Descriptive Statistics}
+Table \ref{tab:descriptive_stats} presents the mean ($\mu$) and standard deviation ($\sigma$) across the global sample and the specific cultural cohorts.
+
+\begin{table}[ht]
+\centering
+\caption{Descriptive Statistics for Cultural Affinity and Perceived Competence}
+\label{tab:descriptive_stats}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Cohort} & \textbf{Paradigm} & \textbf{Cultural Affinity ($\mu \pm \sigma$)} & \textbf{Competence ($\mu \pm \sigma$)} \\
+\midrule
+Global & A & 0.273 $\pm$ 0.209 & 0.530 $\pm$ 0.229 \\
+Global & B & 0.294 $\pm$ 0.232 & 0.644 $\pm$ 0.200 \\
+Global & F & 0.346 $\pm$ 0.225 & 0.603 $\pm$ 0.203 \\
+\midrule
+Italian & A & 0.287 $\pm$ 0.227 & 0.565 $\pm$ 0.235 \\
+Italian & B & 0.282 $\pm$ 0.227 & 0.675 $\pm$ 0.202 \\
+Italian & F & 0.358 $\pm$ 0.241 & 0.617 $\pm$ 0.206 \\
+\midrule
+German & A & 0.261 $\pm$ 0.195 & 0.499 $\pm$ 0.221 \\
+German & B & 0.305 $\pm$ 0.238 & 0.616 $\pm$ 0.196 \\
+German & F & 0.335 $\pm$ 0.211 & 0.590 $\pm$ 0.202 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A series of Repeated Measures ANOVAs were conducted to identify significant differences between paradigms.
+
+A significant main effect was found for Cultural Affinity, $F(2, 160) = 9.9, p < .001$. Post-hoc comparisons (Bonferroni $\alpha = .017$) confirmed that the Foreknowledge paradigm ($M=0.346, \sigma=0.225$) was perceived with significantly higher affinity than both Baseline ($M=0.294, \sigma=0.232$) and Adaptive ($M=0.273, \sigma=0.209$).
+
+For Perceived Competence, the main effect was significant, $F(2, 160) = 13.64, p < .001$. Post-hoc tests identified significant differences between Baseline ($M=0.644, \sigma=0.200$) and Adaptive ($M=0.530, \sigma=0.229$), as well as between Foreknowledge ($M=0.603, \sigma=0.203$) and Adaptive ($p < .001$).
+
+The Italian cohort revealed a significant main effect for Cultural Affinity, $F(2, 74) = 5.24, p = .007$. Pairwise differences were significant between Foreknowledge ($M=0.358, \sigma=0.241$) and Baseline ($M=0.282, \sigma=0.227$), and between Foreknowledge and Adaptive ($M=0.287, \sigma=0.227$).
+
+For Perceived Competence, the main effect was significant, $F(2, 74) = 4.05, p = .021$. However, post-hoc comparisons between the Baseline paradigm ($M=0.675, \sigma=0.202$) and the Adaptive paradigm ($M=0.565, \sigma=0.235$) did not reach the required significance level after Bonferroni correction ($p = .0299 > .017$).
+
+In the German cohort, Cultural Affinity showed a significant main effect, $F(2, 84) = 6.03, p = .004$. Post-hoc analysis identified a significant difference between Foreknowledge ($M=0.335, \sigma=0.211$) and Adaptive ($M=0.261, \sigma=0.195$).
+
+Perceived Competence demonstrated a highly significant effect, $F(2, 84) = 7.32, p = .001$. Significant differences were confirmed between Baseline ($M=0.616, \sigma=0.196$) and Adaptive ($M=0.499, \sigma=0.221$), and between Foreknowledge ($M=0.590, \sigma=0.202$) and Adaptive ($p = .006$).
+
+
+\section*{Qualitative analysis results}
+Following the experimental sessions, participants provided qualitative feedback regarding their perception of the different paradigms. 
+A subset of 47 participants (58\% of the total cohort) was coded to identify whether they detected changes between the interactions and what specific triggers prompted these observations.
+
+A significant majority of the coded participants ($N=40, 85.1\%$) reported a conscious detection of differences between the paradigms.
+The detection rate was particularly high in the German cohort, where $95.2\%$ ($20/21$) of coded participants identified variations. 
+In the Italian cohort, $76.9\%$ ($20/26$) reported noticing changes, often citing differences in the "naturalness" or "robotic" quality of the interaction.
+Participants identified several key factors that influenced their ratings and overall perception of the agent. As shown in Table \ref{tab:qualitative_triggers}, the most frequent trigger was categorized as "General" ($N=23$), representing holistic impressions of the agent's behavior and responsiveness.Language-specific factors (\textit{lang}) were the second most cited trigger ($N=11$), with a higher frequency among German participants ($n=7$) compared to Italians ($n=4$).
+Other identified triggers included the specific content of the conversation ($N=4$) and the nature of the interaction flow ($N=3$).
+\begin{table}[ht]
+\centering
+\caption{Frequency of Primary Triggers for Perceived Paradigm Differences}
+\label{tab:qualitative_triggers}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Primary Trigger} & \textbf{German} & \textbf{Italian} & \textbf{Total} \\
+\midrule
+General Behavior & 9 & 14 & 23 \\
+\Language & 7 & 4 & 11 \\
+\Content & 2 & 2 & 4 \\
+\Interaction Flow & 1 & 2 & 3 \\
+\Other (Time, Style, etc.) & 1 & 2 & 3 \\
+\midrule
+\textbf{Total Coded} & \textbf{20} & \textbf{24} & \textbf{44} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Summary of Qualitative Feedback}
+The qualitative data supports the quantitative findings by highlighting that participants were sensitive to the agent's adaptation and foreknowledge capabilities. For instance, participants in the Italian cohort frequently noted that the "neutral" (Baseline) cases felt more "robotic" compared to cases where the interaction felt more "natural," which aligns with the higher perceived competence ratings for the Baseline and Foreknowledge paradigms. German participants specifically emphasized the impact of speaking in their native tongue as a factor that increased their preference for the agent.
+
+\section*{Qualitative video analysis}The video analysis focused on identifying potential differences in non-verbal communication and proxemic behaviors across the three paradigms: Baseline ($B$), Foreknowledge ($F$), and Adaptive ($A$). The coded features included head and torso orientation, manual gestures (Arms/Hands), facial affect, and general proxemic positioning.A Chi-Square test of independence was performed to determine whether the paradigm type significantly influenced these behaviors. As shown in Table \ref{tab:proxemics_stats}, the analysis revealed no statistically significant differences for any of the observed features.For Head orientation ($\chi^2 = 1.744, p = .783$) and Torso orientation ($\chi^2 = 1.261, p = .868$), the participants maintained consistent alignment regardless of the agent's adaptation or foreknowledge. Similarly, Facial affect remained highly stable across conditions ($\chi^2 = 0.481, p = .998, V = 0.016$), suggesting that the paradigms did not elicit significantly different emotional displays. Proxemics ($\chi^2 = 4.540, p = .338$) and Arms/Hands gestures ($\chi^2 = 4.064, p = .851$) also showed no significant variation.The low Cramer's $V$ values (ranging from $0.016$ to $0.066$) indicate a negligible effect size, confirming that the participants' physical and non-verbal engagement with the agent was uniform across all experimental conditions.
+\begin{table}[ht]
+\centering
+\caption{Chi-Square and Cramer's V Analysis for Proxemic Behaviors}
+\label{tab:proxemics_stats}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Feature} & $\chi^2$ & \textbf{p-value} & \textbf{Cramer's $V$} & \textbf{Result} \\
+\midrule
+Head orientation & 1.744 & 0.783 & 0.036 & N.S.  \\
+Torso orientation & 1.261 & 0.868 & 0.032 & N.S. \\
+Arms/Hands & 4.064 & 0.851 & 0.051 & N.S. \\
+Facial affect & 0.481 & 0.998 & 0.016 & N.S. \\
+Proxemics & 4.540 & 0.338 & 0.066 & N.S. \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{comment}
