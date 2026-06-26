@@ -5,7 +5,6 @@
 
 \chapter{State of the Art} 
 \label{ch1:sec:sota}
-%Title of the First Chapter
 
 \ifpdf
     \graphicspath{{State-Of-The-Art/Figs/Raster/}{State-Of-The-Art/Figs/PDF/}{State-Of-The-Art/Figs/}}
@@ -13,115 +12,150 @@
     \graphicspath{{State-Of-The-Art/Figs/Vector/}{State-Of-The-Art/Figs/}}
 \fi
 
+In this chapter, I will present the state of the art of cultural competence in social robotics. Next, I will devote a section to cultural competence in ML. Finally, I will conclude by discussing cultural competence across robot functional domains.
+
+%\color{red}
+%I reference (nome anno) sono eleganti, ma sono talmente tanti che rendono il testo molto faticoso. Riesci a farli diventare [numerici]?\color{black}
+
+%\color{red}
+\section{Cultural factors in robotics}
+%\color{black}
 
 The integration of cultural factors in robotic systems has been a subject of rigorous investigation over the past decade \citep{Bartneck2007, Rehm2013}. 
-Predominantly, existing research has concentrated on identifying the determinants of system acceptability across diverse cultural cohorts, focusing on either morphological appearance or behavioral patterns \citep{Shibata2009, Dingjun2010, Lee2016, vernon2024african, papadopoulos2022transcultural, recchiuto2019designing, akinade2023culturally, ornelas2023redefining, zantou2023culturally, Papadopoulos_CARESSES, battistuzzi2021socially, papadopoulos2020caresses, 8673086}. 
+Existing research has predominantly focused on identifying determinants of system acceptability across diverse cultural groups, considering either morphological appearance or behavioral patterns \citep{Shibata2009, Dingjun2010, Lee2016, vernon2024african, papadopoulos2022transcultural, recchiuto2019designing, akinade2023culturally, ornelas2023redefining, zantou2023culturally, Papadopoulos_CARESSES, battistuzzi2021socially, papadopoulos2020caresses, 8673086}. 
 This includes the study of cultural nuances in verbal and non-verbal communication \citep{Rau2009, Andrist2015, Bruno2018, Rehm2018, CloudCultureDialogue, bruno2016fuzzy, chugh2024aisles, obremski2022impact, nias2020culturebot, recchiuto2020feasibility, GreetingSelection, pena2019eeva}, as well as variations in perceived social distance and proxemics \citep{Eresha2013, Joosse2014, Trovato2015, truong2016towards}.
 
-Beyond social cues, scholarship has addressed cultural competence within specific AI sub-domains, such as automated planning \citep{Planning, fedriga2023linguistic}, knowledge representation \citep{GreetingSelection, KnowledgeRepresentation, Grassi_2022, mansouri2020can, bringsjord2020culturally}, and activity recognition \citep{Chiang2019}. 
-However, as evidenced by recent systematic and scoping reviews concerning SR in geriatric assistance, these prior approaches have generally failed to establish a unified conceptual framework. 
-There remains a critical lack of generalized architectures designed to imbue intelligent systems for health and social care with comprehensive cultural competence \citep{Abdi2018, Pu2019, Maresova2020, Lee2020}. %Lee2020,  %Despite its seminal role 
+Beyond social cues, the literature has addressed cultural competence within specific AI sub-domains, such as automated planning \citep{Planning, fedriga2023linguistic}, knowledge representation \citep{GreetingSelection, KnowledgeRepresentation, Grassi_2022, mansouri2020can, bringsjord2020culturally}, and activity recognition \citep{Chiang2019}. 
+However, as evidenced by recent systematic and scoping reviews in social robotics for geriatric assistance, these approaches have generally failed to establish a unified conceptual framework. 
+There remains a critical lack of generalized architectures designed to embed comprehensive cultural competence into intelligent systems for health and social care \citep{Abdi2018, Pu2019, Maresova2020, Lee2020}.
 
-Recently, a conceptual framework was established\footnote{https://cordis.europa.eu/article/id/124441-the-worlds-first-culturally-sensitive-robots-for-elderly-care} to imbue Socially Assistive Robots (SAR) for geriatric care with cultural competence \citep{PavingTheWayCulturallyCompetent, KnowledgeRepresentation, Papadopoulos_CARESSES}. 
-This framework was developed by synthesizing foundational research from Transcultural Nursing \citep{Leininger1988} and established paradigms in culturally competent healthcare \citep{Betancourt2003}.
+Recently, a conceptual framework was proposed\footnote{https://cordis.europa.eu/article/id/124441-the-worlds-first-culturally-sensitive-robots-for-elderly-care} to develop socially assistive robots (SARs) for geriatric care with cultural competence \citep{PavingTheWayCulturallyCompetent, KnowledgeRepresentation, Papadopoulos_CARESSES}. 
+This framework was developed by synthesizing foundational research from transcultural nursing \citep{Leininger1988} and established paradigms in culturally competent healthcare \citep{Betancourt2003}.
 
-\begin{landscape}
-\begin{table*}[t]
-\centering
-%\tiny
-\footnotesize
-\setlength{\tabcolsep}{0.1cm}
-\renewcommand{\arraystretch}{1.0}
-\begin{tabular}{l|c|c|c}
-\toprule
-\textbf{Category} & \textbf{SR} & \textbf{ML} & \textbf{SR+ML} \\
-\midrule
-Design                 &  \makecell{\citep{akinade2023culturally, Dingjun2010}\\ \citep{ ornelas2023redefining, Lee2016}\\ \citep{Papadopoulos_CARESSES,battistuzzi2021socially}\\ \citep{papadopoulos2020caresses,Shibata2009}\\ \citep{ zantou2023culturally,8673086}\\ \citep{vernon2024african,papadopoulos2022transcultural}\\ \citep{recchiuto2019designing}}   &   \makecell{\citep{miehle2021multimodal, khan2021one}\\ \citep{ dmytryk2022mining, karpouzis2024plato}}   &  This study    \\
-\hline
-Verbal Interaction         &   \makecell{\citep{Andrist2015, chugh2024aisles}\\  \citep{ Bruno2018,nias2020culturebot}\\ \citep{bruno2016fuzzy,Rau2009}\\ \citep{obremski2022impact,CloudCultureDialogue}\\ \citep{recchiuto2020feasibility}}   & \makecell{\citep{blanchard2024cultural}\\ \citep{ bhatia2023gd}\\ \citep{almaliki2016persuasive,dlHumorRecognition}\\ \citep{ albuquerque2024hype, Wu2012TheAO}\\ \citep{cirucci2024culturally, kuo2024identification}\\ \citep{dwivedi2024navigating} }   &   \citep{spitale2024appropriateness} \\   \\
-\hline
-Non-verbal interaction     &  \makecell{\citep{Rehm2018, GreetingSelection}\\ \citep{pena2019eeva}}    &      &  \makecell{\citep{Gestures}\\ \citep{ren2025exploring}}    \\
-\hline
-Social distance and navigation &  \makecell{\citep{Eresha2013, Joosse2014}\\ \citep{Trovato2015,truong2016towards}}    &      &   \citep{patompak2017learning}   \\
-\hline
-Planning                   &   \citep{Planning, fedriga2023linguistic}   &      &      \\
-\hline
-Knowledge representation   &  \makecell{\citep{GreetingSelection, KnowledgeRepresentation}\\ \citep{ Grassi_2022, mansouri2020can}\\ \citep{ bringsjord2020culturally}}    &      &      \\
-\hline
-Generation       &      &  \makecell{\citep{Quan2018, Zhou2022445}\\ \citep{ yun2024cic, mohamed2022artelingo}}    &      \\
-\hline
-Object  classification &       &    &  \text{This study}   \\
-\hline
-Other classification tasks & \citep{Chiang2019} & \makecell{\citep{alharbi2023cultural,alharbi2024deep}\\ \citep{jordan2023impact,castilla2022applying}\\ \citep{yohe2023towards}} &  \citep{santos2018extended}  \\
-\bottomrule
-\end{tabular}
-\caption{Comparison of previous works exploring cultural competence. 
-The rows represent specific aspects where cultural competence is relevant, while the columns indicate whether a related work has been implemented in social robots without relying on ML (SR), describes a generic ML technique not explicitly designed for social robots (ML), or introduces an ML technique explicitly designed for social robots (SR+ML).}
-\label{ch1:tab:related}
-\end{table*}
-\end{landscape}
+%\color{red}
+\section{ML and cultural factors}
+%\color{black}
+Anthropological studies of material culture demonstrate that everyday objects and the domestic interiors in which they are situated exhibit systematic design variations across different global regions, even when such objects share equivalent functional properties. This variation is expected, as object design is closely linked to the social functions it supports and to the regional availability of materials used in fabrication \citep{Robb2015}. Consequently, while certain aesthetic universals have been identified \citep{Hardonk1999, Hekkert2008}, specific visual features tend to recur more frequently and coherently within particular geographical and cultural domains.
 
-Anthropological studies of material culture demonstrate that everyday objects, and the domestic interiors in which they are situated, exhibit distinct design variations across different global regions—even when such objects share functional equivalence. 
-This divergence is anticipated, as object design is intrinsically linked to the specific social tasks they serve and the regional availability of materials utilized in their fabrication \citep{Robb2015}. Consequently, while certain aesthetic universals have been identified \citep{Hardonk1999, Hekkert2008}, specific visual features tend to recur with greater frequency and coherence within particular geographical and cultural domains.
+Metaphorically, two objects may share identical functional affordances \citep{Gibson1986} yet still exhibit distinct “cultural signatures”. These features constitute relevant information that machine learning algorithms should account for during classification in order to ensure robustness. However, existing computational approaches have largely overlooked these nuances, thereby neglecting the role of cultural factors in improving model performance.
 
-Metaphorically, two objects may possess identical functional affordances \citep{Gibson1986} yet be characterized by distinct "cultural signatures".
-These features constitute critical data that ML algorithms must account for during the classification process to ensure robustness. 
-However, existing computational solutions have largely overlooked these nuances, neglecting the essential role of cultural competence in ML optimization.
+From a computational perspective, recent research has investigated principles and architectures for the design of culture-aware machine learning models \citep{miehle2021multimodal, khan2021one, dmytryk2022mining, karpouzis2024plato}. Significant emphasis has been placed on the development and evaluation of natural language processing techniques aimed at improving cultural sensitivity \citep{blanchard2024cultural, bhatia2023gd, almaliki2016persuasive, dlHumorRecognition, albuquerque2024hype, Wu2012TheAO, cirucci2024culturally, kuo2024identification, dwivedi2024navigating}.
 
-From a strictly computational perspective, contemporary research has explored various principles and architectures for the design of culture-aware ML models \citep{miehle2021multimodal, khan2021one, dmytryk2022mining, karpouzis2024plato}. 
-Significant emphasis has been placed on the implementation and evaluation of NLP techniques tailored for cultural sensitivity \citep{blanchard2024cultural, bhatia2023gd, almaliki2016persuasive, dlHumorRecognition, albuquerque2024hype, Wu2012TheAO, cirucci2024culturally, kuo2024identification, dwivedi2024navigating}.
+Additional research directions include the integration of cultural considerations into generative image tasks \citep{Quan2018, Zhou2022445, yun2024cic, mohamed2022artelingo} and classification problems across diverse application domains. These range from analyzing vaccine hesitancy \citep{alharbi2023cultural, alharbi2024deep}, to studying digital discourse on mental health during the COVID-19 pandemic \citep{castilla2022applying}, as well as AI-augmented clinical triage \citep{jordan2023impact} and personalized recommender systems \citep{yohe2023towards}.
 
-Additional research trajectories include the integration of cultural awareness into generative image tasks \citep{Quan2018, Zhou2022445, yun2024cic, mohamed2022artelingo} and classification problems across diverse domains. 
-These range from analyzing vaccine hesitancy \citep{alharbi2023cultural, alharbi2024deep} and digital discourse regarding mental health during the COVID-19 pandemic \citep{castilla2022applying}, to AI-augmented clinical triage \citep{jordan2023impact} and personalized recommender systems \citep{yohe2023towards}.
+%\color{red} Mi chiedo se mettere questo. Lo hai già detto bene nell'introduzione. Qui limitati a parlare dello stato dell'arte. 
+%\color{blue}
+%Rimosso.
+%\color{black}
 
-Within this broader context, the first and second parts of this thesis examines the visual representation of objects and environments across diverse cultural contexts \citep{Knappett2005} and evaluates the subsequent impact on ML performance in classification tasks.
-The last part of this thesis, integrates LLMs implicit knowledge and capacity to map user's intent into system's parameters shift.
 
 ML has achieved unprecedented performance benchmarks, frequently exceeding human-level proficiency across diverse domains \citep{openai2023gpt4, alphago, minerva, human_performance}. 
 These advancements have catalyzed researchers and practitioners across various disciplines to leverage ML in addressing domain-specific challenges. 
 This paradigm shift has resulted in a significant proliferation of successful ML applications, establishing the technology as a ubiquitous force. 
 Consequently, ML continues to revolutionize and profoundly influence the broader societal landscape \citep{MLForSociety, MLTrends}.
 
-ML serves a pivotal role in robotics, significantly enhancing the capacity of autonomous agents to perceive and interact with complex environments \citep{DLRobotics, RLRobotics, MPRobotics, xu2020learning, bredeche2006perceptual, nguyen2020deep, zhou2022computer, arzani2020switching, hong2020multimodal, gao2021hybrid, yu2021deep}.
-Within the SR domain, ML is equally critical; it provides the sophisticated computational frameworks necessary for robots to interpret human environments. 
-These capabilities allow agents to leverage environmental and social data to optimize interactions with human users across both verbal and non-verbal modalities \citep{SocialRobotics, zheng2013designing, jacob2015optimal, saunderson2020investigating, ogenyi2019physical, rakovic2022gaze, alsamhi2022autonomous}.
+ML plays a pivotal role in robotics, significantly enhancing the capacity of autonomous agents to perceive and interact with complex environments \citep{DLRobotics, RLRobotics, MPRobotics, xu2020learning, bredeche2006perceptual, nguyen2020deep, zhou2022computer, arzani2020switching, hong2020multimodal, gao2021hybrid, yu2021deep}. 
+Within the social robotics domain, ML is equally critical, as it provides the computational frameworks necessary for robots to interpret and model human environments. 
+These capabilities enable agents to exploit environmental and social data to optimize interactions with human users across both verbal and non-verbal modalities \citep{SocialRobotics, zheng2013designing, jacob2015optimal, saunderson2020investigating, ogenyi2019physical, rakovic2022gaze, alsamhi2022autonomous}.
 
-The pinnacle of ML models are, LLMs\citep{raiaan2024review} and LLM-based autonomous agents\citep{luo2025large}. 
-Driven by scalable transformer architectures and aligned via reinforcement learning from human feedback, LLMs have transcended traditional static text-to-text processing to manifest sophisticated in-context learning\citep{dong2024survey}, semantic comprehension, and zero-shot\citep{kojima2022large} generalization capabilities. 
-Crucially, the integration of these models into agentic frameworks has enabled a transition from passive generative systems to proactive decision-making entities. 
-By anchoring the core LLM within a modular architecture that incorporates explicit planning algorithms, short- and long-term memory structures, and external tool-calling execution loops.
+The most advanced class of ML models currently corresponds to LLMs \citep{raiaan2024review} and LLM-based autonomous agents \citep{luo2025large}. 
+Driven by scalable transformer architectures and aligned through reinforcement learning from human feedback, LLMs have moved beyond static text-to-text mapping to exhibit in-context learning \citep{dong2024survey}, semantic understanding, and zero-shot generalization capabilities \citep{kojima2022large}. 
+The integration of these models into agentic frameworks has enabled a transition from passive generative systems to proactive decision-making entities. 
+Such systems typically rely on modular architectures in which a central LLM is combined with explicit planning modules, memory structures (short- and long-term), and external tool-calling execution loops.
 
-Despite these achievements, the integration of ML into technologies designed for social environments and human interaction has been accompanied by escalating concerns regarding its ethical impact \citep{weidinger2021ethical, MLEthicsLaw, PhenotypesML}. 
-These concerns stem from the prevailing design paradigm, which prioritizes high-level technical performance benchmarks—such as predictive accuracy and computational efficiency \citep{regressionMetrics, rlMetrics, rlMetrics2, semi-supervisedMetrics, multi-class-metrics, ComputationalMetrics}—often at the expense of human-centric metrics. 
-Failure to incorporate these dimensions into the technological design process can precipitate significant ethical dilemmas \citep{electronics10050593, Human_metrics, ECThicGuidelines}.
-Critical among these dimensions is sustainability, which involves minimizing energy consumption and promoting the reusability of models to mitigate environmental impact \citep{strubell_etal_2019_energy}. Transparency and explainability are equally vital, ensuring that decision-making processes are interpretable so that users can evaluate and establish trust in the system's outputs \citep{ExplainabilityRequirements, causabilityMedicine, guidotti2018survey, XMLMetrics}. 
-Furthermore, fairness must be addressed by identifying and mitigating algorithmic bias to prevent discriminatory outcomes and ensure equitable decision-making across diverse demographics \citep{fairness, Onetofairness, AccuracyvsFairness}. 
-Privacy and security requirements necessitate robust safeguards against unauthorized data access and adversarial exploitations to protect individual integrity \citep{liu2020machine, Biggio_2018, SecML}. Finally, cultural competence involves developing systems capable of dynamically adapting to the specific cultural environments and norms in which they operate \citep{survey_fairness_wreprbias}. 
+Despite these advances, the integration of ML into systems operating in social environments has raised increasing ethical concerns \citep{weidinger2021ethical, MLEthicsLaw, PhenotypesML}. 
+These concerns stem from a dominant design paradigm that prioritizes technical performance metrics—such as predictive accuracy and computational efficiency \citep{regressionMetrics, rlMetrics, rlMetrics2, semi-supervisedMetrics, multi-class-metrics, ComputationalMetrics}—often at the expense of human-centered criteria.
 
-Preliminary efforts have been made to integrate cultural competence into ML frameworks \citep{dlHumorRecognition, miehle2021multimodal, almaliki2016persuasive, khan2021one, dmytryk2022mining, karpouzis2024plato, Wu2012TheAO, dwivedi2024navigating, cirucci2024culturally, Quan2018, Zhou2022445, yun2024cic, mohamed2022artelingo, alharbi2023cultural, alharbi2024deep, jordan2023impact, castilla2022applying, yohe2023towards, blanchard2024cultural, bhatia2023gd, albuquerque2024hype, kuo2024identification}. 
-However, this research trajectory remains in its nascent stages and is characterized by significant limitations, particularly concerning its application within the SR domain.
+Failure to incorporate such criteria into system design can lead to significant ethical issues \citep{electronics10050593, Human_metrics, ECThicGuidelines}. 
+Key dimensions include sustainability, which concerns reducing energy consumption and improving model reusability to limit environmental impact \citep{strubell_etal_2019_energy}; transparency and explainability, which ensure that system decisions are interpretable and can be assessed by users \citep{ExplainabilityRequirements, causabilityMedicine, guidotti2018survey, XMLMetrics}; fairness, which addresses algorithmic bias and aims to prevent discriminatory outcomes across populations \citep{fairness, Onetofairness, AccuracyvsFairness}; and privacy and security, which focus on protecting data integrity against unauthorized access and adversarial attacks \citep{liu2020machine, Biggio_2018, SecML}. 
+Finally, cultural competence refers to the ability of a system to adapt its behavior to the cultural norms and expectations of the environments in which it operates \citep{survey_fairness_wreprbias}.
 
-The first primary limitation is that existing scholarship in this domain focuses predominantly on data diversity \citep{not_uniform_data, seaborn2023not, lim2021social, hagerty2019global, stacy2025data, ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}, empirically demonstrating that contemporary datasets either omit or under-represent a vast plurality of cultures \citep{ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}.
+Preliminary efforts have explored the integration of cultural competence into ML frameworks \citep{dlHumorRecognition, miehle2021multimodal, almaliki2016persuasive, khan2021one, dmytryk2022mining, karpouzis2024plato, Wu2012TheAO, dwivedi2024navigating, cirucci2024culturally, Quan2018, Zhou2022445, yun2024cic, mohamed2022artelingo, alharbi2023cultural, alharbi2024deep, jordan2023impact, castilla2022applying, yohe2023towards, blanchard2024cultural, bhatia2023gd, albuquerque2024hype, kuo2024identification}. 
+However, this research direction remains in its early stages and is still limited, particularly in its application within the SR domain.
 
-A second critical gap is the absence of standardized benchmark datasets specifically curated for cultural diversity. 
-Such benchmarks are essential for researchers to rigorously evaluate the cultural competence of ML models within the SR domain \citep{Facial_recogn_eval_datasets, BiasDataset, not_uniform_data, seaborn2023not, lim2021social, hagerty2019global, stacy2025data, ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}, analogous to the established evaluation frameworks currently utilized in algorithmic fairness research \citep{le2022survey}.
+The first major limitation is that existing scholarship in this area focuses predominantly on data diversity \citep{not_uniform_data, seaborn2023not, lim2021social, hagerty2019global, stacy2025data, ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}, empirically showing that contemporary datasets either omit or under-represent a wide range of cultural groups.
 
-The third limitation concerns the absence of robust mitigation strategies for cultural incompetence in ML for SR. 
-There is a discernible lack of methodologies that can be effectively generalized and applied across broad, large-scale ML environments. 
+A second critical gap is the absence of standardized benchmark datasets specifically designed to capture cultural diversity. Such benchmarks are essential for rigorously evaluating the cultural competence of ML models within the SR domain \citep{Facial_recogn_eval_datasets, BiasDataset, not_uniform_data, seaborn2023not, lim2021social, hagerty2019global, stacy2025data, ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}, in analogy with established evaluation frameworks used in algorithmic fairness research \citep{le2022survey}.
 
-It is critical to note that the aforementioned studies—addressing social navigation \citep{patompak2017learning}, user clustering \citep{santos2018extended}, and gesture generation \citep{Gestures}—predominantly operate under the implicit assumption of a uniform data distribution across different cultural groups. 
-However, this assumption is frequently invalidated by empirical evidence. 
-Subsequent research has highlighted significant disparities in data distribution, emphasizing that minority cultural contexts are often underrepresented or systematically excluded from foundational datasets \citep{not_uniform_data, seaborn2023not, lim2021social, hagerty2019global, stacy2025data, ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}.
+A third limitation concerns the absence of robust mitigation strategies for cultural incompetence in ML for SR. There is a lack of methodologies that can be consistently generalized and applied across large-scale ML environments.
 
-The rows of Table~\ref{ch1:tab:related} categorize the functional domains where cultural competence is critical: Design, Verbal Interaction, Non-verbal Interaction, Social Distance and Navigation, Planning, Knowledge Representation, Generative Tasks, Activity Recognition, and Object Classification. 
-The columns distinguish the methodological focus of the cited works: those implemented in social robots without the use of ML (SR), generic ML techniques not specifically contextualized for social robotics (ML), and ML frameworks specifically engineered for social robot applications (SR+ML).
+It is important to note that the aforementioned studies—addressing social navigation \citep{patompak2017learning}, user clustering \citep{santos2018extended}, and gesture generation \citep{Gestures}—primarily operate under the implicit assumption of uniform data distributions across cultural groups. However, this assumption is often contradicted by empirical evidence. Subsequent research has highlighted significant disparities in data distribution, showing that minority cultural contexts are frequently under-represented or systematically excluded from foundational datasets \citep{not_uniform_data, seaborn2023not, lim2021social, hagerty2019global, stacy2025data, ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}.
 
-As indicated in the table, this thesis represents the primary effort to address object classification and SR design using ML architectures specifically designed for SRs and to experimentally evaluate the problem of embedding cultural competence using LLM-based architectures. 
-The only other research identified within the first functional category pertains to a medical application, which underscores the performance disparities that arise when models encounter divergent cultural datasets. 
-These findings further validate the necessity of developing robust mitigation algorithms to address cultural incompetence in ML models and social robotics.
+%\color{red}
+\section{Cultural competence and robot functional domains}
+%\color{black}
+Table~\ref{ch1:tab:related} categorizes the functional domains in which cultural competence is relevant: Design, Verbal Interaction, Non-verbal Interaction, Social Distance and Navigation, Planning, Knowledge Representation, Generative Tasks, Activity Recognition, and Object Classification. The columns distinguish the methodological focus of the cited works: SR (implemented in SRs without ML), ML (generic ML techniques not specifically contextualized for SR applications), and SR+ML (ML frameworks specifically designed for SR applications).
 
-Within the aforementioned literature, certain studies conceptualize cultural competence as a derivative of algorithmic fairness constraints \citep{karpouzis2024plato, albuquerque2024hype}. 
-While a nexus between these two fields exists, their objectives are fundamentally divergent: whereas fairness constraints seek to decorrelate a model's output from sensitive variables, cultural competence aims to actively leverage cultural information as a feature to optimize model performance across all cultural cohorts. 
-Notwithstanding these conceptual differences, such studies are included here to provide a comprehensive overview of the current state of the art.
+As indicated in the table, this thesis represents a primary contribution to object classification and SR design using ML architectures specifically developed for SR applications, and it experimentally investigates the problem of embedding cultural competence using LLM-based architectures. The only other work identified within the first category pertains to a medical application, which highlights performance disparities that arise when models are exposed to culturally divergent datasets. These findings further support the need for robust mitigation strategies addressing cultural incompetence in ML and SR systems.
 
-To the best of our knowledge, no prior research has explicitly addressed culturally competent object classification within the social robotics domain or experimentally addressed the problem of culture as a nation approximation.
+Within the aforementioned literature, some studies conceptualize cultural competence as a derivative of algorithmic fairness constraints \citep{karpouzis2024plato, albuquerque2024hype}. While a connection between these two fields exists, their objectives differ fundamentally: fairness constraints aim to decorrelate model outputs from sensitive attributes, whereas cultural competence aims to leverage cultural information as a feature to improve performance across cultural groups. Notwithstanding these differences, such studies are included to provide a comprehensive overview of the state of the art.
+
+To the best of our knowledge, no prior research has explicitly addressed culturally competent object classification in the SR domain, nor has it experimentally investigated culture-as-a-nation approximations in this context.
+
+%\begin{landscape}
+\begin{table*}[t]
+\label{ch1:tab:related}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{0.1cm}
+%\renewcommand{\arraystretch}{1.0}
+\begin{tabular}{l|c|c|c}
+\toprule
+\textbf{Category} & \textbf{SR} & \textbf{ML} & \textbf{SR+ML} \\
+\midrule
+Design & \makecell{\citep{akinade2023culturally, Dingjun2010}\\
+\citep{ornelas2023redefining, Lee2016}\\
+\citep{Papadopoulos_CARESSES, battistuzzi2021socially}\\
+\citep{papadopoulos2020caresses, Shibata2009}\\
+\citep{zantou2023culturally, 8673086}\\
+\citep{vernon2024african, papadopoulos2022transcultural}\\
+\citep{recchiuto2019designing}} 
+& \makecell{\citep{miehle2021multimodal, khan2021one}\\
+\citep{dmytryk2022mining, karpouzis2024plato}} 
+& This study \\
+\hline
+Verbal Interaction & \makecell{\citep{Andrist2015, chugh2024aisles}\\
+\citep{Bruno2018, nias2020culturebot}\\
+\citep{bruno2016fuzzy, Rau2009}\\
+\citep{obremski2022impact, CloudCultureDialogue}\\
+\citep{recchiuto2020feasibility}} 
+& \makecell{\citep{blanchard2024cultural}\\
+\citep{bhatia2023gd}\\
+\citep{almaliki2016persuasive, dlHumorRecognition}\\
+\citep{albuquerque2024hype, Wu2012TheAO}\\
+\citep{cirucci2024culturally, kuo2024identification}\\
+\citep{dwivedi2024navigating}} 
+& \citep{spitale2024appropriateness} \\
+\hline
+Non-verbal interaction & \makecell{\citep{Rehm2018, GreetingSelection}\\
+\citep{pena2019eeva}} 
+&  & \makecell{\citep{Gestures}\\
+\citep{ren2025exploring}} \\
+\hline
+Social distance and navigation & \makecell{\citep{Eresha2013, Joosse2014}\\
+\citep{Trovato2015, truong2016towards}} 
+&  & \citep{patompak2017learning} \\
+\hline
+Planning & \citep{Planning, fedriga2023linguistic} &  &  \\
+\hline
+Knowledge representation & \makecell{\citep{GreetingSelection, KnowledgeRepresentation}\\
+\citep{Grassi_2022, mansouri2020can}\\
+\citep{bringsjord2020culturally}} &  &  \\
+\hline
+Generation &  & \makecell{\citep{Quan2018, Zhou2022445}\\
+\citep{yun2024cic, mohamed2022artelingo}} &  \\
+\hline
+Object classification &  &  & This study \\
+\hline
+Other classification tasks & \citep{Chiang2019} 
+& \makecell{\citep{alharbi2023cultural, alharbi2024deep}\\
+\citep{jordan2023impact, castilla2022applying}\\
+\citep{yohe2023towards}} 
+& \citep{santos2018extended} \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of previous works exploring cultural competence. 
+The rows represent specific aspects where cultural competence is relevant, while the columns indicate whether a related work has been implemented in social robots without relying on ML (SR), describes a generic ML technique not explicitly designed for social robots (ML), or introduces an ML technique explicitly designed for social robots (SR+ML).}
+\label{ch1:tab:related}
+\end{table*}
+%\end{landscape}

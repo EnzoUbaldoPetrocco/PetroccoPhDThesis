@@ -16,99 +16,80 @@
 
 \section{Introduction}
 \label{ch1:sec:introduction}
-The conceptualization of ``culture" remains inherently complex \citep{Geertz73, Hofstede80, Leininger1988, Schwartz19921, Henare2007, Carrithers2010}, with no overarching consensus among researchers regarding its precise definition \citep{Hofstede2003}. 
-A concise yet robust definition characterizes culture as a group's shared representation of the world—a perspective that has underpinned the ontological turn" in anthropology over the last two decades \citep{Henare2007}.
-Historically, divergent definitions have facilitated broad cultural taxonomies, most notably the dichotomy between Western and Eastern societies, and subsequent classifications delineated by national boundaries \citep{hofstede2001culture}. 
-While the East-West paradigm is widely critiqued as reductionist, the conceptualization of culture at the national level persists as a pragmatic heuristic \citep{fedriga2024representation} for preliminary cross-cultural analysis and serves as a functional first approximation. 
-Furthermore, treating culture as a national category simplifies statistical modeling; since empirical data are frequently aggregated by nation-state, categorical values provide a tractable framework for computational analysis.
-However, certain national cultures maintain a disproportionate presence in the global technological landscape, while others face systemic underrepresentation. 
-Furthermore, this nation-centric approach inherently obfuscates significant cultural heterogeneity, particularly the distinct value systems and practices of sub-national and minority groups residing within a state's geographical borders \citep{mcsweeney2002hofstede, venaik2013critical}.
 
-This set of limitations poses a significant risk that minority cultures may be neglected during the development of emerging technologies~\citep{not_uniform_data}, such as social robots (SRs), undermining their cultural competence. 
-In human’s behavioral studies, cultural competence is the capacity of recognizing, understanding and adapting to diverse cultural contexts.
-This definition has been extended to other systems such as SRs and machine learning (ML) models.
-According to~\citep{Betancourt2003}, SRs are ``culturally competent" systems, if they are capable of dynamically adapting their visual representations, perceptions, planning algorithms, actions, and communicative styles to align with the specific worldview of the user \citep{Papadopoulos2006, KnowledgeRepresentation}.
+The conceptualization of ``culture'' remains inherently complex \citep{Geertz73, Hofstede80, Leininger1988, Schwartz19921, Henare2007, Carrithers2010}, and no overarching consensus exists regarding its precise definition \citep{Hofstede2003}. 
+A concise yet robust definition characterizes culture as a group's shared representation of the world, a perspective that has significantly influenced the ontological turn in anthropology over the past two decades \citep{Henare2007}. 
 
-SRs are increasingly required to navigate complex environments and engage in direct social interactions with humans \citep{sarrica2020many, henschel2021makes, AutonomousRobots, UserEngagementRobotics, Ray2008, 9143175, mccoll2016classifying}. 
-These interactions occur across both physical \citep{DESANTIS2008253, sharifi2021impedance} and verbal \citep{verbalHRI} modalities and span various high-impact domains, including healthcare \citep{HealthcareRobotics, ayari2020hybrid}, tourism \citep{tourismRobotics}, and education \citep{teachingRobotics}.
-Robotics research has recently focused on empowering these systems with cultural competence, because of the empirical observation that culture fundamentally influences both human perception \citep{RobotCommunicating, Er04, Evers2008, Dingjun2010, Eresha2013, Joosse2014, Trovato2015, Mavrou2020, Andrist2015} and the overarching quality of complex system design \citep{Jordan2022, Mohammed2015, PavingTheWayCulturallyCompetent}.
-Implementing these capabilities is essential to align robotic behaviors and their underlying AI-driven functionalities with the diverse sociocultural expectations of human users \citep{Ray2008, Oneto2022}.
+Historically, differing conceptualizations of culture have given rise to broad cultural taxonomies, most notably the distinction between Western and Eastern societies, as well as subsequent classifications based on national boundaries \citep{hofstede2001culture}. 
+Although the East–West dichotomy has been widely criticized as overly reductionist, the conceptualization of culture at the national level continues to serve as a pragmatic heuristic \citep{fedriga2024representation} for preliminary cross-cultural analyses and as a useful first approximation. 
+Moreover, treating culture as a national category facilitates statistical modeling, since empirical data are often collected and aggregated at the nation-state level, making national affiliation a tractable unit of analysis. 
+However, some national cultures are disproportionately represented within the global technological landscape, whereas others remain systematically underrepresented \citep{not_uniform_data}. 
+In addition, a nation-centric perspective inevitably obscures substantial cultural heterogeneity, particularly the distinct values, identities, and practices of sub-national communities and minority groups residing within the same geographical boundaries \citep{mcsweeney2002hofstede, venaik2013critical}.
 
-Generally, the challenge of cultural competence in SR has been documented \citep{Bartneck2007, Rehm2013, Planning, GreetingSelection, Grassi_2022, CloudCultureDialogue, KnowledgeRepresentation, PavingTheWayCulturallyCompetent}.
-Historically, many of these approaches relied on Symbolic AI or neuro-fuzzy approaches for solving planning problems.
-However, rule-based models are ill-suited for high-dimensional tasks---including natural language processing and computer vision---where definitive, formal models are non-existent.
+These limitations pose a significant risk that minority cultures may be overlooked during the development of emerging technologies~\citep{not_uniform_data}, including social robots (SRs). 
+Human–robot interactions (HRI) occur through both physical \citep{DESANTIS2008253, sharifi2021impedance} and verbal modalities \citep{verbalHRI} and span a variety of high-impact application domains, including healthcare \citep{HealthcareRobotics, ayari2020hybrid}, tourism \citep{tourismRobotics}, and education \citep{teachingRobotics}.
+SRs are increasingly expected to operate in complex environments and engage in direct social interactions with humans \citep{sarrica2020many, henschel2021makes, AutonomousRobots, UserEngagementRobotics, Ray2008, 9143175, mccoll2016classifying}. 
+Consequently, recent robotics research has focused on endowing these systems with cultural competence, motivated by the growing body of evidence demonstrating that culture profoundly influences both human perceptions of robots \citep{RobotCommunicating, Er04, Evers2008, Dingjun2010, Eresha2013, Joosse2014, Trovato2015, Mavrou2020, Andrist2015} and the broader quality of system design \citep{Jordan2022, Mohammed2015, PavingTheWayCulturallyCompetent}. 
+According to \citep{Betancourt2003}, cultural competence in humans refers to the ability to effectively understand and act within different cultural contexts by appropriately interpreting norms, values, and behaviors. 
+In social robotics, SRs are considered culturally competent systems when they can dynamically adapt their visual representations, perceptual processing, planning mechanisms, actions, and communicative behaviors to align with the user's worldview \citep{Papadopoulos2006, KnowledgeRepresentation}.
+Developing culturally competent capabilities is therefore essential to ensure that robotic behaviors and their underlying AI-driven functionalities align with the diverse sociocultural expectations, norms, and preferences of human users \citep{Ray2008, Oneto2022}.
 
-ML models have been extensively employed for solving those tasks, reporting remarkable results~\citep{DLRobotics, RLRobotics, MPRobotics, xu2020learning, bredeche2006perceptual, nguyen2020deep, zhou2022computer, arzani2020switching, hong2020multimodal, gao2021hybrid, yu2021deep}.
-However, in ML, the problem of cultural competence is underexplored especially in scenarios where some cultures are underrepresented, reflecting the problem on SRs that utilize those culturally incompetent models.
+The challenge of cultural competence in SRs has been documented in the literature \citep{Bartneck2007, Rehm2013, Planning, GreetingSelection, Grassi_2022, CloudCultureDialogue, KnowledgeRepresentation, PavingTheWayCulturallyCompetent, Papadopoulos_CARESSES, papadopoulos2020caresses, 8673086}. 
+However, early approaches relied on symbolic AI~\citep{PavingTheWayCulturallyCompetent, Bartneck2007, Rehm2013, Planning, Grassi_2022, CloudCultureDialogue, KnowledgeRepresentation} or neuro-fuzzy~\citep{bruno2016fuzzy} methods to address planning and decision-making problems. 
+Such rule-based models are ill-suited for high-dimensional tasks, including natural language processing and computer vision, where fully specified formal models are generally unavailable.
 
-Scholars advocate that two among the most compelling problems related to cultural competence are reflected on SRs implementations: the absence of architectural studies that address the problem of culture-as-a-nation approximation, and the problem of excluding minority cultures in statistical models, such as ML models.
+ML models have been extensively employed for these tasks, achieving remarkable results \citep{DLRobotics, RLRobotics, MPRobotics, xu2020learning, bredeche2006perceptual, nguyen2020deep, zhou2022computer, arzani2020switching, hong2020multimodal, gao2021hybrid, yu2021deep}. 
+However, within ML, cultural competence remains underexplored, particularly in scenarios where some cultures are underrepresented, which directly propagates into SRs that rely on such culturally biased models.
 
+Scholars have identified two of the most critical issues in this context: the lack of architectural approaches addressing the culture-as-a-nation approximation, and the exclusion of minority cultures in statistical learning models such as ML systems.
 
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-\begin{comment}
+This thesis is composed of two parts: the first focuses on the problem of underrepresentation; the second one focuses on proposing an alternative framework for solving culture-as-nation approximation. 
+The research question addressed in the first part is:
+\textit{How can the adverse effects of data scarcity, stemming from the underrepresentation of specific cultural groups, be mitigated to enhance the cultural competence of SRs?}
+The research question addressed in the second part is:
+\textit{How does a robot’s cultural competence influence user perception during navigational human--robot interaction in a residential scenario?}
 
-Scholars increasingly advocate for the exploration of alternative methodologies, arguing that a nation-centric definition fails to capture the intricate nuances of sub-cultures and the specificities of minority cultural groups. 
-Even if this national approximation is accepted, significant informational gaps persist. 
-These deficiencies arise not only from the systemic underrepresentation of specific nations within existing datasets~\citep{not_uniform_data} but also from the tendency to treat certain cross-cultural comparisons as axiomatic without rigorous empirical validation or exhaustive study. 
-Such data disparities across cultural domains inevitably precipitate cultural incompetence regarding minority groups—a phenomenon observed in the performance of ML algorithms~\citep{PetroccoIRIM2023}.
+The first part of this thesis, acknowledging the limitations of the culture-as-a-nation approximation, address the measurement and mitigation of cultural incompetence in ML models under underrepresentation scenarios. 
+These scenarios rely on culture-as-a-nation approximations, where certain cultures are underrepresented relative to a dominant majority culture. 
+This contribution consists of two categories of mitigation strategies, namely task-independent (first part) and task-specific (second part) approaches. 
+After establishing the individual effectiveness of these techniques, further empirical evidence is provided showing that their strategic combination significantly improves the cultural competence of ML systems.
 
-Given the polysemic and intricate nature of ``culture,'' alongside the logistical challenges of its practical implementation, it is imperative to conceptualize and evaluate a novel paradigm for embedding cultural competence within social robotics. The advancement of the field necessitates systems capable of dynamic cultural adaptation—mechanisms that transcend the static constraints imposed by national-level value dimensions. A fundamental challenge persists in preference embedding within high-uncertainty environments; in these scenarios, there is frequently a lack of reliable distribution approximations and a notable deficit in statistically robust mean values for specific social behaviors.
-For instance, preferences regarding interpersonal distance—specifically proxemics—are highly contingent upon situational context, cultural background, individual personality traits, and diverse environmental variables. While optimization during longitudinal interactions is essential, the system necessitates a foundational ``prior'' to initialize the learning process. From an operational standpoint, utilizing aggregate national statistics can serve as a pragmatic initialization for these optimization algorithms~\citep{saettone2026diversity}. However, exclusive reliance on national averages risks reinforcing detrimental stereotypes, which can precipitate significant ethical and societal concerns and a quantifiable decline in user engagement.
+The experiments presented in the first section of this thesis are available in a GitHub repository\footnote{\url{https://github.com/lucaoneto/CulturalCompetentML.git}\label{ch1:url:repodata}}, together with the two datasets collected.
 
-Drawing from human social conventions, the act of proactively inquiring about a peer's preferences is frequently perceived as an indicator of both politeness and social intelligence. Recent literature~\citep{fedriga2024cultural, saettone2023linguistic, fedriga2024representation} has proposed the concept of cultural competence as a dynamic heuristic for robotic implementations, predicated on probabilistic models of belief and knowledge that are optimizable through empirical data. While the fuzzy logic approaches previously proposed are theoretically sound, formal methodologies for embedding this adaptive capability remain largely underexplored. Intuitively, the ground truth regarding user preferences should reside with the user themselves. Consequently, integrating an implicit probabilistic representation of some culture, might represent a solution. On top of this, integrating an explicit verification step—wherein the robot prompts the user to confirm or calibrate initial assumptions—may represent a robust strategy to mitigate stereotyping while fostering transparent and personalized interactions. 
+%\color{red}
+%Sopra hai detto: This thesis focuses on the problem of underrepresentation. Anche la terza parte si focalizza su underrepresentation, secondo te? Se non è così, dove hai scritto "This thesis focus on ..." conviene invece dire. "This thesis is composed of three parts: the first two focus on the problem of underrepresentation; the third one focusses on...".
+%The research question addressed in the first two parts is: XXX The research question addressed in the third part is: XXX. Nota infatti che non appare da nessuna parte la question addressed nella third part. Devi stare attento a preservare la struttura in maniera logica e coerente.
+%\color{black}
+The primary contribution of the second part is the development of an adaptive framework designed to address sub-national cultural heterogeneity. 
+The proposed framework implements a probabilistic belief calibration mechanism based on culture-as-a-nation proxies. 
+The framework begins from an initial state in which the user's culture is inferred using behavioral priors, and culture is implicitly represented within the knowledge of the Large Language Model (LLM) used for user interaction. 
+The user subsequently confirms or refines these behavioral priors, with the LLM acting as a dynamic translation layer that converts explicit feedback into actionable behavioral and navigational parameters.
 
-Both the implicit representation of human cultures using large data models and the translation of explicit user feedback into actionable behavioral parameters has been largely neglected in social robotics due to the absence of a versatile ``adapter'' model; however, the emergence of Large Language Models (LLMs) offers a promising mechanism to bridge this gap. This integration remains a non-trivial challenge, as scholars have noted that machine learning models can inadvertently exacerbate cultural stereotypes \citep{arseniev2022machine}, requiring careful alignment and guardrails. To address the scarcity of empirical research in this domain, this thesis investigates a novel paradigm—predicated on established theoretical assumptions—leveraging Large Language Models (LLMs) as a dynamic adaptive mechanism for embedding cultural competence within social robotics.
-
-A fundamental distinction lies in the underlying logic: while Symbolic AI utilizes propositional logic to emulate deductive reasoning, ML is rooted in Statistical Learning Theory, mimicking inductive reasoning. Given that ML models currently represent the vanguard of AI innovation and pervasive application, this thesis focuses on the integration of cultural competence within ML frameworks. Despite the existence of literature proposing ML-based solutions for cultural adaptation, several intrinsic challenges remain unresolved:
-\begin{itemize}
-\item ML models integrated into social robots frequently suffer from a paucity of data representing minority cultures \citep{not_uniform_data, seaborn2023not, lim2021social, hagerty2019global, stacy2025data, ijerph21121642, li2024health, lee2024negotiating, zhang2024ameliorating, blanchard2015socio, thakkar2024artificial}. 
-This data scarcity severely restricts the system's ability to achieve genuine cultural competence.
-\item As the definition of culture is inherently fluid and multi-dimensional, novel architectural solutions must be designed to accommodate this variability within their core structural design.
-\end{itemize}
-
-\end{comment}
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-% NON ELIMINARE QUESTO COMMENTO!!!!!
-
-This thesis is based on two central assertions that converge on a common academic challenge: the problem of underrepresentation. Consequently, the primary research question guiding this investigation is formulated as follows:
-How can the adverse effects of data scarcity, stemming from the underrepresentation of specific cultural groups, be mitigated to enhance the cultural competence of Social Robotics (SR) systems?
-
-The first two parts of this thesis, recognizing the limitation of culture-as-a-nation approximations, address the problem of measuring and mitigating culture incompetence in ML models under underrepresentation scenarios, where some cultures are underrepresented with respect to a majority culture.
-This contribution consists of two mitigation strategies, namely, task-independent (first part) and task-specific (second part) approaches.
-Upon establishing the individual validity of these techniques, we present further empirical evidence demonstrating that the strategic composition of these methodologies significantly increases the cultural competence of ML systems.
-
-The experiments contained in the first section of this thesis can be found in a GitHub repository \footnote{\url{https://github.com/lucaoneto/CulturalCompetentML.git}\label{ch1:url:repodata}}, together with the two datasets collected.
-
-The primary contribution of the third part lies in the development of an adaptive framework design to address sub-national cultural heterogeneity. 
-The proposed framework implements a probabilistic belief calibration system based on culture-as-nation proxies.
-By introducing an explicit verification step wherein the robot prompts the user to confirm or refine its behavioral priors, and leveraging Large Language Models (LLMs) as a dynamic translation mechanism to convert explicit user feedback into actionable behavioral and navigational parameters.
-
-The experiments contained in this last part of this thesis can be found in a GitHub repository \footnote{\url{https://github.com/EnzoUbaldoPetrocco/CulturalCompetenceDuringNavigation}\label{ch1:url:ccn}}.
-
+The experiments contained in the last part of this thesis are available in a GitHub repository\footnote{\url{https://github.com/EnzoUbaldoPetrocco/CulturalCompetenceDuringNavigation}\label{ch1:url:ccn}}.
+%\color{blue}
+My dissertation explores the problem of cultural incompetence in social robots from two sides: component design, in particular, visual perception and action or interaction design.
+However, despite an integration between these two parts it is not only feasible, but recommended, for designing culturally competent robots, it is out of scope of this thesis.
+%\color{black}
+%a\color{red}
+%Bisogna subito dire che hai sviluppato due parti importanti per creare un robot culturalmente competente, ma la dissertation non propone una integrazione tra i due. Dato che si tratta di un argomento nuovo, è ragionevole che vengano esplorate prima le componenti essenziali legate a percezione culturalmente competente e azione/interazione culturalmente competente. Poi ribadisci questo concetto tra le limitation.
 \section{Publications}
-This thesis is the result of the Ph.D. course in Robotics and Intelligent Machines at University of Genova.
-During the Ph.D. course, I have been working on the following list of articles:
+
+This thesis is the result of the Ph.D. program in Robotics and Intelligent Machines at the University of Genoa. 
+During the Ph.D., I worked on the following publications:
+
 \begin{itemize}
-    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2023). \textit{Culture-competent machine learning in social robotics.} In 2023 I-RIM Conference (pp. 3-4).
-    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2024). \textit{Mitigating Cultural Underrepresentation in Image Classification: A Comparative Study of Data Augmentation Techniques.} In 2024 I-RIM Conference.
-    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2024). \textit{Culture in Image Classification: Detecting and Mitigating Cultural Incompetence in Social Robotics.} International Journal of Social Robotics – Major Revision.
-    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2025). \textit{Data Preprocessing for Culturally Competent Machine Learning in Social Robotics.} In I4SDG 2025 Conference.
-    \item Perazzo, G., Petrocco, E. U., Dameri, R. P., \& Sgorbissa, A. (2025). \textit{AI in Venture Capital: Investment Decision-Making and No Cap Case Study.}
-    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2026). \textit{Cultural Competence in Image Classification for Social Robotics: the effects of data augmentation methods.} In International Journal of Social Robotics – .
-    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2026). \textit{Cultural Competence in Social Robotics during Navigation.} In International Journal of Social Robotics – .
-    
+    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2023). \textit{Culture-competent machine learning in social robotics.} Presented at the 2023 I-RIM Conference.
+
+    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2024). \textit{Mitigating cultural underrepresentation in image classification: a comparative study of data augmentation techniques.} Presented at the 2024 I-RIM Conference.
+
+    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2024). \textit{Culture in image classification: detecting and mitigating cultural incompetence in social robotics.} International Journal of Social Robotics (major revision requested, under review).
+
+    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2025). \textit{Data preprocessing for culturally competent machine learning in social robotics.} Presented at the I4SDG 2025 Conference.
+
+    \item Perazzo, G., Petrocco, E. U., Dameri, R. P., \& Sgorbissa, A. (2025). \textit{AI in venture capital: investment decision-making and a case study.}. ITAIS 2025 Proceedings. 2025.
+    %\color{red} 
+
+    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2026). \textit{Cultural competence in image classification for social robotics: effects of data augmentation methods.} International Journal of Social Robotics (submitted).  
+
+    \item Petrocco, E. U., Sgorbissa, A., \& Oneto, L. (2026). \textit{Cultural competence in social robotics during navigation.} International Journal of Social Robotics (in preparation). 
 \end{itemize}

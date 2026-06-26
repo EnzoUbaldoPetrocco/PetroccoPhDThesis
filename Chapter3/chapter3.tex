@@ -2,7 +2,9 @@
 %*******************************************************************************
 %****************************** Third Chapter **********************************
 %*******************************************************************************
-\chapter{Experiments and Results}
+\chapter{Data Augmentation Mitigation Strategy}
+%\color{red}Scusa ma come fa questo capitolo a iniziare con Experiments e Results? Qui introduci una nuova metodologia rispetto al capitolo precedente. Forse dipende dal fatto che nella versione precedente era così. Ma devi stare attento, scusa ma non posso guardare io queste cose.
+%\color{black}
 \label{ch3}
 % **************************** Define Graphics Path **************************
 \ifpdf
@@ -12,38 +14,212 @@
 \fi
 %
 
-This section details and presents the empirical evaluations conducted utilizing the methodologies delineated in the preceding chapter. 
-The analysis commences with a formal characterization of the fundamental objective: quantifying the cultural competency of ML models under conditions of significant data sparsity and under-representation.
-Subsection sections provide an assessment of the cultural competence of baseline ML models under varying degrees of cultural under-representation.
-Finally, we provide a comprehensive exposition of the experimental results obtained for the MTL architecture..
-
-\section{Evaluating Machine Learning Cultural Competence Under Data Scarcity}
-\label{ch3:sec:exp_standard_ml}
 %
-The No-Free-Lunch theorem~\citep{wolpert1996lack} posits that no single learning algorithm is universally superior across all possible data distributions.
-Consequently, identifying the optimal architecture for a specific application necessitates an empirical comparison of multiple algorithmic frameworks, as an optimal choice cannot be determined a priori.
+This chapter introduces a specialized suite of task-specific Data Augmentation (DA) techniques designed to mitigate cultural bias within robotic visual perception frameworks. 
+While the term DA traditionally denotes a broad spectrum of domain-agnostic methodologies utilized to expand sample sizes, the strategies developed herein are intrinsically coupled with specific computer vision tasks. 
+Due to its conceptual simplicity and empirical efficacy, DA has been extensively explored within the vision domain. 
+Crucially, although certain underlying principles introduced in this chapter can be generalized to alternative modalities, direct cross-domain transferability cannot be assumed a priori due to the distinct structural characteristics inherent to different data types.
 
-Adhering to this principle, the present study evaluates two of the most robust and empirically successful algorithms for binary classification—specifically, SVM and Deep Neural Networks—which have consistently demonstrated state-of-the-art performance across diverse tabular and high-dimensional benchmarks~\citep{fernandez2014we,wainberg2016random,shu2021zoo}.
+This chapter details and presents the empirical evaluations regarding the methodology presented.
+%\color{red}Stessa cosa. Abbi pazienza ma sono un po' stanco. Quali metodologie nel precedente chapter? Non le stai introducendo qui?
+%\color{black}
+Subsequent sections provide analysis of the results obtained from DA, and its composition with MTL.
 
-The first candidate originates from the domain of shallow learning architectures: Support Vector Machines (SVM)~\citep{shalev2014understanding}, utilizing both Linear and Gaussian (RBF) kernels~\citep{6790031}. 
-In this framework, the input space is defined as $\mathcal{X} = \mathbb{R}^d$, where $d$ represents the vectorized pixel intensities of the images converted to grayscale.
-To ensure structural homogeneity across the dataset, we evaluated several preprocessing techniques, such as zero-padding and spatial rescaling. We ultimately opted to rescale all instances to a uniform resolution ($d = 35 \times 35$) via area interpolation (inter-area) using the OpenCV library.For the Linear SVM (LSVM), the mapping $\varphi$ in Eq.~\eqref{ch2:eq:generalproblem} is the identity function. 
-The optimization objective incorporates the Hinge loss function, $\max(0, 1 - y f(x))$, and an $L_2$ regularizer $\lambda \| \mathbf{w} \|^2_2$, where $\lambda$ is a hyperparameter determined through a formal model selection phase. 
-Conversely, for the Gaussian SVM (GSVM), the configuration remains identical to the LSVM, with the exception that $\varphi$ is implicitly induced by a Gaussian kernel. 
-This kernel is characterized by the bandwidth parameter $\sigma^2$ (variance), which is similarly optimized during the model selection procedure.
+\section{Methods}
+This section provides a description for the set of DA techniques that will be tested.
+The four DA proposals can be clustered in four groups: oversampling (OS), random transformation (RT), adversarial sampling (ADV) and diffusion-based (DM) techniques.
+The description of these mitigation strategies follows below in this order.
 
-The second algorithmic framework is denoted as RESNET. 
-This approach utilizes a pre-trained ResNet architecture~\citep{He_2016_CVPR} as a feature extractor, followed by a linear classification head employing a Sigmoid activation function. 
-The model is optimized via the Binary Cross-Entropy (BCE) loss function and the Adam optimizer.
-For the RESNET configuration, the input space is defined as $\mathcal{X} = \mathbb{R}^{3 \times H \times W}$, where the spatial dimensions are set to $H = W = 120$ for the LAMP dataset and $H = W = 200$ for the CARPET dataset. 
-To facilitate convergence, we implement a dynamic learning rate scheduler that decays the learning rate upon detecting an accuracy plateau~\citep{goodfellow2016deep}.
+\subsection{Oversampling Techniques}
+\label{ch2:sec:os}
+%\color{red}4.0.1?
+%\color{black}
+The most fundamental DA strategy utilized is OS. 
+In this approach, instances from under-represented cultural groups are replicated within the training distribution until an empirical balance across all cultural contexts is achieved.
+A more sophisticated iteration of this technique, specifically designed for deep learning architectures, involves enforcing a Parity-Balanced Batch (PARB) strategy. 
+Rather than static oversampling of the global dataset, PARB ensures that every stochastic gradient descent (SGD) iteration utilizes a mini-batch in which each cultural context $\mathcal{C}$ is represented with equal frequency.
 
-The training procedure is partitioned into two distinct phases. 
-In the initial phase, the optimization is restricted to the weights of the classification head, effectively utilizing the backbone as a fixed feature extractor. 
-However, empirical analysis of the datasets revealed that the feature representations learned on ImageNet are insufficiently aligned with the nuances of the current problem domain, necessitating a refinement of the internal parameters.
-Consequently, a fine-tuning phase is executed, wherein the entire network architecture is optimized using a significantly reduced learning rate, $l_{r_{fn}}$. 
-During the Model Selection phase, we perform a grid search over the primary learning rate $l_r$ and the epoch count $n_e$, while the fine-tuning rate is held constant at $l_{r_{fn}} = 10^{-5}$.
-A comprehensive summary of the model architectures and the associated hyperparameter ranges utilized for model selection and error estimation is detailed in Table~\ref{ch3:tab:hyper}.
+\subsection{Random Transformations}
+%\color{red}4.0.2
+%\color{black}
+
+\label{ch2:sec:RT}
+In various high-stakes applications~\citep{shorten2019survey}, particularly those involving high-dimensional input spaces such as computer vision, the empirical dataset $\mathcal{D}_n$ often lacks the cardinality required to fully encapsulate the underlying geometric and semantic invariances of the data-generating distribution $\mu$. 
+To mitigate this limitation and suppress overfitting—thereby enhancing the generalization capabilities delineated in Section~\ref{ch2:sec:prel}—we utilize Random Transformations (RT).
+Formally, we define a transformation mapping $T_\omega: \mathcal{X} \rightarrow \mathcal{X}$ parameterized by a random variable $\omega \in \Omega$. 
+Here, $\Omega$ denotes the space of admissible transformations, which may include operations such as stochastic rotations, affine translations, or the injection of Gaussian noise. 
+These transformations are constructed to be label-preserving, such that for any sample $(x_i, y_i) \in \mathcal{D}_n$, the augmented pair $(T_\omega(x_i), y_i)$ is assumed to represent a structurally valid realization from the support of $\mu$.
+
+Within the scope of this research, we implement RT via two distinct operational strategies: Offline Random Transformation (OffRT) and Online Random Transformation (OnRT).
+The OffRT approach involves the expansion of the training corpus $\mathcal{L}^r$ a priori, before the commencement of the training phase. 
+We construct an augmented training set $\mathcal{L}^r_{\text{aug}} = \mathcal{L}^r \cup \{ (T_{\omega_i}(x_i), y_i) \}_{i=1}^{n_{\text{aug}}}$, where $n_{\text{aug}}$ denotes the cardinality of the synthesized samples. 
+This effectively increases the sample size $n$ in Eq.~\eqref{ch2:eq:generalproblem}, facilitating the acquisition of a denser and more comprehensive representation of the input manifold.
+Conversely, the OnRT strategy integrates the transformations dynamically into the model’s pipeline during the training phase. 
+In this configuration, for every training epoch and each input instance $x$, a unique realization of $\omega$ is sampled, and the model processes the stochastically transformed input $T_\omega(x)$. 
+This mechanism functions as a form of stochastic regularization—analogous to the dropout technique—thereby preventing the learning algorithm $\mathscr{A}_\mathcal{H}$ from memorizing specific training exemplars and instead incentivizing the extraction of invariant features.
+
+Specifically, for the empirical evaluations conducted in this research, the space of admissible transformations $\Omega$ comprises horizontal reflections, stochastic rotations (within a bounded range of $g$ radians), the injection of additive Gaussian noise (with a standard deviation $\sigma = g$), and random rescaling (zooming). 
+Within this framework, the variable $g$ serves as a scalar parameter governing the augmentation intensity of the RT methodology.
+
+\subsection{Adversarial Sampling}
+\label{ch2:sec:adv_sampling}
+%\color{red}4.0.3
+%\color{black}
+
+To further bolster the cultural competency of the classification framework, we incorporate an ADV strategy. 
+The fundamental intuition underlying this approach is to augment the training distribution with synthesized samples designed to compel the model to decouple cultural identifiers from the primary discriminative task.
+
+This objective is operationalized through a specialized pre-training phase utilizing the Projected Gradient Descent (PGD) algorithm \citep{madry2017towards}. 
+Within this paradigm, adversarial perturbations are iteratively generated to maximize the model's loss, effectively identifying the "weakest" points in the decision boundary across different cultural strata. By training on these challenging variants, the model is incentivized to ignore superficial cultural correlations and instead converge upon more robust, invariant features.
+
+Initially, we train a cultural discriminator $D_{\Theta_D}: \mathcal{X} \rightarrow \mathbb{R}^{|\mathcal{C}|}$ designed to predict the cultural provenance of a given input. 
+We implement two distinct variants of this architectural strategy: the instantiation of a single, monolithic global discriminator (NODIV) or, alternatively, the deployment of class-conditional discriminators (DIV).The discriminator's parameters are optimized by minimizing the categorical cross-entropy loss function:\begin{align}\mathcal{L}D(x, y{c}) = - \sum_{i=1}^{|\mathcal{C}|} y_{c,i} \log(D_{\Theta_D}(x)i),
+\end{align}
+where $y{c}$ represents the ground-truth cultural label.
+
+Upon completion of the training phase for $D_{\Theta_D}$, we synthesize adversarial perturbations $\delta$ to construct augmented inputs $\tilde{x} = x + \delta$. 
+This process utilizes the PGD framework, which iteratively updates the perturbation to maximize the cultural classification loss while constraining the transformation within a predefined $\epsilon$-ball of the original image. For an iteration $t$, the update rule is defined as follows:
+%
+\begin{align}
+x_{t+1} = \Pi_{x+\mathcal{S}} \left( x_t + \alpha \cdot \text{sign} \left( \nabla_{x_t} \mathcal{L}D(D{\Theta_D}(x_t), y_{c}) \right) \right),
+\end{align}
+%
+where $\alpha$ denotes the step size and $\Pi_{x+\mathcal{S}}$ represents the projection operator onto the feasible set $\mathcal{S}$. 
+This set is governed by the $L_\infty$ norm constraint $\| \tilde{x} - x \|_\infty \leq \epsilon$ and the requisite pixel intensity bounds $[0, 1]$.
+
+The final classification hypothesis $f_{\Theta}$ is optimized over an augmented dataset $\tilde{\mathcal{D}} = \mathcal{D}_n \cup \mathcal{D}_{adv}$, where the adversarial subset $\mathcal{D}_{adv}$ comprises the synthesized inputs $\tilde{x}$ paired with their corresponding ground-truth labels $y$. 
+By training on instances where cultural markers have been stochastically shifted or obscured through adversarial perturbations, the model is incentivized to ignore culturally dependent artifacts. Consequently, the learning algorithm converges upon more robust, invariant features necessary for the primary discriminative task, thereby mitigating cultural bias and enhancing cross-cultural generalization.
+
+\subsection{Diffusion Models}
+\label{ch2:sec:diff_model}
+%\color{red}4.0.4
+%\color{black}
+
+The tertiary DA strategy involves enriching the training corpus with synthetic imagery synthesized via a DM. Within the paradigm of generative modeling, the objective transitions from learning a discriminative mapping $f_\Theta: \mathcal{X} \rightarrow \mathcal{Y}$ to approximating the high-dimensional probability density function $\mu$ characterizing the input space $\mathcal{X}$. 
+Diffusion models operationalize this by learning to invert a forward stochastic process that incrementally degrades the data through the sequential addition of Gaussian noise.
+
+Consistent with the implementation provided in the framework, we define a diffusion schedule governed by a continuous temporal variable $t \in [0, 1]$. 
+The transition from a noise-free image $x_0$ to its perturbed realization $x_t$ is characterized by the following linear interpolation:
+%
+\begin{equation}
+x_t = \cos(\phi_t) x_0 + \sin(\phi_t) \epsilon, \quad \epsilon \sim \mathcal{N}(\mathbf{0}, \mathbf{I}),
+\end{equation}
+%
+where the angular parameter $\phi_t$ is determined by a schedule that interpolates between a maximum signal-to-noise ratio (SNR) at $\cos(\phi_{\min}) = 0.95$ and a minimum SNR at $\cos(\phi_{\max}) = 0.02$. 
+This specific trigonometric formulation ensures that the marginal variance of the latent variable $x_t$ remains invariant throughout the diffusion process, satisfying the constraint $\cos^2(\phi_t) + \sin^2(\phi_t) = 1$.
+
+The model $f_\Theta$ is optimized to function as a denoiser. 
+Specifically, the network architecture processes the perturbed image $x_t$ alongside the noise variance $\sin^2(\phi_t)$—which serves as a temporal conditioning signal—to predict the original noise component $\epsilon$. 
+Consistent with the empirical risk minimization framework established in Problem~\eqref{ch2:eq:generalproblem}, the training objective employs the Mean Absolute Error (MAE) as the loss function $\ell$:
+%
+\begin{equation}
+\min_\Theta \quad \hat{\mathbb{E}}_{\mathcal{D}n, \epsilon, t} \left| \epsilon - f\Theta(x_t, \sin^2\phi_t) \right|_1.
+\end{equation}
+%
+
+To address our specific objective, the diffusion methodology may be operationalized by leveraging the complete training distribution $\mathcal{L}$ for a given class, or by restricting the generative process exclusively to instances associated with a minority cultural context (DMMIN).
+\begin{figure}
+\centering
+\includegraphics[width=1.0\linewidth]{Chapter2/Figs/mock_strategies_comparison.pdf}
+\caption{Simplified 2D feature-space visualizations illustrating the primary mitigation strategies delineated in this thesis.}
+\label{ch2:fig:mock_strategies_comparison}\end{figure}
+
+\section{Combining MTL and DA}
+\label{ch2:sec:mtl_and_da}
+The mitigation strategies delineated above may be synergistically integrated to address specific operational requirements. 
+Within the scope of this thesis, and primarily due to the inherent sparsity of the empirical dataset, diffusion-based augmentation methodologies are consistently coupled with RT. 
+Specifically, the training corpus is first expanded via OffRT; this augmented distribution subsequently serves as the input for the diffusion process, further amplifying the dimensionality and density of the dataset.
+Provided that the transformation $T_\omega$ remains invariant with respect to cultural identifiers, the integration of RT and MTL is a mathematically straightforward procedure. 
+Conversely, the concatenation of synthetic instances generated via DM or DMMIN within an MTL framework presents greater complexity, as it requires the assignment of cultural labels to synthesized data. 
+In this research, we adopt a heuristic wherein synthesized samples are stochastically assigned to a minority cultural context.
+
+Individual mitigation techniques may also be concatenated sequentially to amplify the overall debiasing effect. 
+Figure~\ref{ch2:fig:pipeline} illustrates the comprehensive integration of the proposed preprocessing strategies into a unified pipeline.
+
+\begin{figure}
+\centering
+\includegraphics[width=1.0\linewidth]{Chapter2/Figs/DataAugmentationPipeline.drawio.pdf}
+\caption{Schematic representation of the preprocessing and processing modules designed for the mitigation of cultural incompetence.}
+\label{ch2:fig:pipeline}
+\end{figure}
+
+The presence of a diagonal slash within certain modules highlights a mutual exclusivity, necessitating a selection between alternative methodologies, such as OS and PARB. 
+In principle, each DA stratum can be stacked, whereby samples generated at one stage serve as the foundational input for the subsequent layer. 
+Within this thesis, a exhaustive evaluation of every permutation of these DA techniques is not presented; instead, the specific combinations selected for empirical analysis are delineated in Chapter~\ref{ch3}.
+
+%
+
+\section{Mitigation Strategies}
+%
+Adhering to the methodologies delineated in the preceding chapter, we expanded the LAMP and CARPET datasets through a hierarchical application of OS, RT, and synthetic imagery generated via adversarial perturbations (ADV) and diffusion models (DM).
+
+The initial phase of this experimental series is dedicated to evaluating the baseline efficacy of fundamental strategies, specifically OS and RT. 
+Subsequently, we provide a detailed exposition of the experiments involving adversarial sample generation, followed by an analysis of the performance gains derived from diffusion-based augmentation. Finally, we examine the synergistic effects of various hybrid configurations, integrating MTL with the aforementioned DA techniques to establish the most robust mitigation framework.
+
+A primary distinction from the preceding RESNET configuration is the adoption of a ResNet50V2 backbone, succeeded by a structural sequence comprising a GlobalAveragePooling2D layer, a Dropout regularization layer, and a final Fully Connected (Dense) layer. 
+This architectural transition is motivated by the documented performance enhancements associated with both the updated backbone architecture and the refined classification head design~\citep{szegedy2015going}.
+Throughout these evaluations, the batch size was maintained at a constant $b=32$, and the fine-tuning learning rate was held at $l_{r_{fn}}=10^{-5}$. To differentiate this refined iteration from the initial RESNET implementation, it will be referred to as the Baseline in subsequent experimental discussions.
+
+The initial DA strategies evaluated in this study comprise Oversampling (OS) and RT. Within our experimental framework, the RT pipeline consists of a sequential application of horizontal flipping, stochastic rotations, additive Gaussian noise, and random perturbations in brightness and zoom.
+Specifically, the rotation and brightness factors were fixed at a magnitude of $0.01$. 
+Conversely, the intensities of the Gaussian noise and spatial zoom were modulated by a unifying hyperparameter $g$. 
+During the optimization phase, the learning rate $l_r$ was explored within the discrete set $\{10^{-4}, 5 \cdot 10^{-4}, \dots, 10^{-1}\}$, while the epoch count $n_e$ varied across $\{10, 15, \dots, 30\}$. The DA gain parameter $g$ was adjusted logarithmically across the interval $\{10^{-4.0}, 10^{-3.33}, \dots, 10^{0}\}$.
+Table~\ref{ch3:tab:hyper:os_rt} provides a comprehensive overview of the hyperparameter configurations and their respective search spaces.
+
+\begin{table}
+\footnotesize
+\centering
+\setlength{\tabcolsep}{0.1cm}
+\renewcommand{\arraystretch}{1.5}
+\centering
+\begin{tabular}{c|c|c}
+\toprule
+\textbf{Model} & \textbf{Hyper.} & \textbf{Ranges/Setting} \\
+\midrule
+\multirow{4}{*}{\textbf{Baseline (Section~\ref{ch2:sec:prel})}} & $n_r$ & $10$ \\
+\hhline{~--}
+& $|\mathcal{L}^r|, |\mathcal{V}^r|, |\mathcal{T}^r|$& $70\%, 20\% 10\%$ \\
+\hhline{~--}
+& $l_r$ & $10^{-4}, 10^{-3.33}, \dots, 10^{-1}$\\
+\hhline{~--}
+& $n_e$ & $10, 15, \dots, 30$\\
+\hhline{~--}
+& $b$ & $32$\\
+\hhline{~--}
+& $l_{r_{ft}}$ & $10^{-5}$\\
+\midrule
+\textbf{OS (Section~\ref{ch2:sec:os})} & \multicolumn{2}{c}{Same as above}\\
+\midrule
+\multirow{2}{*}{\textbf{RT (Section~\ref{ch2:sec:RT})}} & \multicolumn{2}{c}{Same as above plus}\\
+\hhline{~--}
+ & $g$ &  $10^{-4}, 10^{-3.33}, \dots, 1$\\
+\midrule
+\textbf{\textbf{RT + OS}} & \multicolumn{2}{c}{Same as RT}\\
+\bottomrule
+\end{tabular}
+\caption{Hyperparameters range and settings during OS and RT experiments.}
+\label{ch3:tab:hyper:os_rt}
+\end{table}
+%
+In accordance with the theoretical framework established in Section~\ref{ch2:sec:adv_sampling}, the adversarial sampling strategy is operationalized to bolster the cultural diversity of the training distribution through the synthesis of adversarial edge cases. 
+This methodology centers upon the optimization of a cultural discriminator, $D_{\Theta_D}$, which serves as the fundamental reference for identifying and perturbing cultural boundaries.
+The architecture of $D_{\Theta_D}$ is designed to mirror the convolutional backbone of the Baseline model, thereby ensuring feature consistency and a shared representation space across the experimental pipeline. 
+To accommodate the multi-class nature of the cultural identification task, the classification head is transitioned from a binary to a categorical configuration, integrating a sequence of three dense layers culminating in a softmax activation function.
+
+The PGD algorithm is implemented as an iterative optimization procedure, wherein the sign of the loss gradient derived from $D_{\Theta_D}$ is leveraged to perturb samples from a specific cultural class toward the decision manifolds of alternative cultures.The execution of this adversarial strategy necessitates the calibration of three primary hyperparameters: the maximum perturbation constraint $\epsilon$, the step size $\alpha$, and the iteration count $n_i$. 
+These parameters were initially initialized based on established literature and subsequently refined through a qualitative assessment of the synthesized imagery; this ensures that the perturbed samples effectively traverse cultural boundaries while maintaining semantic and structural coherence.
+The discriminator's training follows a bifurcated approach: the classification head is first optimized while maintaining a frozen backbone at a learning rate of $\eta = 10^{-3}$. 
+This is followed by a comprehensive fine-tuning phase at $\eta_{\text{fine}} = 10^{-5}$, which ensures the generation of high-fidelity gradient information requisite for the subsequent adversarial attack.
+
+Table~\ref{ch3:tab:hyper:adv} provides a comprehensive overview of the hyperparameter configurations utilized within the adversarial framework. 
+It is pertinent to note a strategic reduction in the dimensionality of the hypothesis space $\mathcal{H}$. 
+This contraction is motivated by the significant computational overhead introduced by the ADV methodology (and subsequently the DM/DMMIN approaches); thus, to maintain computational tractability, the search space was restricted to the most critical parameters. 
+Importantly, this reduction does not compromise the validity of the comparative analysis, as a specific Baseline is re-evaluated for each distinct augmentation technique to ensure a consistent and rigorous performance benchmark.
+
+%Here I need to put the part together with RT and with p_u
+For the interpretation of these findings, it is instructive to examine the performance metrics of the discriminator itself. 
+We hypothesize that cultural under-representation significantly impacts the discriminator's efficacy; consequently, we conducted auxiliary experiments incorporating both RT and an increased data threshold of $p_u=20\%$. 
+This approach allows us to evaluate the extent to which mitigation strategies rectify performance deficits within the discriminator and to determine if enhanced data availability amplifies the collective efficacy of the proposed augmentation suite.
 %
 \begin{table}
 \footnotesize
@@ -55,386 +231,1383 @@ A comprehensive summary of the model architectures and the associated hyperparam
 \toprule
 \textbf{Model} & \textbf{Hyper.} & \textbf{Ranges/Setting} \\
 \midrule
-\multicolumn{3}{c}{\textbf{ML Algorithms (Section~\ref{ch3:sec:exp_standard_ml})}}\\
-\midrule
-\multirow{3}{*}{LSVM} & $n_r$ & $10$ \\
-\hhline{~--}
-& $|\mathcal{L}^r|, |\mathcal{V}^r|, |\mathcal{T}^r|$& $80\%, 10\% 10\%$ \\
-\hhline{~--}
-& $\lambda$ & $10^{-4.0},10^{-3.8}, \cdots, 10^{-3.0}$\\
-\midrule
-\multirow{5}{*}{GSVM} & $n_r$ & $10$ \\
-\hhline{~--}
-& $|\mathcal{L}^r|, |\mathcal{V}^r|, |\mathcal{T}^r|$& $80\%, 10\% 10\%$ \\
-\hhline{~--}
-& $\lambda$ & $10^{-4.0},10^{-3.8}, \cdots, 10^{-3.0}$\\
-\hhline{~--}
-& $\sigma^2$ & $10^{-4.0},10^{-3.8}, \cdots, 10^{-3.0}$\\
-\midrule
-\multirow{4}{*}{RESNET} & $n_r$ & $10$ \\
+\multirow{4}{*}{\textbf{Baseline (Section~\ref{ch2:sec:prel})}} & $n_r$ & $10$ \\
 \hhline{~--}
 & $|\mathcal{L}^r|, |\mathcal{V}^r|, |\mathcal{T}^r|$& $70\%, 20\% 10\%$ \\
 \hhline{~--}
-& $l_r$ & $.0001, .0005, \cdots, .1$\\
+& $l_r$ & $10^{-4}, 10^{-3.4}, \dots, 10^{-1}$\\
 \hhline{~--}
-& $n_e$ & $4,6, \cdots, 30$\\
+& $n_e$ & $10, 20, \dots, 40$\\
+\hhline{~--}
+& $b$ & $32$\\
+\hhline{~--}
+& $l_{r_{ft}}$ & $10^{-5}$\\
+\hhline{~--}
+& $\tau$ & $20\%$\\
 \midrule
-\multicolumn{3}{c}{\textbf{Addition of Cultural Competence (Section~\ref{ch2:sec:makeMLcultcomp})}}\\
+\multirow{4}{*}{\textbf{ADV (Section~\ref{ch2:sec:adv_sampling})}} & \multicolumn{2}{c}{Same as Baseline plus}\\
+\hhline{~--}
+ & $\epsilon$ & 0.2\\
+\hhline{~--}
+ & $\alpha$ & 0.005\\
+\hhline{~--}
+ & $n_i$ & 40\\
 \midrule
-\multicolumn{3}{c}{Same as above plus}\\
-* & $\gamma$ & $10^{-2.0},10^{-1.84}, \cdots, 10^{+2.0}$\\
+\multirow{2}{*}{\textbf{RT (Section~\ref{ch2:sec:RT})}} & \multicolumn{2}{c}{Same as Baseline plus}\\
+\hhline{~--}
+ & $g$ &  $0.1$\\
+\midrule
+\textbf{\textbf{RT + ADV}} & \multicolumn{2}{c}{Same as RT and ADV}\\
 \bottomrule
 \end{tabular}
-\caption{ML algorithms and related hyperparameters range and settings.}
-\label{ch3:tab:hyper}
+\caption{Hyperparameters range and settings during ADV experiments.}
+\label{ch3:tab:hyper:adv}
 \end{table}
 %
-To rigorously evaluate the cultural (in)competence of the models, we conducted a systematic analysis of the effects of cultural under-representation within the training distribution.
-Specifically, we established a single dominant culture within the learning set and modulated the representation density of the remaining cultures via a parameter $p_u$, representing the percentage of available data for each non-dominant group. For instance, utilizing the LAMP dataset, we evaluated a baseline configuration comprising exclusively Chinese lamps. 
-We subsequently introduced samples from French and Turkish cultural contexts at varying concentrations, such as $p_u = 10\%$.
-The empirical observations were recorded across a spectrum of under-representation levels, specifically $p_u \in \{0\%, 5\%, 10\%\}$.
-%
-\section{Mitigation Strategies}
-%\label{ch3:sec:exp_mitigation}
-The first proposed mitigation strategy is integrated into the RESNET framework, which was identified as the superior architecture based on the empirical results presented in Section~\ref{ch3:sec:exp_standard_ml}. 
-This evaluation focuses on both the LAMP and CARPET datasets across the under-representation levels $p_u \in \{5\%, 10\%\}$. 
-Note that the case $p_u = 0\%$ is excluded from this analysis, consistent with the theoretical constraints of MTL delineated in Section~\ref{ch2:sec:CCML}, which require at least a minimal presence of cultural labels for the auxiliary task.
-The expanded hypothesis space $\mathcal{H}$, which incorporates the additional regularization parameter $\gamma$ governing the MTL task-weighting, is detailed in Table~\ref{ch3:tab:hyper}.
-%
 
-\section{Baseline Evaluation of Cultural Incompetence}
+The generative augmentation framework employs an Attention-Residual U-Net architecture, specifically optimized to approximate the score-matching function $f_\Theta(x_t, \sin^2\phi_t)$. 
+The backbone of $f_\Theta$ is configured as a symmetric U-Net comprising four hierarchical stages with feature map dimensionalities of $[32, 64, 100, 128]$.
+Within the encoder pathway, each stage incorporates dual residual blocks followed by average pooling and a dropout layer ($p=0.1$) to bolster model regularization. 
+Temporal and noise-level context is integrated through 32-dimensional sinusoidal embeddings derived from the noise variance $\sin^2\phi_t$; these embeddings are concatenated with the feature maps to modulate the denoising trajectory. At the latent bottleneck, a Transformer module leveraging Multi-Head Self-Attention (MHSA) is utilized to capture global spatial dependencies. The decoder pathway mirrors the encoder's topology, employing bilinear interpolation for spatial upsampling and skip connections to preserve high-frequency structural integrity throughout the reconstruction process.
 
-For the LAMP dataset, we conducted a comparative performance evaluation of the LSVM, GSVM, and RESNET architectures. 
-In contrast, the analysis of the CARPET dataset was restricted to the RESNET framework due to the heightened complexity of the classification task; preliminary empirical assessments indicated that the linear and kernel-based SVMs (LSVM and GSVM) failed to achieve acceptable accuracy thresholds.
+The training procedure for the diffusion architecture is structured as a hierarchical paradigm to facilitate robust generalization. 
+The model undergoes an initial pre-training phase on the \textit{Places} dataset \citep{zhou2017places}, specifically utilizing the \texttt{places365\_small} subset.
+Given that training is conducted on an NVIDIA A100 GPU, the available VRAM was insufficient to process the entire dataset in a single pass. 
+Consequently, the dataset was partitioned into $t_{pt}=15$ discrete segments, with each segment undergoing one epoch of training. To mitigate catastrophic forgetting during this sequential optimization, the learning rate is reduced by a decay factor of $d_{pt}=1.05$ upon the completion of each chunk. 
+This iterative process is repeated for $n_{pt}=8$ cycles.
+The optimization phase employs the AdamW optimizer with a weight decay of $10^{-4}$ and an initial learning rate of $l_r = 10^{-3}$, which is subjected to the aforementioned exponential decay at each iteration. 
+This procedure yields a foundational diffusion model with established feature-generation capabilities.
 
-The comprehensive results regarding cultural competence and the baseline performance of these standard ML algorithms for both the LAMP and CARPET use cases are detailed in Tables~\ref{ch3:tab:ris:ml:lamp} and \ref{ch3:tab:ris:ml:carpet}, with corresponding visual trends illustrated in Figures~\ref{ch3:fig:ris:ml:lamp} and \ref{ch3:fig:ris:ml:carpet}.
+Subsequently, a model selection phase is executed to align the denoiser with the target distribution $\mathcal{L}$. 
+This involves a grid search over varying learning rates and the evaluation of a freezing strategy, wherein the initial $40\%$ of the network's layers are maintained as static parameters. 
+The optimal configuration is identified by minimizing the Kernel Inception Distance (KID) on the validation manifold.
+The final architecture is fine-tuned for $70$ epochs, incorporating an Exponential Moving Average (EMA) with a decay coefficient of $0.999$ to bolster the structural stability and fidelity of the synthesized imagery. 
+During the inference stage, synthetic cultural instances are generated via a $12$-step reverse diffusion (sampling) process, transitioning from an isotropic Gaussian noise distribution to the target data manifold.
 
-Table~\ref{ch3:tab:ris:ml:lamp} delineates the test set error rates for the LAMP dataset across each cultural category—specifically $\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$—alongside the CIC for the LSVM, GSVM, and RESNET architectures. 
-These metrics are reported for every permutation of majority culture and minority representation level ($p_u$).
-As a representative case, consider the RESNET performance when the majority culture is Fren and the minority representation is $p_u=0\%$. In this configuration, the error for the dominant class ($\text{ERR}^{\text{Fren}}$) is $34.6\%$, which is significantly lower than the error rates observed for the Chin. and Turk. categories. 
-However, empirical trends indicate that as $p_u$ increases, the error rate for the majority culture typically rises, whereas the error rates for the minority cultures and the overall CIC exhibit a downward trajectory, suggesting a more balanced feature representation.
-
-Table~\ref{ch3:tab:ris:ml:carpet} serves as the counterpart to Table~\ref{ch3:tab:ris:ml:lamp} for the CARPET dataset, where experimental evaluations are restricted to the RESNET architecture.
-To enhance interpretability and provide a comprehensive visualization, Figure~\ref{ch3:fig:ris:ml:lamp} illustrates the data from Table~\ref{ch3:tab:ris:ml:lamp} in a graphical format. 
-The horizontal axis represents the test error (ERR), while the vertical axis denotes the CIC as the minority representation $p_u$ varies. 
-The trajectory of $p_u$ is indicated by directional arrows, which signify the evolution of performance as the minority data percentage increases. 
-Within each plot, which corresponds to a specific majority culture, the arrow's color identifies the culture for which the ERR is computed, while the line style (solid, dashed, or dotted) distinguishes between the different algorithms employed.
-
-Figure~\ref{ch3:fig:ris:ml:carpet} serves as the counterpart to Figure~\ref{ch3:fig:ris:ml:lamp} for the CARPET dataset, presenting the results obtained exclusively from the RESNET architecture.
+Table~\ref{ch3:tab:hyper:diff} provides a comprehensive summary of the hyperparameter configurations utilized throughout the experimental evaluations involving the diffusion-based augmentation frameworks.
 %
 \begin{table}
 \footnotesize
 \centering
 \setlength{\tabcolsep}{0.1cm}
-\renewcommand{\arraystretch}{1.1}
-\begin{tabular}{c|c|c|c|c|c}
+\renewcommand{\arraystretch}{1.5}
+\centering
+\begin{tabular}{c|c|c}
 \toprule
+\textbf{Model} & \textbf{Hyper.} & \textbf{Ranges/Setting} \\
+\midrule
+\multirow{4}{*}{\textbf{Baseline (Section~\ref{ch2:sec:prel})}} & $n_r$ & $10$ \\
+\hhline{~--}
+& $|\mathcal{L}^r|, |\mathcal{V}^r|, |\mathcal{T}^r|$& $70\%, 20\% 10\%$ \\
+\hhline{~--}
+& $l_r$ & $10^{-4}, 10^{-3.33}, \dots, 10^{-1}$\\
+\hhline{~--}
+& $n_e$ & $10, 20, \dots, 40$\\
+\hhline{~--}
+& $b$ & $32$\\
+\hhline{~--}
+& $l_{r_{ft}}$ & $10^{-5}$\\
+\hhline{~--}
+& $\tau$ & $20\%$\\
+\midrule
+\multirow{2}{*}{\textbf{RT (Section~\ref{ch2:sec:RT})}} & \multicolumn{2}{c}{Same as Baseline plus}\\
+\hhline{~--}
+ & $g$ &  $0.1$\\
+\midrule
+\multirow{20}{*}{\textbf{DM/DMMIN (Section~\ref{ch2:sec:diff_model})}} & \multicolumn{2}{c}{Same as RT plus diffusion-based image generator hyperparameters}\\
+\hhline{~--}
+& \multicolumn{2}{c}{\textbf{Optimization}}\\
+\hhline{~--}
+ & Optimizer & AdamW \\ 
+\hhline{~--}
+ & $l_r$ & $1 \times 10^{-3}$ \\ 
+\hhline{~--}
+ & Weight Decay & $1 \times 10^{-4}$ \\ 
+\hhline{~--}
+ & $b$ & 64 \\ 
+\hhline{~--}
+ & EMA Decay Rate & 0.999 \\
+\hhline{~--}
+& \multicolumn{2}{c}{\textbf{Training}}\\
+\hhline{~--}
+ & $\ell$  & MAE \\ 
+\hhline{~--}
+& $n_e$ (Fine-tuning) & 70 \\
+\hhline{~--}
+& $n_{pt}$ (Pre-training) & 8 \\
+\hhline{~--}
+& $t_{pt}$ (Pre-training) & 15 \\
+\hhline{~--}
+& $l_{pt}$ (Pre-training)  & $10^{-3}$ \\
+ \hhline{~--}
+& $d_{pt}$ Decay Factor & 1.05 \\
+\hhline{~--}
+& Dropout ($p$) & 0.1 \\
+\hhline{~--}
+& \multicolumn{2}{c}{\textbf{Diffusion}}\\
+\hhline{~--}
+ & Max Signal Rate $\cos(\phi_{\min})$ & 0.95 \\ 
+\hhline{~--}
+ & Min Signal Rate $\cos(\phi_{\max})$ & 0.02 \\ 
+\hhline{~--}
+ & KID Steps & 6 \\ 
+\hhline{~--}
+ & Sampling Steps ($1/\Delta t$) & 12 \\ 
+\hhline{~--}
+& \multicolumn{2}{c}{\textbf{Architecture}}\\
+\hhline{~--}
+ & Resolution ($x_0$) & $128 \times 128 \times 3$ \\ 
+\hhline{~--}
+ & UNet Widths & [32, 64, 100, 128] \\
+\hhline{~--}
+ & Block Depth & 2 \\ 
+\hhline{~--}
+ & Time Embedding & Sinusoidal ($\sin^2\phi_t$) \\ 
+\bottomrule
+\end{tabular}
+\caption{Hyperparameters range and settings of the diffusion generated experiments.}
+\label{ch3:tab:hyper:diff}
+\end{table}
+%
+
+
+
+In accordance with the theoretical foundations established in Section~\ref{ch2:sec:mtl_and_da}, the MTL mitigation strategy is integrated with various DA techniques to cultivate a synergistic framework for cultural competence. 
+This section provides an empirical evaluation of the MTL framework when concurrently employed with RT, as well as the generative methodologies, specifically DM and DMMIN.
+
+Furthermore, we extend this analysis by investigating the efficacy of these hybrid strategies when augmented by the integration of an additional PARB at the commencement of the processing pipeline. 
+
+In this section, we omit a standalone summary table for the hyperparameters involved in the hybrid MTL and DA configurations, as a dedicated table would introduce unnecessary complexity without proportional explanatory value. 
+Instead, the hyperparameter search space remains consistent with the parameters detailed in Table~\ref{ch3:tab:hyper:diff}, with the inclusion of the task-weighting parameter $\gamma$, which is explored across the logarithmic range $\gamma \in \{10^{-4}, 10^{-3.5}, \dots, 10^{0}\}$.
+
+\section{Oversampling and Random Transformation Mitigation Strategies Results}
+This section presents the empirical results obtained through the application of RT and OS strategies, utilizing the hyperparameter configurations delineated in Table~\ref{ch3:tab:hyper:os_rt}.
+Table~\ref{ch3:tab:os_and_rt:lamp} details the performance for the LAMP dataset, reporting the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$) and the CIC across every permutation of majority culture. 
+These metrics are evaluated for the baseline model, the individual RT and OS interventions, and the hybrid configuration combining both augmentation techniques. 
+Correspondingly, Table~\ref{ch3:tab:os_and_rt:carpet} provides analogous performance data for the CARPET dataset.
+%
+\begin{table}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{cccccc}
+\hline
 \textbf{Algorithm} & \textbf{Majority} & \textbf{ERR$^{\text{Chin.}}$}
-& \textbf{ERR$^{\text{Fren}}$}
+& \textbf{ERR$^{\text{Fren.}}$}
 & \textbf{ERR$^{\text{Turk.}}$} 
 & \textbf{CIC} \\
-\midrule
-\multicolumn{1}{c}{\multirow{12}{*}{LSVM}} & \multicolumn{5}{c}{$p_u = 0\%$}\\
-\hhline{~-----}
-& Chin. & $33.1\% $ & $40.7\% $ & $44.4\% $ & $6.3\% $ \\
-& Fren & $42.6\% $ & $34.6\% $ & $50.3\% $ & $7.9\% $ \\
-& Turk. & $44.2\% $ & $45.9\% $ & $23.4\% $ & $14.4\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 5\%$}\\
-\hhline{~-----}
-& Chin. & $34.4\% $ & $38.3\% $ & $44.8\% $ & $4.7\% $ \\
-& Fren & $40.9\% $ & $34.9\% $ & $46.9\% $ & $6.0\% $ \\
-& Turk. & $42.4\% $ & $44.7\% $ & $24.8\% $ & $12.5\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 10\%$}\\
-\hhline{~-----}
-& Chin. & $35.1\% $ & $38.2\% $ & $43.7\% $ & $3.9\% $ \\
-& Fren & $40.5\% $ & $35.2\% $ & $44.7\% $ & $5.0\% $ \\
-& Turk. & $41.0\% $ & $44.4\% $ & $25.4\% $ & $11.5\% $ \\
-\midrule
-\multicolumn{1}{c}{\multirow{12}{*}{GSVM}} & \multicolumn{5}{c}{$p_u = 0\%$}\\
-\hhline{~-----}
-& Chin. & $27.0\% $ & $37.1\% $ & $43.5\% $ & $8.8\% $ \\
-& Fren & $38.4\% $ & $33.7\% $ & $53.4\% $ & $8.1\% $ \\
-& Turk. & $53.9\% $ & $49.7\% $ & $10.5\% $ & $27.5\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 5\%$}\\
-\hhline{~-----}
-& Chin. & $26.7\% $ & $34.0\% $ & $35.7\% $ & $5.4\% $ \\
-& Fren & $36.8\% $ & $ 33.2\% $ & $36.2\% $ & $2.9\% $ \\
-& Turk. & $41.6\% $ & $43.5\% $ & $10.9\% $ & $21.1\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 10\%$}\\
-\hhline{~-----}
-& Chin. & $28.0\% $ & $32.7\% $ & $26.0\% $ & $3.1\% $ \\
-& Fren & $34.7\% $ & $32.1\% $ & $27.0\% $ & $4.2\% $ \\
-& Turk. & $37.9\% $ & $39.1\% $ & $10.9\% $ & $18.4\% $ \\
-\midrule
-\multicolumn{1}{c}{\multirow{12}{*}{RESNET}} & \multicolumn{5}{c}{$p_u = 0\%$}\\
-\hhline{~-----}
-& Chin. & $15.2\% $ & $25.4\% $ & $46.4\% $ & $13.8\% $ \\
-& Fren & $23.3\% $ & $10.6\% $ & $49.6\% $ & $17.3\% $ \\
-& Turk. & $38.7\% $ & $44.3\% $ & $14.1\%$ & $18.6\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 5\%$}\\
-\hhline{~-----}
-& Chin. & $13.0\% $ & $21.5\% $ & $31.5\% $ & $9.0\% $ \\
-& Fren & $20.9\% $ & $15.2\% $ & $33.3\% $ & $7.9\% $ \\
-& Turk. & $27.9\% $ & $27.1\% $ & $12.6\% $ & $9.9\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 10\%$} \\
-\hhline{~-----}
-& Chin. & $11.2\%$ & $16.9\%$ & $23.3\%$ & $6.0\%$ \\
-& Fren & $18.8\%$ & $11.6\%$ & $26.1\%$ & $7.2\%$ \\
-& Turk. & $20.2\%$ & $22.6\%$ & $13.1\%$ & $5.5\%$ \\
-\bottomrule
+\hline
+\multirow{3}{*}{Baseline}
+& Chin. & $11.8\%$ & $15.4\%$ & $31.0\%$ & $7.6\% $ \\
+& Fren. & $19.0\%$ & $9.8\%$ & $31.3\%$ & $10.3\% $ \\
+& Turk. & $30.1\%$ & $28.3\%$ & $9.0\%$ & $13.5\% $ \\
+\hline
+\multirow{3}{*}{RT}
+& Chin. & $10.7\% (\mathbf{-1.1\%})$ & $16.2\% (+0.8\%)$ & $22.5\%(\mathbf{-8.5\%})$ & $5.8\% (\mathbf{-1.8\%})$ \\
+& Fren. & $17.8\% (\mathbf{-1.2\%})$ & $10.5\% (+0.7\%)$ & $29.3\%(\mathbf{-2.0\%})$ & $8.7\%(\mathbf{-1.6\%})$ \\
+& Turk. & $25.8\% (\mathbf{-4.3\%})$ & $25.6\% (\mathbf{-2.7\%})$ & $11.9\% (+2.9\%)$ & $9.2\% (\mathbf{-4.3\%})$ \\
+\hline
+\multirow{3}{*}{OS}
+& Chin. & $10.3\% (\mathbf{-1.5\%})$ & $16.1\% (+0.7\%)$ & $23.7\%(\mathbf{-7.3\%})$ & $6.4\% (\mathbf{-1.2\%})$ \\
+& Fren. & $18.4\% (\mathbf{-0.6\%})$ & $10.5\% (+0.7\%)$ & $24.9\%(\mathbf{-6.4\%})$ & $7.5\%(\mathbf{-2.8\%})$ \\
+& Turk. & $24.5\% (\mathbf{-5.6\%})$ & $24.5\% (\mathbf{-3.8\%})$ & $8.3\% (\mathbf{-0.7\%})$ & $10.8\% (\mathbf{-2.7\%})$ \\
+\hline
+\multirow{3}{*}{RT + OS}
+& Chin. & $11.0\% (\mathbf{-0.8\%})$ & $14.0\% (\mathbf{-1.4\%})$ & $18.2\%(\mathbf{-12.8\%})$ & $3.4\% (\mathbf{-4.2\%})$ \\
+& Fren. & $14.4\% (\mathbf{-4.6\%})$ & $9.0\% (\mathbf{-0.8\%})$ & $20.0\%(\mathbf{-11.3\%})$ & $5.4\%(\mathbf{-4.9\%})$ \\
+& Turk. & $19.0\% (\mathbf{-11.1\%})$ & $16.5\% (\mathbf{-11.9\%})$ & $7.0\% (\mathbf{-2.0\%})$ & $7.2\% (\mathbf{-6.3\%})$ \\
+\hline
 \end{tabular}
-\caption{LAMP dataset: For each algorithm (LSVM, GSVM, and RESNET), for each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, and for each possible combination of cultures (Chin., Fren, and Turk.), the error on the test set for each culture (ERR$^\text{Chin.}$, ERR$^\text{Fren}$, and ERR$^\text{Turk.}$) and the CIC are reported.}
-\label{ch3:tab:ris:ml:lamp}
+}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the LAMP dataset, for each model associated with a majority culture and its proposed variations.}
+%\vspace{0.1mm}
+\label{ch3:tab:os_and_rt:lamp}
 \end{table}
 %
-%
 \begin{table}
-\footnotesize
-\centering
-\setlength{\tabcolsep}{0.1cm}
-\renewcommand{\arraystretch}{1.55}
-\begin{tabular}{c|c|c|c|c|c}
-\toprule
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{cccccc}
+\hline
 \textbf{Algorithm} & \textbf{Majority} & \textbf{ERR$^{\text{Ind.}}$}
 & \textbf{ERR$^{\text{Japan.}}$}
 & \textbf{ERR$^{\text{Scand.}}$} 
 & \textbf{CIC} \\
-\midrule
-\multicolumn{1}{c}{\multirow{12}{*}{RESNET}} & \multicolumn{5}{c}{$p_u = 0\%$}\\
-\hhline{~-----}
-& Ind. & $24.1\% $ & $33.3\% $ & $44.1\% $ & $9.8\% $ \\
-& Japan. & $36.7\% $ & $22.3\% $ & $50.8\% $ & $14.3\% $ \\
-& Scand. & $41.3\% $ & $52.6\% $ & $35.7\% $ & $7.9\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 5\%$}\\
-\hhline{~-----}
-& Ind. & $25.4\% $ & $30.7\% $ & $42.3\% $ & $7.5\% $ \\
-& Japan. & $33.4\% $ & $17.8\% $ & $50.1\% $ & $16.0\% $ \\
-& Scand. & $37.5\% $ & $41.5\% $ & $36.3\% $ & $3.5\% $ \\
-\hhline{~-----}
-\multicolumn{1}{c}{} & \multicolumn{5}{c}{$p_u = 10\%$}\\
-\hhline{~-----}
-& Ind. & $26.1\% $ & $30.4\% $ & $44.8\% $ & $7.7\% $ \\
-& Japan. & $33.2\% $ & $20.6\% $ & $48.7\% $ & $13.6\% $ \\
-& Scand. & $33.7\% $ & $34.4\% $ & $35.2\% $ & $2.6\% $ \\
-\midrule
+\hline
+\multirow{3}{*}{Baseline}
+& Ind. & $14.8\%$ & $19.8\%$ & $28.1\%$ & $6.1\% $ \\
+& Japan. & $24.0\%$ & $11.4\%$ & $35.3\%$ & $12.2\% $ \\
+& Scand. & $24.0\%$ & $18.8\%$ & $22.5\%$ & $3.0\% $ \\
+\hline
+\multirow{3}{*}{RT}
+& Ind.  & $16.1\% (+1.3\%)$ & $16.3\% (\mathbf{-3.5\%})$ & $26.0\% (\mathbf{-2.1\%})$ & $3.4\% (\mathbf{-2.7\%})$ \\
+& Japan. & $22.2\% (\mathbf{-1.8\%})$ & $13.7\% (+2.3\%)$ & $32.7\%(\mathbf{-2.6\%})$ & $9.2\%(\mathbf{-3.0\%})$ \\
+& Scand. & $22.3\% (\mathbf{-1.7\%})$ & $19.8\% (+1.0\%)$ & $19.3\% (\mathbf{-3.2\%})$ & $1.2\% (\mathbf{-1.8\%})$ \\
+\hline
+\multirow{3}{*}{OS}
+& Ind.  & $14.0\% (\mathbf{-0.8\%})$ & $18.6\% (\mathbf{-1.2\%})$ & $29.3\% (+1.2\%)$ & $6.5\% (+0.4\%)$ \\
+& Japan. & $21.7\% (\mathbf{-2.3\%})$ & $13.3\% (+1.9\%)$ & $34.5\%(\mathbf{-0.8\%})$ & $9.8\%(\mathbf{-2.4\%})$ \\
+& Scand. & $21.2\% (\mathbf{-2.8\%})$ & $17.7\% (\mathbf{-1.1\%})$ & $22.2\% (\mathbf{-0.3\%})$ & $2.7\% (\mathbf{-0.3\%})$ \\
+\hline
+\multirow{3}{*}{RT + OS}
+& Ind.  & $16.3\% (+1.5\%)$ & $15.0\% (\mathbf{-4.8\%})$ & $25.6\% (\mathbf{-2.5\%})$ & $4.0\% (\mathbf{-2.1\%})$ \\
+& Japan. & $20.7\% (\mathbf{-3.3\%})$ & $13.7\% (+2.3\%)$ & $32.5\%(\mathbf{-2.8\%})$ & $8.6\%(\mathbf{-3.6\%})$ \\
+& Scand. & $20.8\% (\mathbf{-3.2\%})$ & $18.4\% (\mathbf{-0.4\%})$ & $21.1\% (\mathbf{-1.4\%})$ & $1.7\% (\mathbf{-1.3\%})$ \\
+\hline
 \end{tabular}
-\caption{CARPET dataset: For the RESNET algorithm, for each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, and for each possible combination of cultures (Ind., Japan., and Scand.), the error on the test set for each culture (ERR$^\text{Ind.}$, ERR$^\text{Japan.}$, and ERR$^\text{Scand.}$) and the CIC are reported.}
-\label{ch3:tab:ris:ml:carpet}
+}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the CARPET dataset, for each model associated with a majority culture and its proposed variations.}
+%\vspace{0.1mm}
+\label{ch3:tab:os_and_rt:carpet}
 \end{table}
 %
-%
-\begin{figure}
-\centering
-\begin{subfigure}[b]{0.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/analisi_chinese.png}
-\caption{Majority - Chin.}
-\end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/analisi_french.png}
-\caption{Majority - Fren}
-\end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/analisi_turkish.png}
-\caption{Majority - Turk.}
-\end{subfigure} 
-\caption{LAMP dataset: graphical representation of Table~\ref{ch3:tab:ris:ml:lamp}. 
-x-axis reports the average error on all cultures (ERR) while on the y-axis the CIC varying $p_u$ (arrow indicates the direction of increase of $p_u$) for each algorithm (LSVM, GSVM and RESNET) and for each combination of majority culture and $p_u$ (percentage of minority culture) in the training set and for each possible combination of the cultures (Chin., Fren, and Turk.).}
-\label{ch3:fig:ris:ml:lamp}
-\end{figure}
-%
-%
-\begin{figure}
-\centering
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/analisi_indian.png}
-\caption{Majority - Ind.}
-\end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/analisi_japanese.png}
-\caption{Majority - Japan.}
-\end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/analisi_scandinavian.png}
-\caption{Majority - Scand.}
-\end{subfigure} 
-\caption{CARPET dataset: A graphical representation of Table~\ref{ch3:tab:ris:ml:carpet}. The x-axis shows the average error across all cultures (ERR), while the y-axis represents the CIC varying with $p_u$ (the arrow indicates the direction of increase of $p_u$). This is for the RESNET algorithm and for each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, as well as for each possible combination of the cultures (Ind., Japan., and Scand.).}
-\label{ch3:fig:ris:ml:carpet}
-\end{figure}
-%
-\section{Multi-Task-Learning-Inspired Mitigation Strategy}
-\label{sec:exp_mitigation:res}
-The proposed mitigation framework is applied to the RESNET architecture—identified as the optimal model based on the empirical results delineated in the previous chapter—across both the LAMP and CARPET datasets. 
-Evaluations are conducted using minority representation levels $p_u \in \{5\%, 10\%\}$, excluding the $p_u = 0\%$ configuration in accordance with the theoretical constraints established in Section~\ref{ch2:sec:CCML}.
-The performance metrics for the MTL interventions are detailed in Tables~\ref{ch3:tab:ris:mtl:lamp} and~\ref{ch3:tab:ris:mtl:carpet}, and further elucidated through the graphical representations in Figures~\ref{ch3:fig:ris:mtl:lamp} and~\ref{ch3:fig:ris:mtl:carpet}.
+Based on the empirical evidence presented in Tables~\ref{ch3:tab:os_and_rt:lamp} and~\ref{ch3:tab:os_and_rt:carpet}, it is observed that the CIC exhibits consistent improvement across most configurations, with the notable exception of instances where OS is applied to the Ind. cultural model.
 
-Table~\ref{ch3:tab:ris:mtl:lamp} details the performance of the mitigated RESNET architecture on the LAMP dataset across each permutation of majority culture and minority representation levels ($p_u \in \{5\%, 10\%\}$). 
-The table enumerates the results for varying threshold values $\tau \in \{0, 0.05, 0.1\}$ across all cultural combinations (Chin., Fren, and Turk.).
-Specifically, it reports the optimal task-weighting parameter identified during model selection, denoted as $\gamma^*$, the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$), and the resulting CIC. 
-Furthermore, to quantify the efficacy of the MTL approach, we provide the percentage improvement ($\%\text{Imp.}$) relative to the non-mitigated baseline configurations established in Section~\ref{ch3:sec:exp_standard_ml} (see Table~\ref{ch3:tab:ris:ml:lamp}).
+Furthermore, the error rates across distinct cultural categories generally follow a downward trajectory. 
+Exceptions to this trend are primarily localized within the majority cultures (represented along the matrix diagonals). 
+When the hybrid approach—integrating both RT and OS—is employed, the test error for minority cultures and the overall CIC demonstrate robust and consistent improvements, suggesting that the combination of geometric variance and class-balancing effectively mitigates cultural bias.
+%
 
-Table~\ref{ch3:tab:ris:mtl:carpet} provides analogous performance metrics for the CARPET dataset, enabling a direct comparison with the baseline results established in Table~\ref{ch3:tab:ris:ml:carpet}.
-To elucidate the impact of the MTL regularizer in mitigating cultural incompetence (as formalized in Section~\ref{ch2:sec:CCML}), Figure~\ref{ch3:fig:ris:mtl:lamp} illustrates the trade-off between the mean error ($\text{ERR}$) on the horizontal axis and the CIC on the vertical axis for the RESNET architecture. 
-Each plot corresponds to a specific majority culture at a minority representation level of $p_u=10\%$. 
-The trajectories, indicated by directional arrows, signify the evolution of the model as the task-weighting parameter $\gamma$ increases. 
-In these visualizations, the arrow color denotes the error rate associated with a specific culture, while the line style (solid, dashed, or dotted) distinguishes between the various algorithmic configurations.
+\section{The effect of Adversarial-sampling-based strategies}
+This section details the empirical findings derived from the ADV sampling strategies, utilizing the hyperparameter search space delineated in Table~\ref{ch3:tab:hyper:adv}. 
+The analysis is bifurcated: the initial subsection evaluates the performance metrics of the discriminator network, while the subsequent subsection examines the consequential impact of the ADV methodologies on overall model performance.
+\subsection{Discriminator Performance Analysis}
+\label{sec:res:discr}
+%\color{red}4.4.0.1
+%\color{black}
 
-Figure~\ref{ch3:fig:ris:mtl:carpet} is the counterpart of Figure~\ref{ch3:fig:ris:mtl:lamp} for the CARPET dataset.
+Tables~\ref{ch3:tab:discr:LC}, \ref{ch3:tab:discr:LF}, and \ref{ch3:tab:discr:LT} provide the classification metrics for the discriminator on the LAMP dataset across each majority culture permutation. 
+These tables report the precision (PREC) and recall (REC) for each cultural category—specifically Chin., Fren, and Turk.—alongside the aggregate accuracy (ACC), evaluated at minority representation thresholds of $p_u \in \{5\%, 20\%\}$. 
+Furthermore, for the $p_u = 5\%$ configuration, we include comparative results for models incorporating RT at the commencement of the processing pipeline to assess its influence on discriminator robustness.
+%
 \begin{table}
-\footnotesize
 \centering
+\scriptsize
 \setlength{\tabcolsep}{0.1cm}
-\renewcommand{\arraystretch}{1.55}
-\begin{tabular}{c|c|c|c|c|c|c}
+\begin{tabular}{lrrrrrrr}
 \toprule
-\textbf{Majority} & $\boldsymbol{\tau}$ & $\boldsymbol{\gamma^*}$ & \textbf{ERR$^{\text{Chin.}}$  (\%Imp)}
-& \textbf{ERR$^{\text{Fren}}$ (\%Imp)}
-& \textbf{ERR$^{\text{Turk.}}$  (\%Imp)}
-& \textbf{CIC (\%Imp)} \\
+\textbf{Method} & \textbf{PREC}$^{Chin.}$  & \textbf{PREC}$^{Fren.}$ & \textbf{PREC}$^{Tur.}$ & \textbf{REC}$^{Chin.}$ & \textbf{REC}$^{Fren.}$ & \textbf{REC}$^{Tur.}$ &  \textbf{ACC}\\
 \midrule
-\multicolumn{7}{c}{$p_u = 5\%$}\\
+\multicolumn{8}{c}{$p_u=0.05$} \\
 \midrule
-\multirow{4}{*}{Chin.} & 0.0 & 0.0146 & $11.8\% (\mathbf{-1.2\%})$ & $19.0\% (\mathbf{-2.5\%})$ & $25.1\% (\mathbf{-6.4\%})$ & $7.0\% (\mathbf{-2.0\%})$ \\
-& 0.1 & 0.0146 & $11.8\% (\mathbf{-1.2\%})$ & $19.0\% (\mathbf{-2.5\%})$ & $25.1\% (\mathbf{-6.4\%})$ & $7.0\% (\mathbf{-2.0\%})$ \\
-& 0.2 & 0.0146 & $11.8\% (\mathbf{-1.2\%})$ & $19.0\% (\mathbf{-2.5\%})$ & $25.1\% (\mathbf{-6.4\%})$ & $7.0\% (\mathbf{-2.0\%})$ \\
-\hhline{-------}
-\multirow{4}{*}{Fren} & 0.0 & 0.0464 & $18.5\%  (\mathbf{-2.4\%})$ & $9.0\%  (\mathbf{-6.2}\%)$ & $26.0\%  (\mathbf{-7.3}\%)$ & $8.8\% (+0.9\%)$ \\
-& 0.1 & 0.0146 & $19.5\%  (\mathbf{-1.4\%})$ & $10.8\%  (\mathbf{-4.4\%})$ & $28.3\%  (\mathbf{-5.0\%})$ & $8.8\%  (+0.9\%)$ \\
-& 0.2 & 0.0146 & $19.5\%  (\mathbf{-1.4\%})$ & $10.8\%  (\mathbf{-4.4\%})$ & $28.3\%  (\mathbf{-5.0\%})$ & $8.8\% \ (+0.9\%)$ \\
-\hhline{-------}
-\multirow{4}{*}{Turk.} & 0.0 & 0.1468 & $25.1\% (\mathbf{-2.8\%})$ & $21.3\% (\mathbf{-5.8\%})$ & $12.1\% (\mathbf{-0.5\%})$ & $7.4\% (\mathbf{-2.5\%})$ \\
-& 0.1 & 0.1468 & $25.1\% (\mathbf{-2.8\%})$ & $21.3\% (\mathbf{-5.8\%})$ & $12.1\% (\mathbf{-0.5\%})$ & $7.4\% (\mathbf{-2.5\%})$ \\
-& 0.2 & 0.1468 & $25.1\% (\mathbf{-2.8\%})$ & $21.3\% (\mathbf{-5.8\%})$ & $12.1\% (\mathbf{-0.5\%})$ & $7.4\% (\mathbf{-2.5\%})$ \\
+DIV 0 & 46.6\%	&	88.4\%&	99.3\%	&	99.2\%&	9.8\%&	75.3\%	&	61.4\%\\	
+DIV 1 & 55.0\%	&	92.5\%&	99.0\%&	98.7\%&	29.7\%&	87.0\%	&	71.8\%\\	
+NODIV & 54.8\%	&	95.7\%&	98.8\%	&	99.7\%&	25.2\%&	90.2\%	&	71.7\%\\
 \midrule
-\multicolumn{7}{c}{$p_u = 10\%$}\\
+RT + DIV 0      & 48.4\% (\textbf{+1.8}\%) & 91.2\% (\textbf{+2.8}\%) & 99.1\% (-0.2\%) & 99.6\% (\textbf{+0.4}\%) & 8.8\% (-1.0\%) & 83.7\% (\textbf{+8.4}\%) & 64.0\% (\textbf{+2.6}\%) \\
+RT + DIV 1      & 56.2\% (\textbf{+1.2}\%) & 96.0\% (\textbf{+3.5}\%) & 97.4\% (-1.6\%) & 98.6\% (-0.1\%) & 30.7\% (\textbf{+1.0}\%) & 89.9\% (\textbf{+2.9}\%) & 73.0\% (\textbf{+1.2}\%) \\
+RT + NODIV      & 56.7\% (\textbf{+1.9}\%) & 96.2\% (\textbf{+0.5}\%) & 98.4\% (-0.4\%) & 98.9\% (-0.8\%) & 29.6\% (\textbf{+4.4}\%) & 92.9\% (\textbf{+2.7}\%) & 73.8\% (\textbf{+2.1}\%) \\
 \midrule
-\multirow{3}{*}{Chin.} & 0.0 & 1.0 & $10.6\% (\mathbf{-0.6\%})$ & $13.8\% (\mathbf{-3.1\%})$ & $19.3\% (\mathbf{-4.0\%})$ & $4.1\% (\mathbf{-1.9\%})$ \\
-& 0.1 & 0.6813 & $12.4\% (+1.2\%)$ & $13.7\% (\mathbf{-3.2\%})$ & $20.7\% (\mathbf{-2.6\%})$ & $3.8\% (\mathbf{-2.2\%})$ \\
-& 0.2 & 0.6813 & $12.4\% (+1.2\%)$ & $13.7\% (\mathbf{-3.2\%})$ & $20.7\% (\mathbf{-2.6\%})$ & $3.8\% (\mathbf{-2.2\%})$ \\
-\hhline{-------}
-\multirow{3}{*}{Fren} & 0.0 & 0.0146 & $16.8\% (\mathbf{-2.0\%})$ & $9.2\% (\mathbf{-2.4}\%)$ & $20.6\% (\mathbf{-5.5\%})$ & $6.3\% (\mathbf{-0.9\%})$ \\
-& 0.1 & 0.04641 & $15.9\% (\mathbf{-2.9\%})$ & $9.4\% (\mathbf{-7.5}\%)$ & $21.5\% (\mathbf{-1.8\%})$ & $6.2\% (\mathbf{-1.0\%})$ \\
-& 0.2 & 0.04641 & $15.9\% (\mathbf{-2.9\%})$ & $9.4\% (\mathbf{-7.5}\%)$ & $21.5\% (\mathbf{-1.8\%})$ & $6.2\% (\mathbf{-1.0\%})$ \\
-\hhline{-------}
-\multirow{3}{*}{Turk.} & 0.0 & 0.0316 & $17.2\% (\mathbf{-3.0\%})$ & $18.0\% (\mathbf{-4.6\%})$ & $10.6\% (\mathbf{-2.5\%})$ & $4.7\% (\mathbf{-0.8\%})$ \\
-& 0.1 & 1.578 & $17.8\% (\mathbf{-2.4\%})$ & $18.4\% (\mathbf{-4.2\%})$ & $12.5\% (\mathbf{-0.6\%})$ & $3.7\% (\mathbf{-1.8\%})$ \\
-& 0.2 & 1.578 & $17.8\% (\mathbf{-2.4\%})$ & $18.4\% (\mathbf{-4.2\%})$ & $12.5\% (\mathbf{-0.6\%})$ & $3.7\% (\mathbf{-1.8\%})$ \\
+\multicolumn{8}{c}{$p_u=0.2$} \\
+\midrule
+DIV 0           & 70.4\% (\textbf{+23.8}\%) & 89.0\% (\textbf{+0.6}\%) & 88.7\% (-10.6\%) & 93.4\% (-5.8\%) & 76.8\% (\textbf{+67.0}\%) & 71.4\% (-3.9\%) & 80.5\% (\textbf{+19.1}\%) \\
+DIV 1           & 72.2\% (\textbf{+17.2}\%) & 91.0\% (-1.5\%) & 97.3\% (-1.7\%) & 93.0\% (-5.7\%) & 67.2\% (\textbf{+37.5}\%) & 94.3\% (\textbf{+7.3}\%) & 84.9\% (\textbf{+13.1}\%) \\
+NODIV           & 68.2\% (\textbf{+13.4}\%) & 92.9\% (-2.8\%) & 99.0\% (\textbf{+0.2}\%) & 95.6\% (-4.1\%) & 58.2\% (\textbf{+33.0}\%) & 95.8\% (\textbf{+5.6}\%) & 83.2\% (\textbf{+11.5}\%) \\
 \bottomrule
 \end{tabular}
-\caption{LAMP dataset and the RESNET algorithm: For each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, for different values of $\tau \in {0, 0.05, 0.1}$, and for each possible combination of the cultures (Chin., Fren, and Turk.), the optimal $\gamma$ selected during the model selection phase, denoted as $\gamma^*$, the error on the test set for each culture (ERR$^\text{Chin.}$, ERR$^\text{Fren}$, and ERR$^\text{Turk.}$), and the CIC using our mitigation approach.
-Additionally, we report the improvements (\%Imp.) with respect to the non-mitigated scenario described in Section~\ref{ch3:sec:exp_standard_ml}.}
-\label{ch3:tab:ris:mtl:lamp}
+\caption{PREC, REC, and ACC of the cultural discriminator for the LAMP dataset with Chin. majority. The results compare the DIV and NODIV architectural strategies across minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the performance metrics also incorporate RT as a baseline mitigation strategy prior to the implementation of adversarial DA.}
+\label{ch3:tab:discr:LC}
 \end{table}
 %
 %
 \begin{table}
-\footnotesize
 \centering
+\scriptsize
 \setlength{\tabcolsep}{0.1cm}
-\renewcommand{\arraystretch}{1.55}
-\begin{tabular}{c|c|c|c|c|c|c}
+\begin{tabular}{lrrrrrrr}
 \toprule
-\textbf{Majority} & $\boldsymbol{\tau}$ & $\boldsymbol{\gamma^*}$ & \textbf{ERR$^{\text{Ind.}}$  (\%Imp)}
-& \textbf{ERR$^{\text{Japan.}}$ (\%Imp)}
-& \textbf{ERR$^{\text{Scand.}}$  (\%Imp)}
-& \textbf{CIC (\%Imp)} \\
+\textbf{Method} & \textbf{PREC}$^{Chin.}$  & \textbf{PREC}$^{Fren.}$ & \textbf{PREC}$^{Tur.}$ & \textbf{REC}$^{Chin.}$ & \textbf{REC}$^{Fren.}$ & \textbf{REC}$^{Tur.}$ &  \textbf{ACC}\\
 \midrule
-\multicolumn{7}{c}{$p_u = 5\%$}\\
+\multicolumn{8}{c}{$p_u=0.05$} \\
 \midrule
-\multirow{3}{*}{Ind.} & 0.0 & 0.06812 & $22.0\% (\mathbf{-3.4\%})$ & $21.6\% (\mathbf{-9.1}\%)$ & $45.6\% (+3.3\%)$ & $9.3\% (+1.8\%)$ \\
-& 0.1 & 1.0 & $23.2\% (\mathbf{-2.2\%})$ & $24.3\% (\mathbf{-6.4\%})$ & $44.5\% (+2.2\%)$ & $8.8\%(+1.3\%)$ \\
-& 0.2 & 1.0 & $23.2\%(\mathbf{-2.2\%})$ & $24.3\% (\mathbf{-6.4}\%)$ & $44.5\% (+2.2\%)$ & $8.8\% (+1.3\%)$ \\
-\hhline{-------}
-\multirow{3}{*}{Japan.} & 0.0 & 0.0.01 & $34.6\%(+1.2\%)$ & $17.7\% (\mathbf{-0.1\%})$ & $45.8\%(\mathbf{-4.3\%})$ & $15.0\% (\mathbf{-1.0\%})$ \\
-& 0.1 & 0.03162 & $35.7\% (+2.3\%)$ & $21.0\% (+3.2\%)$ & $45.8\% (\mathbf{-4.3\%})$ & $13.1\% (\mathbf{-2.9\%})$ \\
-& 0.2 & 0.03162 & $35.7\% (+2.3\%)$ & $21.0\% (+3.2\%)$ & $45.8\% (\mathbf{-4.3\%})$ & $13.1\% (\mathbf{-2.9\%})$ \\
-\hhline{-------}
-\multirow{3}{*}{Scand.} & 0.0 & 0.04641 & $32.2\% (\mathbf{-5.3\%})$ & $22.1\% (\mathbf{-19.4\%})$ & $38.2\% (+1.9\%)$ & $8.7\% (+5.2\%)$ \\
-& 0.1 & 0.0681 & $34.5\% (\mathbf{-3.0\%})$ & $26.8\% (\mathbf{-14.7}\%)$ & $38.8\% (+2.5\%)$ & $6.7\% (+3.2\%)$ \\
-& 0.2 & 2.1544 & $33.8\% (\mathbf{-3.7\%})$ & $32.7\% (\mathbf{-8.8\%})$ & $37.1\% (+0.8\%)$ & $5.0\%(+1.5\%)$ \\
+DIV, 0 & 91.8\%&	51.2\%&	98.5\%&	25.9\%&	99.3\%	&	76.3\%&	67.2\%	\\
+DIV, 1 & 94.8\%	&	55.4\%&	96.4\%&	29.8\%&	99.5\%&	85.3\%&	71.5\%\\
+NODIV & 98.1\%&	59.4\%&	97.1\%&	36.6\%&	99.3\%&	92.4\%	&	76.1\%\\
 \midrule
-\multicolumn{7}{c}{$p_u = 10\%$}\\
+RT + DIV 0      & 95.2\% (\textbf{+3.4}\%) & 56.1\% (\textbf{+4.9}\%) & 97.8\% (-0.7\%) & 33.7\% (\textbf{+7.8}\%) & 98.8\% (-0.5\%) & 86.1\% (\textbf{+9.8}\%) & 72.9\% (\textbf{+5.7}\%) \\
+RT + DIV 1      & 96.0\% (\textbf{+1.2}\%) & 58.6\% (\textbf{+3.2}\%) & 97.1\% (\textbf{+0.7}\%) & 34.1\% (\textbf{+4.3}\%) & 99.2\% (-0.3\%) & 90.9\% (\textbf{+5.6}\%) & 74.7\% (\textbf{+3.2}\%) \\
+RT + NODIV      & 97.3\% (-0.8\%) & 62.3\% (\textbf{+2.9}\%) & 97.5\% (\textbf{+0.4}\%) & 41.1\% (\textbf{+4.5}\%) & 99.6\% (\textbf{+0.3}\%) & 95.4\% (\textbf{+3.0}\%) & 78.7\% (\textbf{+2.6\%}) \\
 \midrule
-\multirow{3}{*}{Ind.} & 0.0 & 0.2154 & $22.6\% (\mathbf{-3.5\%})$ & $20.2\% (\mathbf{-10.2}\%)$ & $41.9\% (\mathbf{-2.9\%})$ & $8.3\% (+0.6\%)$ \\
-& 0.1\%& 0.2154 & $22.6\% (\mathbf{-3.5\%})$ & $20.2\%(\mathbf{-10.2}\%)$ & $41.9\%(\mathbf{-2.9\%})$ & $8.3\% (+0.6\%)$ \\
-& 0.2\%& 0.2154 & $22.6\% (\mathbf{-3.5\%})$ & $20.2\% (\mathbf{-10.2}\%)$ & $41.9\% (\mathbf{-2.9\%})$ & $8.3\% (+0.6\%)$ \\
-\hhline{-------}
-\multirow{3}{*}{Japan.} & 0.0 & 0.1 & $32.3\% (\mathbf{-0.9\%})$ & $18.2\% (\mathbf{-2.4\%})$ & $42.6\% (\mathbf{-6.1}\%)$ & $12.8\% (\mathbf{-0.8\%})$ \\
-& 0.1\%& 0.3162 & $34.0\% (+0.8\%)$ & $20.4\% (\mathbf{-0.2\%})$ & $44.1\% (\mathbf{-4.6\%})$ & $12.4\% (\mathbf{-1.2\%})$ \\
-& 0.2\%& 0.3162 & $34.0\% (+0.8\%)$ & $20.4\% (\mathbf{-0.2\%})$ & $44.1\% (\mathbf{-4.6\%})$ & $12.4\% (\mathbf{-1.2\%})$ \\
-\hhline{-------}
-\multirow{3}{*}{Scand.} & 0.0 & 0.0681 & $27.4\% (\mathbf{-6.3}\%)$ & $19.6\% (\mathbf{-14.8}\%)$ & $39.6\% (+4.4\%)$ & $9.3\% (+6.7\%)$ \\
-& 0.1\%& 0.01 & $29.8\% (\mathbf{-3.9\%})$ & $24.1\% (\mathbf{-10.3}\%)$ & $39.0\% (+3.8\%)$ & $7.0\% (+4.4\%)$ \\
-& 0.2\%& 2.1544 & $33.0\% (\mathbf{-0.7\%})$ & $27.5\% (\mathbf{-6.9}\%)$ & $35.3\% (+0.1\%)$ & $4.5\% (+1.9\%)$ \\
+\multicolumn{8}{c}{$p_u=0.2$} \\
+\midrule
+DIV 0           & 92.2\% (\textbf{+0.4}\%) & 70.0\% (\textbf{+18.8}\%) & 97.8\% (-0.7\%) & 63.2\% (\textbf{+37.3}\%) & 95.8\% (-3.5\%) & 92.2\% (\textbf{+15.9}\%) & 83.8\% (\textbf{+16.6}\%) \\
+DIV 1           & 94.0\% (-0.8\%) & 71.4\% (\textbf{+16.0}\%) & 96.5\% (\textbf{+0.1}\%) & 59.8\% (\textbf{+30.0}\%) & 97.1\% (-2.4\%) & 96.5\% (\textbf{+11.2}\%) & 84.4\% (\textbf{+12.9}\%) \\
+NODIV           & 93.7\% (-4.4\%) & 73.9\% (\textbf{+14.5}\%) & 98.2\% (\textbf{+1.1}\%) & 66.0\% (\textbf{+29.4}\%) & 96.9\% (-2.4\%) & 96.7\% (\textbf{+4.3}\%) & 86.5\% (\textbf{+10.4}\%) \\
 \bottomrule
 \end{tabular}
-\caption{CARPET dataset and the RESNET algorithm: For each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, for different values of $\tau \in {0, 0.05, 0.1}$, and for each possible combination of the cultures (Ind., Japan. and Scand.), we report the optimal $\gamma$ selected during the model selection phase, namely $\gamma^*$, the error on the test set for each culture (ERR$^\text{Ind.}$, ERR$^\text{Japan.}$, and ERR$^\text{Scand.}$), and the CIC using our mitigation approach. In addition to ERR and CIC, we also report the improvements (\%Imp.) relative to the non-mitigated scenario presented in Section~\ref{ch3:sec:exp_standard_ml}.}
-\label{ch3:tab:ris:mtl:carpet}
+\caption{PREC, REC, and ACC of the cultural discriminator for the LAMP dataset with Fren majority. The results compare the DIV and NODIV architectural strategies across minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the performance metrics also incorporate RT as a baseline mitigation strategy prior to the implementation of adversarial DA.}
+\label{ch3:tab:discr:LF}
 \end{table}
 %
 %
+\begin{table}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{0.1cm}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Method} & \textbf{PREC}$^{Chin.}$  & \textbf{PREC}$^{Fren.}$ & \textbf{PREC}$^{Tur.}$ & \textbf{REC}$^{Chin.}$ & \textbf{REC}$^{Fren.}$ & \textbf{REC}$^{Tur.}$ &  \textbf{ACC}\\
+\midrule
+\multicolumn{8}{c}{$p_u=0.05$} \\
+\midrule
+DIV, 0 & 74.2\%&	80.8\%&	76.9\%	&	60.8\%	&	70.6\%	&	99.2\%	&	76.8\%	\\
+DIV, 1 & 83.7\%	&	81.6\%&	81.9\%	&	68.7\%	&	78.3\%	&	99.5\%&	82.1\%	\\
+NODIV & 78.7\%	&	75.8\%&	78.0\%&	58.3\%&	73.7\%&	99.4\%&	77.1\%\\
+\midrule
+RT + DIV 0      & 75.7\% (\textbf{+1.5\%}) & 81.5\% (\textbf{+0.7\%}) & 75.9\% (-1.0\%) & 62.5\% (\textbf{+1.7\%}) & 69.7\% (-0.9\%) & 99.6\% (\textbf{+0.4\%}) & 77.2\% (\textbf{+0.4\%}) \\
+RT + DIV 1      & 82.5\% (-1.2\%) & 82.4\% (\textbf{+0.8\%}) & 74.0\% (-7.9\%) & 64.0\% (-4.7\%) & 70.7\% (-7.6\%) & 99.6\% (\textbf{+0.1\%}) & 78.1\% (-4.0\%) \\
+RT + NODIV      & 83.3\% (\textbf{+4.6\%}) & 81.1\% (\textbf{+5.3\%}) & 80.7\% (\textbf{+2.7\%}) & 66.9\% (\textbf{+8.6\%}) & 76.8\% (\textbf{+3.1\%}) & 99.7\% (\textbf{+0.3\%}) & 81.1\% (\textbf{+4.0\%}) \\
+\midrule
+\multicolumn{8}{c}{$p_u=0.2$} \\
+\midrule
+DIV 0           & 79.1\% (\textbf{+4.9}\%) & 84.3\% (\textbf{+3.5}\%) & 91.7\% (\textbf{+14.8}\%) & 80.0\% (\textbf{+19.2}\%) & 76.8\% (\textbf{+6.2}\%) & 97.6\% (-1.6\%) & 84.8\% (\textbf{+8.0}\%) \\
+DIV 1           & 84.2\% (\textbf{+0.5}\%) & 80.8\% (-0.8\%) & 91.1\% (\textbf{+9.2}\%) & 75.3\% (\textbf{+6.6}\%) & 82.2\% (\textbf{+3.9}\%) & 98.7\% (-0.8\%) & 85.4\% (\textbf{+3.3}\%) \\
+NODIV           & 86.0\% (\textbf{+7.3}\%) & 84.4\% (\textbf{+8.6}\%) & 94.0\% (\textbf{+16.0}\%) & 81.1\% (\textbf{+22.8}\%) & 84.2\% (\textbf{+10.5}\%) & 99.2\% (-0.2\%) & 88.2\% (\textbf{+11.1}\%) \\
+\bottomrule
+\end{tabular}
+\caption{PREC, REC, and ACC of the cultural discriminator for the LAMP dataset with Turk. majority. The results compare the DIV and NODIV architectural strategies across minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the performance metrics also incorporate RT as a baseline mitigation strategy prior to the implementation of adversarial DA.}
+\label{ch3:tab:discr:LT}
+\end{table}
+%
+Table~\ref{ch3:tab:discr:CI} ,\ref{ch3:tab:discr:CJ} and \ref{ch3:tab:discr:CS} report analogous information for the CARPET dataset.
+%
+\begin{table}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{0.1cm}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Method} & \textbf{PREC}$^{Ind.}$  & \textbf{PREC}$^{Jap.}$ & \textbf{PREC}$^{Sca.}$ & \textbf{REC}$^{Ind.}$ & \textbf{REC}$^{Jap.}$ & \textbf{REC}$^{Sca.}$ &  \textbf{ACC}\\
+\midrule
+\multicolumn{8}{c}{$p_u=0.05$} \\
+\midrule
+DIV, 0 & 47.8\%&	94.1\%&	88.7\%&	97.6\%&	48.7\%&	38.8\%&	61.7\%\\
+DIV, 1 & 41.7\%&	99.0\%&	89.7\%&	99.3\%&	35.3\%&	23.3\%	&	52.6\%\\
+NODIV & 51.5\%&	94.8\%&	93.1\%&	99.1\%&	58.7\%&	41.2\%	&	66.3\%\\
+\midrule
+RT + DIV 0      & 50.6\% (\textbf{+2.8}\%) & 92.3\% (-1.8\%) & 91.4\% (\textbf{+2.7}\%) & 98.2\% (\textbf{+0.6}\%) & 49.7\% (\textbf{+1.0}\%) & 46.2\% (\textbf{+7.4}\%) & 64.7\% (\textbf{+3.0}\%) \\
+RT + DIV 1      & 44.4\% (\textbf{+2.7}\%) & 98.2\% (-0.8\%) & 90.7\% (\textbf{+1.0}\%) & 99.5\% (\textbf{+0.2}\%) & 34.9\% (-0.4\%) & 36.2\% (\textbf{+12.}9\%) & 56.9\% (\textbf{+4.3}\%) \\
+RT + NODIV      & 52.8\% (\textbf{+1.3}\%) & 96.2\% (\textbf{+1.4}\%) & 94.2\% (\textbf{+1.1}\%) & 99.4\% (\textbf{+0.3}\%) & 59.8\% (\textbf{+1.1}\%) & 45.6\% (\textbf{+4.4}\%) & 68.3\% (\textbf{+2.0}\%) \\
+\midrule
+\multicolumn{8}{c}{$p_u=0.2$} \\
+\midrule
+DIV 0           & 70.4\% (\textbf{+22.6}\%) & 89.0\% (-5.1\%) & 88.6\% (-0.1\%) & 93.4\% (-4.2\%) & 76.8\% (\textbf{+28.1}\%) & 71.4\% (\textbf{+32.6}\%) & 80.5\% (\textbf{+18.8}\%) \\
+DIV 1           & 58.1\% (\textbf{+16.4}\%) & 95.4\% (-3.6\%) & 86.3\% (-3.4\%) & 97.2\% (-2.1\%) & 53.2\% (\textbf{+17.9}\%) & 66.3\% (\textbf{+43.0}\%) & 72.2\% (\textbf{+19.6}\%) \\
+NODIV           & 71.4\% (\textbf{+19.9}\%) & 94.6\% (-0.2\%) & 89.5\% (-3.6\%) & 96.6\% (-2.5\%) & 74.7\% (\textbf{+16.0}\%) & 76.2\% (\textbf{+35.0}\%) & 82.5\% (\textbf{+16.2}\%) \\
+\bottomrule
+\end{tabular}
+\caption{PREC, REC, and ACC of the cultural discriminator for the CARPET dataset with Ind. majority. The results compare the DIV and NODIV architectural strategies across minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the performance metrics also incorporate RT as a baseline mitigation strategy prior to the implementation of adversarial DA.}
+\label{ch3:tab:discr:CI}
+\end{table}
+%
+An analysis of Tables~\ref{ch3:tab:discr:LC} through~\ref{ch3:tab:discr:CS} reveals that cultural under-representation significantly impacts the performance of the discriminator model. 
+This phenomenon is consistent with theoretical expectations, as under-representation typically manifests as a class imbalance problem within the optimization objective.
+Empirical evidence demonstrates that RT—a technique conventionally employed to address class imbalance—is effective in enhancing both the aggregate accuracy of the discriminator and the specific precision and recall metrics for minority cultures.
+This effect is limited where these metrics are already high despite the imbalance, for example, in case of PREC$^{Turk.}$ for Chin. majority culture. 
+Furthermore, these experimental results confirm the presence of an under-representation bias; specifically, increasing the minority data threshold to $p_u = 20\%$ effectively mitigates these performance deficits, thereby validating the correlation between data availability and discriminator reliability.
+
+%
+\begin{table}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{0.1cm}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Method} & \textbf{PREC}$^{Ind.}$  & \textbf{PREC}$^{Jap.}$ & \textbf{PREC}$^{Sca.}$ & \textbf{REC}$^{Ind.}$ & \textbf{REC}$^{Jap.}$ & \textbf{REC}$^{Sca.}$ &  \textbf{ACC}\\
+\midrule
+\multicolumn{8}{c}{$p_u=0.05$} \\
+\midrule
+DIV, 0 & 91.9\%&	44.9\%&	83.8\%&	30.1\%&	99.0\%&	39.3\%	&	56.1\%\\
+DIV, 1 & 82.7\%	&	47.3\%&	83.7\%&	28.3\%&	96.8\% &	50.7\% &	58.6\%\\
+NODIV & 91.1\%&	54.0\%&	88.5\%&	47.9\%&	98.3\%&	56.8\%	&	67.7\%	\\
+\midrule
+RT + DIV 0      & 91.3\% (-0.6\%) & 46.7\% (\textbf{+1.8}\%) & 84.0\% (\textbf{+0.2}\%) & 34.3\% (\textbf{+4.2}\%) & 98.4\% (-0.6\%) & 42.6\% (\textbf{+3.3}\%) & 58.5\% (\textbf{+2.4}\%) \\
+RT + DIV 1      & 84.2\% (\textbf{+1.5}\%) & 50.5\% (\textbf{+3.2}\%) & 87.9\% (\textbf{+4.2}\%) & 36.9\% (\textbf{+8.6}\%) & 96.0\% (-0.8\%) & 57.2\% (\textbf{+6.5}\%) & 63.4\% (\textbf{+4.8}\%) \\
+RT + NODIV      & 92.3\% (\textbf{+1.2}\%) & 53.9\% (-0.1\%) & 89.6\% (\textbf{+1.1}\%) & 49.1\% (\textbf{+1.2}\%) & 98.6\% (\textbf{+0.3}\%) & 55.6\% (-1.2\%) & 67.8\% (\textbf{+0.1}\%) \\
+\midrule
+\multicolumn{8}{c}{$p_u=0.2$} \\
+\midrule
+DIV 0           & 89.8\% (-2.1\%) & 65.3\% (\textbf{+20.4}\%) & 86.1\% (+2.3\%) & 60.8\% (\textbf{+30.7}\%) & 96.1\% (-2.9\%) & 72.8\% (\textbf{+33.5}\%) & 76.6\% (\textbf{+20.5}\%) \\
+DIV 1           & 84.2\% (\textbf{+1.5}\%) & 73.6\% (\textbf{+26.3}\%) & 83.7\% (+0.0\%) & 73.7\% (\textbf{+45.4}\%) & 87.4\% (-9.4\%) & 78.2\% (\textbf{+27.5}\%) & 79.8\% (\textbf{+21.2}\%) \\
+NODIV           & 91.3\% (\textbf{+0.2}\%) & 75.5\% (\textbf{+21.5}\%) & 88.5\% (+0.0\%) & 75.1\% (\textbf{+27.2}\%) & 95.8\% (-2.5\%) & 79.8\% (\textbf{+23.0}\%) & 83.6\% (\textbf{+15.9}\%) \\
+\bottomrule
+\end{tabular}
+\caption{PREC, REC, and ACC of the cultural discriminator for the CARPET dataset with Japan. majority. The results compare the DIV and NODIV architectural strategies across minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the performance metrics also incorporate RT as a baseline mitigation strategy prior to the implementation of adversarial DA.}
+\label{ch3:tab:discr:CJ}
+\end{table}
+%
+
+%
+\begin{table}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{0.1cm}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Method} & \textbf{PREC}$^{Ind.}$  & \textbf{PREC}$^{Jap.}$ & \textbf{PREC}$^{Sca.}$ & \textbf{REC}$^{Ind.}$ & \textbf{REC}$^{Jap.}$ & \textbf{REC}$^{Sca.}$ &  \textbf{ACC}\\
+\midrule
+\multicolumn{8}{c}{$p_u=0.05$} \\
+\midrule
+DIV, 0 & 92.8\%&	95.2\%&	44.8\%&	25.9\%&	47.6\%&	99.3\%&	57.6\%	\\
+DIV, 1 & 85.4\%&	95.3\%&	44.8\%&	28.9\%&	41.7\%&	99.6\%&	56.7\%\\
+NODIV & 91.3\%	&	94.8\%&	54.2\%&	46.4\%&	62.8\%&	98.8\%&	69.3\%\\
+\midrule
+RT + DIV 0      & 91.5\% (-1.3\%) & 94.6\% (-0.6\%) & 46.1\% (\textbf{+1.3}\%) & 30.6\% (\textbf{+4.7}\%) & 47.1\% (-0.5\%) & 99.4\% (\textbf{+0.1}\%) & 59.0\% (\textbf{+1.4}\%) \\
+RT + DIV 1      & 87.0\% (\textbf{+1.6}\%) & 93.8\% (-1.5\%) & 47.0\% (\textbf{+2.2}\%) & 32.0\% (\textbf{+3.1}\%) & 47.4\% (\textbf{+5.7}\%) & 99.4\% (-0.2\%) & 59.6\% (\textbf{+2.9}\%) \\
+RT + NODIV      & 91.6\% (\textbf{+0.3}\%) & 95.3\% (\textbf{+0.5}\%) & 55.1\% (\textbf{+0.9}\%) & 46.3\% (-0.1\%) & 64.8\% (\textbf{+2.0}\%) & 99.4\% (\textbf{+0.6}\%) & 70.2\% (\textbf{+0.9}\%) \\
+\midrule
+\multicolumn{8}{c}{$p_u=0.2$} \\
+\midrule
+DIV 0           & 90.2\% (-2.6\%) & 92.0\% (-3.2\%) & 62.3\% (\textbf{+17.5}\%) & 55.6\% (\textbf{+29.7}\%) & 76.0\% (\textbf{+28.4}\%) & 96.5\% (-2.8\%) & 76.0\% (\textbf{+18.4}\%) \\
+DIV 1           & 85.3\% (-0.1\%) & 93.9\% (-1.4\%) & 62.8\% (\textbf{+18.0}\%) & 68.5\% (\textbf{+39.6}\%) & 60.3\% (\textbf{+18.6}\%) & 97.2\% (-2.4\%) & 75.4\% (\textbf{+18.7}\%) \\
+NODIV           & 90.5\% (-0.8\%) & 94.3\% (-0.5\%) & 73.5\% (\textbf{+19.3}\%) & 75.6\% (\textbf{+29.2}\%) & 79.7\% (\textbf{+16.9}\%) & 96.5\% (-2.3\%) & 83.9\% (\textbf{+14.6}\%) \\
+\midrule
+\end{tabular}
+\caption{PREC, REC, and ACC of the cultural discriminator for the CARPET dataset with Scand. majority. The results compare the DIV and NODIV architectural strategies across minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the performance metrics also incorporate RT as a baseline mitigation strategy prior to the implementation of adversarial DA.}
+\label{ch3:tab:discr:CS}
+\end{table}
+%
+In Figures~\ref{ch3:fig:advLC} we reported examples of transformations applied on Chin. images from LAMP dataset of lamps turned on and off using PGD and CLSDIV or NOCLSDIV with Chin. as majority cultures.
+
+%%%%%%%%%%%%%%%%% LAMP %%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}
 \centering
-\begin{subfigure}[b]{.325\columnwidth}
+\begin{subfigure}[b]{0.4\columnwidth}
 \centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/mitigazione_chinese.png}
-\caption{Majority - Chin.}
-\end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/mitigazione_french.png}
-\caption{Majority - Fren.}
-\end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/mitigazione_turkish.png}
-\caption{Majority - Turk.}
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajLC_CLSDIV0_source_0.jpg}
+\caption{Example of transformation applied on Chin. image from LAMP dataset with lamps turned off using PGD and CLSDIV with Chin. as majority culture.}
 \end{subfigure} 
-\caption{LAMP dataset and RESNET algorithm: On the x-axis, we report the average error across all cultures (ERR), while on the y-axis, we report the CIC varying $\gamma$ (with the arrow indicating the direction of increase of $\gamma$), for each combination of majority culture and for each possible combination of the cultures (Chin., Fren, and Turk.) with $p_u = 10\%$.}
-\label{ch3:fig:ris:mtl:lamp}
-\end{figure}
-%
-%
-\begin{figure}
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
 \centering
-\begin{subfigure}[b]{.325\columnwidth}
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajLC_CLSDIV1_source_0.jpg}
+\caption{Example of transformation applied on Chin. image from LAMP dataset with lamps turned on using PGD and CLSDIV with Chin. as majority culture.}
+\end{subfigure} \\
+\begin{subfigure}[b]{0.4\columnwidth}
 \centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/mitigazione_indian.png}
-\caption{Majority - Ind.}
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajLC_NOCLSDIV0_source_0.jpg}
+\caption{Example of transformation applied on Chin. image from LAMP dataset with lamps turned off using PGD and NOCLSDIV with Chin. as majority culture.}
 \end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
 \centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/mitigazione_japanese.png}
-\caption{Majority - Japan.}
-\end{subfigure}
-\begin{subfigure}[b]{.325\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{Chapter3/FirstPaperFigures/mitigazione_scandianavian.png}
-\caption{Majority - Scand.}
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajLT_NOCLSDIV1_source_0.jpg}
+\caption{Example of transformation applied on Chin. image from LAMP dataset with lamps turned on using PGD and NOCLSDIV with Chin. as majority culture.}
 \end{subfigure} 
-\caption{CARPET dataset and RESNET algorithm: On the x-axis, we report the average error on all cultures (ERR), while on the y-axis, we report the CIC varying $\gamma$ (the arrow indicates the direction of increase of $\gamma$), for each combination of majority culture and each possible combination of the cultures (Ind., Japan., and Scand.) with $p_u = 10\%$.}
-\label{ch3:fig:ris:mtl:carpet}
+\caption{Example of transformations applied on Chin. images from LAMP dataset with lamps using PGD and CLSDIV or NOCLSDIV, with Chin. as majority culture. }
+\label{ch3:fig:advLC}
 \end{figure}
 
+%\color{red}In tutte queste figure in cui le caption delle subfigures si avvicinano troppo, metti \hspace{1cm} come ho fatto io qui tra subfugures \color{black}
+
+
+In Figures~\ref{ch3:fig:advCI}, we reported examples of transformations applied on Ind. images from CARPET dataset with and without carpets using PGD and CLSDIV or NOCLSDIV with Ind. as majority cultures.
+
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajCI_CLSDIV0_source_0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset with carpets using PGD and CLSDIV with Ind. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajCS_CLSDIV1_source_0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset without carpets, using PGD and CLSDIV with Scan. as majority culture.}
+\end{subfigure} \\
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajCJ_NOCLSDIV0_source_0.jpg} 
+\caption{Example of transformation applied on Ind. image from CARPET dataset with carpets, using PGD and NOCLSDIV with Jap. as majority culture.}
+\end{subfigure}  
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/ADVmajCJ_NOCLSDIV1_source_0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset without carpets, using PGD and NOCLSDIV with Jap. as majority culture.}
+\end{subfigure}
+\caption{Examples of transformations applied on Ind. images from CARPET dataset, using PGD and CLSDIV or NOCLSDIV with Jap. as majority culture.}
+\label{ch3:fig:advCI}
+\caption{Example of transformations applied on Ind. images from CARPETS dataset using PGD and CLSDIV or NOCLSDIV, with Chin. as majority culture.}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%% RT %%%%%%%%%%%%%%%%%%%%
+
+In Figures~\ref{ch3:fig:adv_rt_LF} we reported examples of transformations applied on Chin. images from CARPET dataset with and without carpets using PGD, RT and CLSDIV or NOCLSDIV with Fren. as majority culture
+
+%%%%%%%%%%%%%%%%% LAMP %%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_LF_CLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Ind. image from LAMP dataset of lamps turned off using PGD, RT and CLSDIV with fren. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_LF_CLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Ind. image from LAMP dataset of lamps turned on using PGD, RT and CLSDIV with Fren. as majority culture.}
+\end{subfigure} \\
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_LF_NOCLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Ind. image from LAMP dataset of lamps turned off using PGD, RT and NOCLSDIV with Fren. as majority culture.}
+\end{subfigure}
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_LF_NOCLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Ind. image from LAMP dataset of lamps turned on using PGD, RT and NOCLSDIV with Fren. as majority culture.}
+\end{subfigure}
+\caption{Example of transformations applied on Chin. images from LAMP dataset using PGD, RT and CLSDIV or NOCLSDIV, with Fren. as majority culture.}
+\label{ch3:fig:adv_rt_LF}
+\end{figure}
+
+In Figures~\ref{ch3:fig:adv_rt_CJ} we reported examples of transformations applied on Ind. images from LAMP dataset of lamps turned on and off using PGD, RT and CLSDIV or NOCLSDIV with jap. as majority culture.
+
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_CJ_CLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset with carpets using PGD and CLSDIV with Jap. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_CJ_CLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset without carpets using PGD and CLSDIV with Jap. as majority culture.}
+\end{subfigure} \\
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_CJ_NOCLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset with carpets using PGD and NOCLSDIV with Jap. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_rt_CJ_NOCLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset without carpets using PGD and NOCLSDIV with Jap. as majority culture.}
+\end{subfigure}
+\caption{Example of transformations applied on Ind. images from CARPET dataset using PGD, RT and CLSDIV or NOCLSDIV, with Jap. as majority culture.}
+\label{ch3:fig:adv_rt_CJ}
+\end{figure}
+
+In Figures~\ref{ch3:fig:adv_02_LT} we reported examples of transformations applied on Chin. images from LAMP dataset lamps turned off and on using PGD, CLSDIV or NOCLSDIV and $p_u=20\%$ with Turk. as majority cultures.
+
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majLT_CLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Chin. image from LAMP dataset lamps turned on using PGD, CLSDIV and $p_u=20\%$ with Turk. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majLT_CLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Chin. image from LAMP dataset lamps turned off using PGD, CLSDIV and $p_u=20\%$ with Turk. as majority culture.}
+\end{subfigure} \\
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majLT_NOCLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Chin. image from CARPET dataset lamps turned on using PGD, NOCLSDIV and $p_u=20\%$ with Turk. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majLT_NOCLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Chin. image from LAMP dataset lamps turned off using PGD, NOCLSDIV and $p_u=20\%$ with Turk. as majority culture.}
+\end{subfigure} 
+\caption{Example of transformations applied on Chin. images from LAMP dataset using PGD, and CLSDIV or NOCLSDIV, with Turk. as majority culture and $p_u=20\%$.}
+\label{ch3:fig:adv_02_LT}
+\end{figure}
+
+In Figures~\ref{ch3:fig:adv_02_CS} we reported examples of transformations applied on Ind. images from CARPET dataset with and without carpets using PGD, CLSDIV or NOCLSDIV and $p_u=20\%$ with Scan. as majority cultures.
+
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majCS_CLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Ind.image from CARPET dataset with carpets using PGD, CLSDIV and $p_u=20\%$ with Scan. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majCS_CLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset without carpets using PGD, CLSDIV and $p_u=20\%$ with Ind. as majority culture.}
+\end{subfigure} \\
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majCS_NOCLSDIV0_source0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset with carpets using PGD, NOCLSDIV and $p_u=20\%$ with Scan. as majority culture.}
+\end{subfigure} 
+\hspace{1cm}
+\begin{subfigure}[b]{0.4\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{adv_gen_figures/adv_02_majCS_NOCLSDIV1_source0.jpg}
+\caption{Example of transformation applied on Ind. image from CARPET dataset without carpets using PGD, NOCLSDIV and $p_u=20\%$ with Scan. as majority culture.}
+\end{subfigure} 
+\caption{Example of transformations applied on Ind. images from CARPET dataset using PGD, and CLSDIV or NOCLSDIV, with Scan. as majority culture and $p_u=20\%$.}
+\label{ch3:fig:adv_02_CS}
+\end{figure}
+
+More samples generated by the discriminator, can be found in the Appendix~\ref{appendix}
+
+It is noteworthy that, despite the results of the discriminator multi-task problem, visual inspection reveals no discernible differences between transformations, regardless of the RT mitigation strategy or the condition where $p_u=20\%$.
+
+\subsubsection{Adversarial Sampling Enhanced Results}
+%\color{red}4.4.0.2
+%\color{black}
+\label{ch3:sec:res:discr}
+Tables~\ref{ch3:tab:ADVLC}, \ref{ch3:tab:ADVLF}, and \ref{ch3:tab:ADVLT} delineate the performance metrics for the LAMP dataset across each majority culture permutation. 
+These tables report the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$) and the resulting CIC. 
+The evaluations encompass the baseline model alongside various adversarial configurations, including NODIV, DIV, and RT, as well as hybrid compositions of RT with NODIV or DIV strategies. 
+All results are reported for minority representation thresholds of $p_u \in \{5\%, 20\%\}$.
+The improvements are meant to validate the effectiveness of the methods: DIV and NODIV improvements are computed with respect to the Baseline, RT, RT+DIV and RT+NODIV are computed with respect their respective methods without RT.
+%
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chin.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.05$} \\
+\midrule
+Baseline & 14.5\%&	18.7\%& 31.8\%&	21.7\%&	7.6\%\\	
+DIV          & 10.7\% (\textbf{-3.8})\% & 16.1\% (\textbf{-2.6})\% & 25.4\% (\textbf{-6.4})\% & 17.4\% (\textbf{-4.3})\% & 6.7\% (\textbf{-0.9})\% \\
+NODIV        & 12.0\% (\textbf{-2.5})\% & 18.7\% (+0.0)\% & 24.7\% (\textbf{-7.1})\% & 18.4\% (\textbf{-3.3})\% & 6.4\% (\textbf{-1.2})\% \\
+\midrule
+RT              & 12.6\% (\textbf{-1.9\%}) & 16.6\% (\textbf{-2.1\%}) & 31.7\% (\textbf{-0.1\%}) & 20.3\% (\textbf{-1.4\%}) & 8.0\% (+0.4\%) \\
+RT + DIV        & 11.6\% (+0.9\%) & 15.6\% (\textbf{-0.5\%}) & 24.1\% (\textbf{-1.3\%}) & 17.1\% (\textbf{-0.3\%}) & 5.5\% (\textbf{-1.2\%}) \\
+RT + NODIV      & 10.3\% (\textbf{-1.7\%}) & 17.1\% (\textbf{-1.6\%}) & 25.9\% (+1.2\%) & 17.8\% (\textbf{-0.6\%}) & 7.5\% (+1.1\%) \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.2$} \\
+\midrule
+Baseline & 12.8\% & 15.7\% & 19.6\% & 16.0\% & 4.0\% \\
+DIV          & 11.2\% (\textbf{-1.6})\% & 15.4\% (\textbf{-0.3})\% & 15.6\% (\textbf{-4.0})\% & 14.1\% (\textbf{-1.9})\% & 3.3\% (\textbf{-0.7})\% \\
+NODIV        & 12.0\% (\textbf{-0.8})\% & 15.1\% (\textbf{-0.6})\% & 16.8\% (\textbf{-2.8})\% & 14.6\% (\textbf{-1.4})\% & 2.6\% (\textbf{-1.4})\% \\
+\bottomrule
+\end{tabular}
+\caption{Cultural error rates and impact coefficients for the LAMP dataset (Chin. majority) under Adversarial Sampling. The results contrast DIV and NODIV strategies for minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the analysis is extended to include the performance of RT and its combined application with both architectural variants. The improvements are meant to validate the effectiveness of the methods: DIV and NODIV improvements are with respect to the Baseline, RT, RT+DIV and RT+NODIV are with respect their respective methods without RT.}
+\label{ch3:tab:ADVLC}
+\end{table}
+%
+%
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chin.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.05$} \\
+\midrule
+Baseline & 24.1\%&	13.6\%&	34.4\%&	24.0\%&	10.5\%\\	
+DIV & 20.3\%&	11.1\%&	27.6\%&	19.7\%&	8.6\%\\	
+NODIV & 20.4\%&	11.5\%&	33.5\%&	21.8\%&	10.3\%\\
+\midrule
+RT              & 19.6\% (\textbf{-4.5\%}) & 11.0\% (\textbf{-2.6\%}) & 33.9\% (\textbf{-0.5\%}) & 21.5\% (\textbf{-2.5\%}) & 10.5\% (+0.0\%) \\
+RT + DIV        & 16.8\% (\textbf{-3.5\%}) & 10.4\% (\textbf{-0.7\%}) & 27.4\% (\textbf{-0.2\%}) & 18.2\% (\textbf{-1.5\%}) & 7.8\% (\textbf{-0.8\%}) \\
+RT + NODIV      & 17.2\% (\textbf{-3.2\%}) & 11.1\% (\textbf{-0.4\%}) & 26.0\% (\textbf{-7.5\%}) & 18.1\% (\textbf{-3.7\%}) & 7.0\% (\textbf{-3.3\%}) \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.2$} \\
+\midrule
+Baseline & 17.3\% & 13.1\% & 21.4\% & 17.3\% & 4.4\% \\
+DIV & 17.3\% & 11.6\% & 20.4\% & 16.4\% & 4.9\% \\
+NODIV & 16.1\% & 9.9\% & 19.2\% & 15.1\% & 5.2\% \\
+\bottomrule
+\end{tabular}
+\caption{Cultural error rates and impact coefficients for the LAMP dataset (Fren majority) under Adversarial Sampling. The results contrast DIV and NODIV strategies for minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the analysis is extended to include the performance of RT and its combined application with both architectural variants.The improvements are meant to validate the effectiveness of the methods: DIV and NODIV improvements are with respect to the Baseline, RT, RT+DIV and RT+NODIV are with respect their respective methods without RT.}
+\label{ch3:tab:ADVLF}
+\end{table}
+%
+%
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chin.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.05$} \\
+\midrule
+Baseline & 33.2\%&	32.0\%&	12.8\%&	26.0\%&	13.2\%\\	
+DIV & 27.5\%&	26.4\%&	11.3\%&	21.8\%&	10.42\%\\	
+NODIV & 30.4\%&	28.5\%&	8.3\%&	22.4\%&	14.1\%\\
+\midrule
+RT              & 32.8\% (\textbf{-0.4\%}) & 31.0\% (\textbf{-1.0\%}) & 10.8\% (\textbf{-2.0\%}) & 24.9\% (\textbf{-1.1\%}) & 14.0\% (+0.8\%) \\
+RT + DIV        & 25.8\% (\textbf{-1.7\%}) & 25.5\% (\textbf{-0.9\%}) & 7.6\% (\textbf{-3.7\%}) & 19.6\% (\textbf{-2.2\%}) & 12.1\% (+1.7\%) \\
+RT + NODIV      & 26.7\% (\textbf{-3.7\%}) & 25.0\% (\textbf{-3.5\%}) & 7.9\% (\textbf{-0.4\%}) & 19.9\% (\textbf{-2.5\%}) & 11.9\% (\textbf{-2.2\%}) \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.2$} \\
+\midrule
+Baseline & 23.2\% & 23.7\% & 11.6\% & 19.5\% & 7.9\% \\
+DIV & 18.0\% & 17.8\% & 10.0\% & 15.2\% & 5.7\% \\
+NODIV & 16.9\% & 18.9\% & 9.8\% & 15.2\% & 5.4\% \\
+\bottomrule
+\end{tabular}
+\caption{Cultural error rates and impact coefficients for the LAMP dataset (Turk. majority) under Adversarial Sampling. The results contrast DIV and NODIV strategies for minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the analysis is extended to include the performance of RT and its combined application with both architectural variants.The improvements are meant to validate the effectiveness of the methods: DIV and NODIV improvements are with respect to the Baseline, RT, RT+DIV and RT+NODIV are with respect their respective methods without RT.}
+\label{ch3:tab:ADVLT}
+\end{table}
+%
+
+Table~\ref{ch3:tab:ADVCI}, \ref{ch3:tab:ADVCJ}, and \ref{ch3:tab:ADVCS} provide analogous performance metrics for the CARPET dataset, enabling a direct comparison of adversarial sampling strategies within that domain.
+
+
+%
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind.}$} & \textbf{ERR$^{Jap.}$} & \textbf{ERR$^{Scan.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.05$} \\
+\midrule
+Baseline & 16.7\%&	22.2\%&	31.5\%&	23.5\%&	7.6\%\\	
+DIV & 15.5\%&	20.0\%&	31.4\%&	22.3\%&	7.1\%\\	
+NODIV & 14.4\%&	20.7\%&	28.9\%&	21.3\%&	7.3\%\\
+\midrule
+RT              & 17.3\% (+0.6\%) & 21.1\% (\textbf{-1.1\%}) & 30.8\% (\textbf{-0.7\%}) & 23.1\% (\textbf{-0.4\%}) & 6.6\% (\textbf{-1.0\%}) \\
+RT + DIV        & 15.4\% (\textbf{-0.1\%}) & 18.7\% (\textbf{-1.3\%}) & 29.1\% (\textbf{-2.3\%}) & 21.1\% (\textbf{-1.2\%}) & 6.0\% (\textbf{-1.1\%}) \\
+RT + NODIV      & 14.8\% (+0.4\%) & 19.4\% (\textbf{-1.3\%}) & 28.5\% (\textbf{-0.4\%}) & 20.9\% (\textbf{-0.4\%}) & 6.6\% (\textbf{-0.7\%}) \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.2$} \\
+\midrule
+Baseline & 15.9\% & 16.5\% & 29.6\% & 20.7\% & 6.0\% \\
+DIV & 14.8\% & 14.9\% & 27.8\% & 19.1\% & 5.3\% \\
+NODIV & 15.2\% & 14.8\% & 27.8\% & 19.3\% & 4.9\% \\
+\bottomrule
+\end{tabular}
+\caption{Cultural error rates and impact coefficients for the CARPET dataset (Ind. majority) under Adversarial Sampling. The results contrast DIV and NODIV strategies for minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the analysis is extended to include the performance of RT and its combined application with both architectural variants.The improvements are meant to validate the effectiveness of the methods: DIV and NODIV improvements are with respect to the Baseline, RT, RT+DIV and RT+NODIV are with respect their respective methods without RT.}
+\label{ch3:tab:ADVCI}
+\end{table}
+%
+%
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind.}$} & \textbf{ERR$^{Jap.}$} & \textbf{ERR$^{Scan.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.05$} \\
+\midrule
+Baseline & 28.1\%&	13.7\%&	37.4\%&	26.4\%&	12.7\%\\	
+DIV & 23.6\%&	12.3\%&	36.3\%&	24.0\%&	11.8\%\\	
+NODIV & 25.3\%&	12.2\%&	38.4\%&	25.3\%&	13.1\%\\
+\midrule
+RT              & 26.7\% (\textbf{-1.4\%}) & 12.6\% (\textbf{-1.1\%}) & 35.3\% (\textbf{-2.1\%}) & 24.9\% (\textbf{-1.5\%}) & 12.3\% (\textbf{-0.4\%}) \\
+RT + DIV        & 25.5\% (+1.9\%) & 13.8\% (+1.5\%) & 36.8\% (+0.5\%) & 25.4\% (+1.4\%) & 11.6\% (\textbf{-0.2\%}) \\
+RT + NODIV      & 25.3\% (+0.0\%) & 12.5\% (+0.3\%) & 33.9\% (\textbf{-4.5\%}) & 23.9\% (\textbf{-1.4\%}) & 11.4\% (\textbf{-1.7\%}) \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.2$} \\
+\midrule
+Baseline & 22.9\% & 13.5\% & 34.0\% & 23.5\% & 10.0\% \\
+DIV  & 21.7\% & 13.4\% & 29.2\% & 21.4\% & 8.0\% \\
+NODIV & 21.0\% & 13.0\% & 30.2\% & 21.4\% & 8.4\% \\
+\bottomrule
+\end{tabular}
+\caption{Cultural error rates and impact coefficients for the CARPET dataset (Japan. majority) under Adversarial Sampling. The results contrast DIV and NODIV strategies for minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the analysis is extended to include the performance of RT and its combined application with both architectural variants.The improvements are meant to validate the effectiveness of the methods: DIV and NODIV improvements are with respect to the Baseline, RT, RT+DIV and RT+NODIV are with respect their respective methods without RT.}
+\label{ch3:tab:ADVCJ}
+\end{table}
+%
+%
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind.}$} & \textbf{ERR$^{Jap.}$} & \textbf{ERR$^{Scan.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.05$} \\
+\midrule
+Baseline & 24.6\%&	17.9\%&	25.2\%&	22.6\%&	4.8\%\\	
+DIV & 20.6\%&	17.4\%&	22.1\%&	20.0\%&	3.3\%\\
+NODIV & 22.8\%&	19.7\%&	22.1\%&	21.5\%&	2.3\%\\
+\midrule
+RT              & 26.2\% (+1.6\%) & 20.0\% (+2.1\%) & 24.3\% (\textbf{-0.9\%}) & 23.5\% (+0.9\%) & 3.5\% (\textbf{-1.3\%}) \\
+RT + DIV        & 21.2\% (+0.6\%) & 16.2\% (\textbf{-1.2\%}) & 22.9\% (+0.8\%) & 20.1\% (+0.1\%) & 4.0\% (+0.7\%) \\
+RT + NODIV      & 22.9\% (+0.1\%) & 18.2\% (\textbf{-1.5\%}) & 21.6\% (\textbf{-0.5\%}) & 20.9\% (\textbf{-0.6\%}) & 3.5\% (+1.2\%) \\
+\midrule
+\multicolumn{6}{c}{$p_u=0.2$} \\
+\midrule
+Baseline & 20.9\% & 18.1\% & 25.8\% & 21.6\% & 4.2\% \\
+DIV & 19.6\% & 15.2\% & 24.2\% & 19.7\% & 4.5\% \\
+NODIV & 19.5\% & 14.2\% & 21.7\% & 18.4\% & 4.3\% \\
+\bottomrule
+\end{tabular}
+\caption{Cultural error rates and impact coefficients for the CARPET dataset (Scand. majority) under Adversarial Sampling. The results contrast DIV and NODIV strategies for minority representation thresholds of $p_u \in \{0.05, 0.2\}$. For the $p_u = 0.05$ configuration, the analysis is extended to include the performance of RT and its combined application with both architectural variants.The improvements are meant to validate the effectiveness of the methods: DIV and NODIV improvements are with respect to the Baseline, RT, RT+DIV and RT+NODIV are with respect their respective methods without RT.}
+\label{ch3:tab:ADVCS}
+\end{table}
+%
+
+An analysis of Tables~\ref{ch3:tab:ADVLC} through~\ref{ch3:tab:ADVLC} reveals that both the DIV and NODIV adversarial sampling methodologies function as effective mitigation strategies. 
+Empirical results further indicate that the integration of RT yields a cumulative positive effect, concurrently reducing the class-specific error rates (ERR) and the overall CIC.
+This performance enhancement is consistent across both the $p_u = 5\%$ and $p_u = 20\%$ experimental configurations. 
+Such findings validate the robustness of this strategy, demonstrating its efficacy regardless of whether the discriminator is "culturally informed" (higher $p_u$) or operating under conditions of extreme cultural scarcity (lower $p_u$).
+
+\section{The effect of Diffusion-model-based strategies}
+\label{ch3:sec:diff_model_gen_res}
+In this section we explore the effect of diffusion-model-based strategies.
+First part will evaluate the quality of the image-generator. 
+Second part will present the improvements on Cultural Competence while adopting DM techniques.
+
+\subsection{Image Generator results using Diffusion Models}
+
+Tables~\ref{ch3:tab:genDM} and \ref{ch3:tab:genDMMIN} delineate the performance metrics for the image generators on the LAMP dataset across each majority culture permutation and class label. 
+The reported evaluation metrics include the inception loss ($i_{\text{loss}}$), the reconstruction or noise loss ($n_{\text{loss}}$), and the KID. 
+These results facilitate a comparative analysis between the diffusion models trained on the comprehensive dataset (DM), encompassing all training and validation partitions, and those trained exclusively on the minority cultural subsets (DMMIN).
+%
+\begin{table}[]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+\multirow{6}{*}{Chin.} & \multirow{3}{*}{Off} & Chin. & 0.0824 & 0.1449 & 2.2316 \\
+ &  & Fren & 0.0791 & 0.1399 & 2.2240  \\
+ &  & Turk. & 0.0875 & 0.1515 & 2.3485  \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. & 0.0910 & 0.1541 & 2.5457  \\
+ &  & Fren & 0.0861 & 0.1454 & 2.6774  \\
+ &  & Turk. & 0.0909 & 0.1530 & 2.6741 \\
+\midrule
+\multirow{6}{*}{Fren} & \multirow{3}{*}{Off} & Chin. & 0.0799 & 0.1440 & 2.5226  \\
+ &  & Fren & 0.0784 & 0.1394 & 2.540  \\
+ &  & Turk. & 0.0876 & 0.1555 & 2.5561 \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. & 0.0886 & 0.1517 & 3.4152  \\
+ &  & Fren & 0.0860 & 0.1464 & 3.3864  \\
+ &  & Turk. & 0.0930 & 0.1605 & 3.2585 \\
+\midrule
+\multirow{6}{*}{Turk.} & \multirow{3}{*}{Off} & Chin. & 0.0961 & 0.1650 & 2.5294  \\
+ &  & Fren & 0.0890 & 0.1536 & 2.4598  \\
+ &  & Turk. & 0.0929 & 0.1582 & 2.5090  \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. & 0.0948 & 0.1602 & 2.4078 \\
+ &  & Fren & 0.0887 & 0.1490 & 2.5270 \\
+ &  & Turk. & 0.0904 & 0.1538 & 2.5631  \\
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DM trained for each Majority Culture and Class, calculated on each culture for LAMP dataset.}
+    \label{ch3:tab:genDM}
+\end{table}
+%
+%
+\begin{table}[]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+\multirow{6}{*}{Chin.} & \multirow{3}{*}{Off} & Chin. & 0.0833 (\textbf{-0.0009})       & 0.1426 (+0.0023)       & 2.2302 (+0.0014)   \\
+ &  & Fren & 0.0794 (-0.0003)       & 0.1373 (+0.0026)       & 2.2037 (+0.0203)   \\
+ &  & Turk. & 0.0871 (+0.0004)       & 0.1489 (+0.0026)       & 2.2856 (+0.0629)  \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. & 0.0906 (+0.0004)       & 0.1542 (\textbf{-0.0001})       & 2.4012 (+0.1445) \\
+ &  & Fren & 0.0906 (+0.0004)       & 0.1542 (\textbf{-0.0001})       & 2.4012 (+0.1445) \\
+ &  & Turk. & 0.0892 (+0.0017)       & 0.1550 (\textbf{-0.0020})       & 2.5341 (+0.1400)   \\
+\midrule
+\multirow{6}{*}{Fren} & \multirow{3}{*}{Off} & Chin. & 0.0811 (\textbf{-0.0012})       & 0.1413 (+0.0027)       & 2.2964 (+0.2262) \\
+ &  & Fren &0.0789 (\textbf{-0.0005})       & 0.1392 (+0.0002)       & 2.2941 (+0.2459)  \\
+ &  & Turk. & 0.0884 (\textbf{-0.0008})       & 0.1550 (+0.0005)       & 2.4670 (+0.0891) \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. & 0.0895 (-0.0009)       & 0.1563 (\textbf{-0.0046})       & 3.4234 (\textbf{-0.0082})\\
+ &  & Fren & 0.0869 (\textbf{-0.0009})       & 0.1515 (\textbf{-0.0051})       & 3.4994 (\textbf{-0.1130}) \\
+ &  & Turk. & 0.0932 (\textbf{-0.0002})       & 0.1654 (\textbf{-0.0049})       & 3.4690 (\textbf{-0.2105})  \\
+\midrule
+\multirow{6}{*}{Turk.} & \multirow{3}{*}{Off} & Chin. & 0.1017 (\textbf{-0.0056})       & 0.1791 (\textbf{-0.0141})       & 2.9362 (\textbf{-0.4068}) \\
+ &  & Fren & 0.0939 (\textbf{-0.0049})       & 0.1672 (\textbf{-0.0136})       & 2.8270 (\textbf{-0.3672}) \\
+ &  & Turk. &  0.0989 (\textbf{-0.0060})       & 0.1705 (\textbf{-0.0123})       & 2.8720 (\textbf{-0.3630}) \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. & 0.0965 (\textbf{-0.0017})       & 0.1657 (\textbf{-0.0055})       & 2.6409 (-0.2331)  \\
+ &  & Fren & 0.0895 (\textbf{-0.0008})       & 0.1560 (\textbf{-0.0070})       & 2.8183 (\textbf{-0.2913}) \\
+ &  & Turk. & 0.0920 (\textbf{-0.0016})       & 0.1591 (\textbf{-0.0053})       & 2.8750 (\textbf{-0.3119}) \\
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DMMIN trained for each Majority Culture and Class, calculated on each culture for LAMP dataset.}
+    \label{ch3:tab:genDMMIN}
+\end{table}
+%
+Tables~\ref{ch3:tab:genDMPARB} and \ref{ch3:tab:genDMMINPARB} delineate the performance metrics for the generative models on the LAMP dataset across each majority culture permutation and class label. These tables enumerate the inception loss ($i_{\text{loss}}$), noise loss ($n_{\text{loss}}$), and KID for image generators utilizing either the comprehensive dataset (DM) or the minority-specific subsets (DMMIN), both integrated with the PARB oversampling strategy.
+
+%
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+\multirow{6}{*}{Chin.} & \multirow{3}{*}{Off}  & Chin. & 0.0895 (\textbf{-0.0071})       & 0.1513 (\textbf{-0.0064})       & 1.7632 (+0.4684)  \\
+ &  & Fren & 0.0867 (\textbf{-0.0076})       & 0.1475 (\textbf{-0.0076})       & 1.7369 (+0.4871) \\
+ &  & Turk. & 0.0896 (-0.0021)       & 0.1526 (\textbf{-0.0011})       & 1.7548 (+0.5937 \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. & 0.0871 (+0.0039)       & 0.1500 (+0.0041)       & 1.9953 (+0.5504) \\
+ &  & Fren & 0.0847 (+0.0014)       & 0.1469 (\textbf{-0.0015})       & 2.0614 (+0.6160) \\
+ &  & Turk. & 0.0864 (+0.0045)       & 0.1513 (+0.0017)       & 2.0670 (+0.6071) \\
+\midrule
+\multirow{6}{*}{Fren} & \multirow{3}{*}{Off} & Chin. &  0.0884 (\textbf{-0.0085})       & 0.1491 (\textbf{-0.0051})       & 1.5108 (+1.0118)  \\
+ &  & Fren & 0.0856 (\textbf{-0.0072})       & 0.1444 (\textbf{-0.0050})       & 1.5040 (+1.0360) \\
+ &  & Turk. &0.0887 (\textbf{-0.0011})       & 0.1493 (+0.0062)       & 1.5336 (+1.0225)  \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. &0.0913 (-0.0027)       & 0.1538 (\textbf{-0.0021})       & 2.0740 (+1.3412) \\
+ &  & Fren & 0.0880 (\textbf{-0.0020})       & 0.1502 (\textbf{-0.0038})       & 2.0537 (+1.3327) \\
+ &  & Turk. & 0.0895 (+0.0035)       & 0.1534 (+0.0071)       & 2.0369 (+1.2216)  \\
+\midrule
+\multirow{6}{*}{Turk.} & \multirow{3}{*}{Off}& Chin. & 0.0887 (+0.0074)       & 0.1496 (+0.0154)       & 1.0475 (+1.4819)  \\
+ &  & Fren & 0.0864 (+0.0026)       & 0.1468 (+0.0068)       & 1.0397 (+1.4201) \\
+ &  & Turk. & 0.0889 (+0.0040)       & 0.1510 (+0.0072)       & 1.1191 (+1.3899) \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin. &0.0906 (+0.0042)       & 0.1513 (+0.0089)       & 1.3224 (+1.0854) \\
+ &  & Fren &  0.0879 (+0.0008)       & 0.1484 (+0.0006)       & 1.3837 (+1.1433) \\
+ &  & Turk. & 0.0889 (+0.0015)       & 0.1514 (+0.0024)       & 1.4095 (+1.1536) \\
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DM trained for each Majority Culture and Class, calculated on each culture for LAMP dataset, using PARB.}
+    \label{ch3:tab:genDMPARB}
+\end{table}
+%
+%
+\begin{table}[]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+\multirow{6}{*}{Chin.} & \multirow{3}{*}{Off} & Chin.    & 0.1015 (\textbf{-0.0191})       & 0.1815 (\textbf{-0.0366})       & 2.6252 (\textbf{-0.3936})  \\
+ &  &Fren     & 0.0969 (\textbf{-0.0178})       & 0.1735 (\textbf{-0.0336})       & 2.6289 (\textbf{-0.4049})   \\
+ &  & Turk.    & 0.1063 (\textbf{-0.0188})       & 0.1856 (\textbf{-0.0341})       & 2.7348 (\textbf{-0.3863}) \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} &Chin.    & 0.1089 (\textbf{-0.0179})       & 0.2140 (\textbf{-0.0599})       & 3.0189 (\textbf{-0.4732}) \\
+ &  & Fren     & 0.1012 (\textbf{-0.0151})       & 0.1800 (\textbf{-0.0346})       & 3.1484 (\textbf{-0.4710})  \\
+ &  & Turk.    & 0.1072 (\textbf{-0.0163})       & 0.1880 (\textbf{-0.0350})       & 3.0911 (\textbf{-0.4170}) \\
+\midrule
+\multirow{6}{*}{Fren} & \multirow{3}{*}{Off} & Chin.    & 0.0856 (\textbf{-0.0057})       & 0.1521 (\textbf{-0.0081})       & 2.5492 (\textbf{-0.0266})  \\
+ &  & Fren     & 0.0835 (\textbf{-0.0051})       & 0.1518 (\textbf{-0.0124})       & 2.5836 (\textbf{-0.0436})   \\
+ &  & Turk.    & 0.0936 (\textbf{-0.0060})       & 0.1641 (\textbf{-0.0086})       & 2.6956 (\textbf{-0.1395})    \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin.    & 0.0840 (+0.0046)       & 0.1581 (\textbf{-0.0064})       & 3.4520 (\textbf{-0.0368})  \\
+ &  & Fren     & 0.0825 (+0.0035)       & 0.1523 (\textbf{-0.0059})       & 3.4826 (\textbf{-0.0962})   \\
+ &  & Turk.    & 0.0897 (+0.0033)       & 0.1614 (\textbf{-0.0009})       & 3.4660 (\textbf{-0.2075})    \\
+\midrule
+\multirow{6}{*}{Turk.} & \multirow{3}{*}{Off} & Chin.    & 0.1374 (\textbf{-0.0413})       & 0.2252 (\textbf{-0.0602})       & 2.9809 (\textbf{-0.4515})    \\
+ &  & Fren     & 0.1255 (\textbf{-0.0365})       & 0.2092 (\textbf{-0.0556})       & 2.8982 (\textbf{-0.4384})   \\
+ &  & Turk.    & 0.1324 (\textbf{-0.0395})       & 0.2159 (\textbf{-0.0577})       & 2.9081 (\textbf{-0.3991})    \\
+\hhline{~-----}
+ & \multirow{3}{*}{On} & Chin.    & 0.1379 (\textbf{-0.0431})       & 0.2307 (\textbf{-0.0705})       & 2.9782 (-0.5704)  \\
+ &  & Fren     & 0.1246 (\textbf{-0.0359})       & 0.2138 (\textbf{-0.0648})       & 3.1480 (-0.6210)    \\
+ &  & Turk.    & 0.1304 (\textbf{-0.0400})       & 0.2231 (\textbf{-0.0693})       & 3.0766 (\textbf{-0.5135})  \\
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DMMIN trained for each Majority Culture and Class, calculated on each culture for LAMP dataset using PARB.}
+    \label{ch3:tab:genDMMINPARB}
+\end{table}
+%
+%
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+\multirow{6}{*}{Ind.} & \multirow{3}{*}{With} & Ind. & 0.1731 & 0.2730 & 0.6117  \\
+ &  & Japan. & 0.1650 & 0.2624 & 0.6818  \\
+ &  & Scand. & 0.1618 & 0.2581 & 0.6489\\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind. & 0.1548 & 0.2426 & 0.731  \\
+ &  & Japan. & 0.1509 & 0.2385 & 0.7983  \\
+ &  & Scand. & 0.1487 & 0.2345 & 0.7524  \\
+\midrule
+\multirow{6}{*}{Japan.} & \multirow{3}{*}{With} & Ind. & 0.1524 & 0.2400 & 0.9191  \\
+ &  & Japan. & 0.1489 & 0.2351 & 0.9357  \\
+ &  & Scand. & 0.1486 & 0.2351 & 0.8557  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind. & 0.1424 & 0.2314 & 1.0702  \\
+ &  & Japan. & 0.1399 & 0.2314 & 1.1060 \\
+ &  & Scand. & 0.1386 & 0.2310 & 1.0220  \\
+\midrule
+\multirow{6}{*}{Scand.} & \multirow{3}{*}{With} & Ind. & 0.1608 & 0.2603 & 0.3162 \\
+ &  & Japan. & 0.1562 & 0.2543 & 0.4095  \\
+ &  & Scand. & 0.1562 & 0.2499 & 0.3760  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind. & 0.1478 & 0.2364 & 0.3403  \\
+ &  & Japan. & 0.1472 & 0.2344 & 0.505 \\
+ &  & Scand. & 0.1450 & 0.2346 & 0.4257  \\
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DM trained for each Majority Culture and Class, calculated on each culture for CARPET dataset.}
+    \label{ch3:tab:ris:dm:carpet}
+\end{table}
+%
+%
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+
+\multirow{6}{*}{Ind.} & \multirow{3}{*}{With} & Ind.     & 0.1732 (\textbf{-0.0001})       & 0.2738 (\textbf{-0.0008})       & 0.5858 (+0.0259)    \\
+ &  & Japan.   & 0.1663 (\textbf{-0.0013})       & 0.2609 (+0.0015)       & 0.6436 (+0.0382)  \\
+ &  & Scand. & 0.1620 (-0.0002)       & 0.2597 (\textbf{-0.0016})       & 0.6133 (+0.0356)  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind.     & 0.1490 (+0.0058)       & 0.2555 (\textbf{-0.0129})       & 0.7043 (+0.0267)   \\
+ &  & Japan.   & 0.1455 (+0.0054)       & 0.2486 (\textbf{-0.0101})       & 0.7765 (+0.0218)  \\
+ &  & Scand. & 0.1441 (+0.0046)       & 0.2423 (\textbf{-0.0078})       & 0.7600 (-0.0076)  \\
+\midrule
+\multirow{6}{*}{Japan.} & \multirow{3}{*}{With} & Ind.     & 0.1523 (+0.0001)       & 0.2430 (\textbf{-0.0030})       & 0.8634 (+0.0557)   \\
+ &  & Japan.   & 0.1493 (\textbf{-0.0004})       & 0.2372 (\textbf{-0.0021})       & 0.8776 (+0.0581)   \\
+ &  & Scand. & 0.1490 (\textbf{-0.0004})       & 0.2366 (\textbf{-0.0015})       & 0.8190 (+0.0367)  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind.     & 0.1432 (\textbf{-0.0008})       & 0.2283 (+0.0031)       & 0.9889 (+0.0813)     \\
+ &  & Japan.   & 0.1419 (-0.0020)       & 0.2264 (+0.0050)       & 1.0101 (+0.0959)  \\
+ &  & Scand. & 0.1411 (-0.0025)       & 0.2252 (+0.0058)       & 0.9298 (+0.0922)  \\
+\midrule
+\multirow{6}{*}{Scand.} & \multirow{3}{*}{With} & Ind.     & 0.1595 (+0.0013)       & 0.2583 (+0.0020)       & 0.2987 (+0.0175)   \\
+ &  & Japan.   & 0.1558 (+0.0004)       & 0.2542 (+0.0001)       & 0.4032 (+0.0063)   \\
+ &  & Scand. & 0.1535 (+0.0027)       & 0.2546 (\textbf{-0.0047})       & 0.3803 (\textbf{-0.0043}) \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} &Ind.     & 0.1481 (\textbf{-0.0003})       & 0.2376 (\textbf{-0.0012})       & 0.3053 (+0.0350)   \\
+ &  & Japan.   & 0.1461 (+0.0011)       & 0.2380 (\textbf{-0.0036})       & 0.4208 (+0.0842)    \\
+ &  & Scand. & 0.1447 (+0.0003)       & 0.2364 (\textbf{-0.0018})       & 0.3871 (+0.0386) \\
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DMMIN trained for each Majority Culture and Class, calculated on each culture for CARPET dataset.}
+    \label{ch3:tab:ris:dmmin:carpet}
+\end{table}
+%
+%
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+\multirow{6}{*}{Ind.} & \multirow{3}{*}{With} & Ind.     & 0.1591 (+0.0140)       & 0.2536 (+0.0194)       & 0.6585 (\textbf{-0.0468}) \\
+ &  & Japan.   & 0.1566 (+0.0084)       & 0.2504 (+0.0120)       & 0.6865 (\textbf{-0.0047})   \\
+ &  & Scand. & 0.1563 (+0.0055)       & 0.2496 (+0.0085)       & 0.6619 (\textbf{-0.0130})  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind.     & 0.1455 (+0.0093)       & 0.2334 (+0.0092)       & 0.6883 (+0.0427) \\
+ &  & Japan.   & 0.1448 (+0.0061)       & 0.2322 (+0.0063)       & 0.7159 (+0.0824) \\
+ &  & Scand. & 0.1447 (+0.0040)       & 0.2306 (+0.0039)       & 0.6843 (+0.0681)  \\
+\midrule
+\multirow{6}{*}{Japan.} & \multirow{3}{*}{With} & Ind.     & 0.1591 (\textbf{-0.0067})       & 0.2513 (\textbf{-0.0113})       & 0.6625 (+0.2566)  \\
+ &  & Japan.   & 0.1567 (\textbf{-0.0078})       & 0.2487 (\textbf{-0.0136})       & 0.6950 (+0.2407)  \\
+ &  & Scand. & 0.1557 (\textbf{-0.0071})       & 0.2490 (\textbf{-0.0139})       & 0.6687 (+0.1870)  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind.     & 0.1482 (\textbf{-0.0058})       & 0.2417 (\textbf{-0.0103})       & 0.6440 (+0.4262) \\
+ &  & Japan.   & 0.1465 (\textbf{-0.0066})       & 0.2395 (\textbf{-0.0081})       & 0.6632 (+0.4428) \\
+ &  & Scand. & 0.1454 (\textbf{-0.0068})       & 0.2390 (\textbf{-0.0080})       & 0.6327 (+0.3893)  \\
+\midrule
+\multirow{6}{*}{Scand.} & \multirow{3}{*}{With} & Ind.     & 0.1597 (+0.0011)       & 0.2515 (+0.0088)       & 0.6522 (\textbf{-0.3360})  \\
+ &  & Japan.   & 0.1583 (\textbf{-0.0021})       & 0.2489 (+0.0054)       & 0.6751 (\textbf{-0.2656})  \\
+ &  & Scand. & 0.1574 (\textbf{-0.0012})       & 0.2467 (+0.0032)       & 0.6424 (\textbf{-0.2664})  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind.     & 0.1500 (\textbf{-0.0022})       & 0.2369 (\textbf{-0.0005})       & 0.8520 (\textbf{-0.5117}) \\
+ &  & Japan.   & 0.1495 (\textbf{-0.0023})       & 0.2362 (\textbf{-0.0018})       & 0.8910 (\textbf{-0.3860})  \\
+ &  & Scand. & 0.1475 (\textbf{-0.0025})       & 0.2349 (\textbf{-0.0003})       & 0.7968 (\textbf{-0.3711})  \\
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DM trained for each Majority Culture and Class, calculated on each culture for CARPET dataset, using PARB.}
+    \label{ch3:tab:ris:dm:parb:carpet}
+\end{table}
+%
+%
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+    \textbf{Majority} & \textbf{Class} & \textbf{$\mathcal{T}$} & \textbf{$i_{loss}$} & \textbf{$n_{loss}$} & \textbf{KID} \\
+    \toprule
+\multirow{6}{*}{Ind.} & \multirow{3}{*}{With} &  Ind.     & 0.1884 (\textbf{-0.0153})       & 0.2828 (\textbf{-0.0098})       & 0.8950 (\textbf{-0.2833}) \\
+ &  & Japan.   & 0.1801 (\textbf{-0.0151})       & 0.2724 (\textbf{-0.0100})       & 0.8867 (\textbf{-0.2049})   \\
+ &  & Scand. & 0.1752 (\textbf{-0.0134})       & 0.2681 (\textbf{-0.0100})       & 0.8670 (\textbf{-0.2181})  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind.     & 0.1573 (\textbf{-0.0025})       & 0.2518 (\textbf{-0.0092})       & 0.8119 (\textbf{-0.0809})    \\
+ &  & Japan.   & 0.1533 (\textbf{-0.0024})       & 0.2467 (\textbf{-0.0082})       & 0.8737 (\textbf{-0.0754})  \\
+ &  & Scand. & 0.1500 (\textbf{-0.0013})       & 0.2438 (\textbf{-0.0093})       & 0.8216 (\textbf{-0.0692})   \\
+\midrule
+\multirow{6}{*}{Japan.} & \multirow{3}{*}{With} & Ind.     & 0.1626 (\textbf{-0.0102})       & 0.2604 (\textbf{-0.0204})       & 1.0310 (\textbf{-0.1119})   \\
+ &  & Japan.   & 0.1600 (\textbf{-0.0111})       & 0.2564 (\textbf{-0.0213})       & 1.0326 (\textbf{-0.0969}) \\
+ &  & Scand. & 0.1591 (\textbf{-0.0105})       & 0.2531 (\textbf{-0.0180})       & 0.9644 (\textbf{-0.1087})  \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} & Ind.     & 0.1481 (\textbf{-0.0057})       & 0.2498 (\textbf{-0.0184})       & 1.1259 (\textbf{-0.0557})   \\
+ &  & Japan.   & 0.1466 (\textbf{-0.0067})       & 0.2484 (\textbf{-0.0170})       & 1.1412 (\textbf{-0.0352})  \\
+ &  & Scand. & 0.1459 (\textbf{-0.0073})       & 0.2457 (\textbf{-0.0147})       & 1.0509 (\textbf{-0.0289})      \\
+\midrule
+\multirow{6}{*}{Scand.} & \multirow{3}{*}{With} & Ind.     & 0.1626 (\textbf{-0.0018})       & 0.2612 (\textbf{-0.0009})       & 0.6748 (\textbf{-0.3586})   \\
+ &  & Japan.   & 0.1581 (\textbf{-0.0019})       & 0.2576 (\textbf{-0.0033})       & 0.7795 (\textbf{-0.3700})  \\
+ &  & Scand. & 0.1572 (\textbf{-0.0010})       & 0.2546 (\textbf{-0.0047})       & 0.7507 (\textbf{-0.3747})   \\
+\hhline{~-----}
+ & \multirow{3}{*}{Without} &Ind.     & 0.1480 (\textbf{-0.0002})       & 0.2334 (+0.0030)       & 0.6863 (\textbf{-0.3460})   \\
+ &  & Japan.   & 0.1468 (+0.0004)       & 0.2321 (+0.0023)       & 0.7920 (\textbf{-0.2870})  \\
+ &  & Scand. & 0.1455 (\textbf{-0.0005})       & 0.2316 (+0.0030)       & 0.7662 (\textbf{-0.3405}) \\  
+\bottomrule
+    \end{tabular}
+    \caption{Results of $i_{loss}$, $n_{loss}$ and KID metrics for DMMIN trained for each Majority Culture and Class, calculated on each culture for CARPET dataset, using PARB.}
+    \label{ch3:tab:ris:dmmin:parb:carpet}
+\end{table}
+
+
+\subsection{Diffusion Model Performance Results}\label{ch3:sec:diff}Tables~\ref{ch3:tab:diffLC}, \ref{ch3:tab:diffLF}, and \ref{ch3:tab:diffLT} delineate the experimental results for the LAMP dataset across each majority culture permutation. These tables report the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$) and the CIC for the baseline model, the RT augmentation, and the generative strategies based on Diffusion Models (DM) and Minority-focused Diffusion Models (DMMIN).
+%
+\begin{table} [H]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chin.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+Baseline     & 14.4\% & 18.9\% & 31.7\% & 21.7\% & 7.6\% \\
+RT           & 12.6\% (\textbf{-1.8\%}) & 16.6\% (\textbf{-2.3\%}) & 31.7\% (+0.0)\% & 20.3\% (\textbf{-1.4\%}) & 8.0\% (+0.4)\% \\
+DM           & 13.2\% (\textbf{-1.2\%}) & 18.0\% (\textbf{-0.9\%}) & 34.9\% (+3.2)\% & 22.0\% (+0.3)\% & 9.0\% (+1.4)\% \\
+DMMIN        & 13.2\% (\textbf{-1.2\%}) & 18.8\% (\textbf{-0.1\%}) & 30.4\% (\textbf{-1.3\%}) & 20.9\% (\textbf{-0.8\%}) & 7.5\% (\textbf{-0.1\%}) \\
+\bottomrule
+\end{tabular}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the LAMP dataset, for Baseline, DM, and DMMIN models associated with Chin. culture as majority culture.}
+\label{ch3:tab:diffLC}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chin.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+Baseline     & 24.1\% & 13.6\% & 34.4\% & 24.0\% & 10.5\% \\
+RT           & 19.6\% (\textbf{-4.5\%)} & 11.0\% (\textbf{-2.6\%)} & 33.9\% (\textbf{-0.5\%)} & 21.5\% (\textbf{-2.5\%)} & 10.5\% (+0.0)\% \\
+DM           & 17.9\% (\textbf{-6.2\%)} & 12.7\% (\textbf{-0.9\%)} & 31.3\% (\textbf{-3.1\%)} & 20.6\% (\textbf{-3.4\%)} & 7.9\% (\textbf{-2.6\%)} \\
+DMMIN        & 18.9\% (\textbf{-5.2\%)} & 12.8\% (\textbf{-0.8\%)} & 32.5\% (\textbf{-1.9\%)} & 21.4\% (\textbf{-2.6\%)} & 8.6\% (\textbf{-1.9\%)} \\
+\bottomrule
+\end{tabular}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the LAMP dataset, for Baseline, DM, and DMMIN models associated with Fren culture as majority culture.}
+\label{ch3:tab:diffLF}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chin.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+Baseline     & 34.2\% & 31.3\% & 12.3\% & 26.0\% & 13.6\% \\
+RT           & 32.8 (\textbf{-1.4\%}) & 31.0 (\textbf{-0.3\%}) & 10.8 (\textbf{-1.5\%}) & 24.9 (\textbf{-1.1\%}) & 14.0 (+0.4)\% \\
+DM           & 28.6 (\textbf{-5.6\%}) & 27.5 (\textbf{-3.8\%}) & 9.4 (\textbf{-2.9\%}) & 21.8 (\textbf{-4.2\%}) & 12.4 (\textbf{-1.2\%}) \\
+DMMIN        & 30.8 (\textbf{-3.4\%}) & 29.2 (\textbf{-2.1\%}) & 9.2 (\textbf{-3.1\%}) & 23.0 (\textbf{-3.0\%}) & 13.9 (+0.3)\% \\
+\bottomrule
+\end{tabular}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the LAMP dataset, for Baseline, DM, and DMMIN models associated with Turk. culture as majority culture.}
+\label{ch3:tab:diffLT}
+\end{table}
+%
+Table~\ref{ch3:tab:diffCI} ,\ref{ch3:tab:diffCJ} and \ref{ch3:tab:diffCS} report analogous information for the CARPET dataset.
+
+%
+\begin{table} [H]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind}$} & \textbf{ERR$^{Jap}$} & \textbf{ERR$^{Scan}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+Baseline     & 16.7\% & 22.2\% & 31.5\% & 23.5\% & 7.6\% \\
+RT           & 17.3\% (+0.6\%) & 21.1\% (\textbf{-1.1\%}) & 30.8\% (\textbf{-0.7\%}) & 23.1\% (\textbf{-0.4\%}) & 6.6\% (\textbf{-1.0\%}) \\
+DM           & 17.2\% (+0.5\%) & 22.2\% (+0.0\%) & 30.2\% (\textbf{-1.3\%}) & 23.2\% (\textbf{-0.3\%}) & 6.1\% (\textbf{-1.5\%}) \\
+DMMIN        & 16.0\% (\textbf{-0.7\%}) & 18.9\% (\textbf{-3.3\%}) & 31.0\% (\textbf{-0.5\%}) & 22.0\% (\textbf{-1.5\%}) & 6.1\% (\textbf{-1.5\%}) \\
+\bottomrule
+\end{tabular}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the CARPET dataset, for Baseline, DM, and DMMIN models associated with Ind. culture as majority culture.}
+\label{ch3:tab:diffCI}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind}$} & \textbf{ERR$^{Jap}$} & \textbf{ERR$^{Scan}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule						
+Baseline     & 28.1\% & 13.7\% & 37.4\% & 26.4\% & 12.7\% \\
+RT           & 26.7\% (\textbf{-1.4\%}) & 12.6\% (\textbf{-1.1\%}) & 35.3\% (\textbf{-2.1\%}) & 24.9\% (\textbf{-1.5\%}) & 12.3\% (\textbf{-0.4\%}) \\
+DM           & 26.6\% (\textbf{-1.5\%}) & 13.6\% (\textbf{-0.1\%}) & 37.3\% (\textbf{-0.1\%}) & 25.9\% (\textbf{-0.5\%}) & 12.2\% (\textbf{-0.5\%}) \\
+DMMIN        & 23.8\% (\textbf{-4.3\%}) & 13.4\% (\textbf{-0.3\%}) & 37.1\% (\textbf{-0.3\%}) & 24.8\% (\textbf{-1.6\%}) & 11.4\% (\textbf{-1.3\%}) \\
+\bottomrule
+\end{tabular}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the CARPET dataset, for Baseline, DM, and DMMIN models associated with Japan. culture as majority culture.}
+\label{ch3:tab:diffCJ}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind}$} & \textbf{ERR$^{Jap}$} & \textbf{ERR$^{Scan}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+Baseline     & 24.6\% & 17.9\% & 25.2\% & 22.6\% & 4.8\% \\
+RT           & 26.2\% (+1.6\%) & 20.0\% (+2.1\%) & 24.3\% (\textbf{-0.9\%}) & 23.5\% (+0.9\%) & 3.5\% (\textbf{-1.3\%}) \\
+DM           & 24.1\% (\textbf{-0.5\%}) & 19.7\% (+1.8\%) & 22.7\% (\textbf{-2.5\%}) & 22.2\% (\textbf{-0.4\%}) & 4.0\% (\textbf{-0.8\%}) \\
+DMMIN        & 23.9\% (\textbf{-0.7\%}) & 18.5\% (+0.6\%) & 24.2\% (\textbf{-1.0\%}) & 22.2\% (\textbf{-0.4\%}) & 3.7\% (\textbf{-1.1\%}) \\
+\bottomrule
+\end{tabular}
+\caption{The table displays the ERR$^C$ values for each culture $C$ and the corresponding CIC for the CARPET dataset, for Baseline, DM, and DMMIN models associated with Scand. culture as majority culture.}
+\label{ch3:tab:diffCS}
+\end{table}
+%
+Based on the results presented in the tables, it is evident that the application of DM and DMMIN strategies leads to improved performance across both the CARPET and LAMP datasets for all cultures. These improvements are observed not only in comparison to the Baseline but also relative to RT, upon which the DM and DMMIN strategies are built.
+
+Qualitatively, the DM and DMMIN strategies are highly effective at reproducing the LAMP dataset. However, they encounter greater difficulty with the CARPET dataset, likely due to the inherent complexity of that specific task.
+
+Samples of DM generated images can be found in the Appendix~\ref{appendix}.
+
+\section{Multi-Task Learning Mitigation Strategy Enhanced by Data Augmentation Results}\label{ch3:sec:mtl_and_da}Tables~\ref{ch3:tab:mtl_and_da:LC}, \ref{ch3:tab:mtl_and_da:LF}, and \ref{ch3:tab:mtl_and_da:LT} delineate the performance metrics for the LAMP dataset across each majority culture permutation. 
+These tables report the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$) and the CIC. 
+The experimental evaluation utilizes the MTL framework as the primary baseline, which is subsequently enhanced through the most effective DA strategies: DM and DMMIN. 
+Furthermore, these configurations are augmented with the PARB strategy at the commencement of the processing pipeline.
+%
+%
+\begin{table} [H]
+\centering
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chi.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+MTL          & 11.3\% & 15.6\% & 33.0\% & 19.9\% & 8.7\% \\
+MTL + DM     & 11.3\% (+0.0\%) & 20.6\% (+5.0\%) & 26.4\% (\textbf{-6.6\%}) & 19.4\% (\textbf{-0.5\%}) & 8.2\% (\textbf{-0.5\%}) \\
+MTL +  DMMIN & 11.4\% (+0.1\%) & 15.9\% (+0.3\%) & 27.9\% (\textbf{-5.1\%}) & 18.4\% (\textbf{-1.5\%}) & 7.0\% (\textbf{-1.7\%}) \\
+\hline
+MTL +  PARB    & 13.9\% (+2.6\%) & 16.4\% (+0.8\%) & 23.0\% (\textbf{-10.0\%}) & 17.8\% (\textbf{-2.1\%}) & 4.5\% (\textbf{-4.2\%}) \\
+MTL + PARB + DMM & 13.0\% (+1.7\%) & 17.7\% (+2.1\%) & 22.4\% (\textbf{-10.6\%}) & 17.7\% (\textbf{-2.2\%}) & 4.7\% (\textbf{-4.0\%}) \\
+MTL + PARB + DMMIN & 10.0\% (\textbf{-1.3\%}) & 17.4\% (+1.8\%) & 23.9\% (\textbf{-9.1\%}) & 17.1\% (\textbf{-2.8\%}) & 7.1\% (\textbf{-1.6\%}) \\
+\bottomrule
+\end{tabular}
+\caption{This table presents the cultural error rates ($ERR^C$) for each culture $C$ and the corresponding CIC for the LAMP dataset. The reported values evaluate the performance of MTL as a baseline, alongside the architectural interventions of DM, DMMIN, and PARB strategies, specifically under the configuration where Chin. culture serves as the majority.}
+\label{ch3:tab:mtl_and_da:LC}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chi.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule							
+MTL          & 23.2\% & 10.3\% & 36.4\% & 23.3\% & 13.0\% \\
+MTL +  DM    & 18.3\% (\textbf{-4.9\%}) & 10.1\% (\textbf{-0.2\%}) & 29.3\% (\textbf{-7.1\%}) & 19.2\% (\textbf{-4.1\%}) & 9.1\% (\textbf{-3.9\%}) \\
+MTL +  DMMIN & 18.5\% (\textbf{-4.7\%}) & 10.3\% (+0.0\%) & 29.1\% (\textbf{-7.3\%}) & 19.3\% (\textbf{-4.0\%}) & 9.0\% (\textbf{-4.0\%}) \\
+\hline
+MTL + PARB     & 19.8\% (\textbf{-3.4\%}) & 10.4\% (+0.1\%) & 23.8\% (\textbf{-12.6\%}) & 18.0\% (\textbf{-5.3\%}) & 7.6\% (\textbf{-5.4\%}) \\
+MTL + PARB + DM & 16.7\% (\textbf{-6.5\%}) & 11.2\% (+0.9\%) & 23.7\% (\textbf{-12.7\%}) & 17.2\% (\textbf{-6.1\%}) & 6.1\% (\textbf{-6.9\%}) \\
+MTL + PARB + DMMIN & 17.4\% (\textbf{-5.8\%}) & 11.0\% (+0.7\%) & 22.8\% (\textbf{-13.6\%}) & 17.1\% (\textbf{-6.2\%}) & 6.1\% (\textbf{-6.9\%}) \\
+\bottomrule
+\end{tabular}
+\caption{This table presents the cultural error rates ($ERR^C$) for each culture $C$ and the corresponding CIC for the LAMP dataset. The reported values evaluate the performance of MTL as a baseline, alongside the architectural interventions of DM, DMMIN, and PARB strategies, specifically under the configuration where Fren culture serves as the majority.}
+\label{ch3:tab:mtl_and_da:LF}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Chi.}$} & \textbf{ERR$^{Fren.}$} & \textbf{ERR$^{Tur.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule			
+MTL          & 34.9\% & 32.6\% & 10.0\% & 25.9\% & 15.8\% \\
+MTL +  DM    & 27.9\% (\textbf{-7.0\%}) & 27.2\% (\textbf{-5.4\%}) & 9.4\% (\textbf{-0.6\%}) & 21.5\% (\textbf{-4.4\%}) & 12.1\% (\textbf{-3.7\%}) \\
+MTL +  DMMIN & 27.9\% (\textbf{-7.0\%}) & 27.7\% (\textbf{-4.9\%}) & 10.3\% (+0.3\%) & 22.0\% (\textbf{-3.9\%}) & 11.7\% (\textbf{-4.1\%}) \\
+\hline
+MTL + PARB     & 23.2\% (\textbf{-11.7\%}) & 22.1\% (\textbf{-10.5\%}) & 10.8\% (+0.8\%) & 18.7\% (\textbf{-7.2\%}) & 7.9\% (\textbf{-7.9\%}) \\
+MTL + PARB + DM & 20.9\% (\textbf{-14.0\%}) & 21.1\% (\textbf{-11.5\%}) & 9.1\% (\textbf{-0.9\%}) & 17.1\% (\textbf{-8.8\%}) & 7.9\% (\textbf{-7.9\%}) \\
+MTL + PARB + DMMIN & 21.7\% (\textbf{-13.2\%}) & 21.1\% (\textbf{-11.5\%}) & 10.7\% (+0.7\%) & 17.8\% (\textbf{-8.1\%}) & 7.1\% (\textbf{-8.7\%}) \\
+\bottomrule
+\end{tabular}
+\caption{This table presents the cultural error rates ($ERR^C$) for each culture $C$ and the corresponding CIC for the LAMP dataset. The reported values evaluate the performance of MTL as a baseline, alongside the architectural interventions of DM, DMMIN, and PARB strategies, specifically under the configuration where Turk. culture serves as the majority.}
+\label{ch3:tab:mtl_and_da:LT}
+\end{table}
+%
+Table~\ref{ch3:tab:mtl_and_da:CI} ,\ref{ch3:tab:mtl_and_da:CJ} and \ref{ch3:tab:mtl_and_da:CS} report analogous information for the CARPET dataset.
+%
+\begin{table} [H]
+\centering
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind.}$} & \textbf{ERR$^{Jap.}$} & \textbf{ERR$^{Scan.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+MTL  & 15.7\% & 20.9\% & 28.8\% & 21.8\% & 6.1\% \\
+MTL +  DM    & 17.1\% (+1.4\%) & 17.1\% (\textbf{-3.8\%}) & 29.6\% (+0.8\%) & 21.3\% (\textbf{-0.5\%}) & 5.1\% (\textbf{-1.0\%}) \\
+MTL +  DMMIN & 15.1\% (\textbf{-0.6\%}) & 18.5\% (\textbf{-2.4\%}) & 26.8\% (\textbf{-2.0\%}) & 20.1\% (\textbf{-1.7\%}) & 5.5\% (\textbf{-0.6\%}) \\
+\hline
+MTL + PARB     & 17.1\% (+1.4\%) & 16.9\% (\textbf{-4.0\%}) & 30.9\% (+2.1\%) & 21.6\% (\textbf{-0.2\%}) & 5.8\% (\textbf{-0.3\%}) \\
+MTL + PARB + DM & 16.6\% (+0.9\%) & 16.8\% (\textbf{-4.1\%}) & 29.8\% (+1.0\%) & 21.1\% (\textbf{-0.7\%}) & 5.3\% (\textbf{-0.8\%}) \\
+MTL + PARB + DMMIN & 14.3\% (\textbf{-1.4\%}) & 17.1\% (\textbf{-3.8\%}) & 27.8\% (\textbf{-1.0\%}) & 19.7\% (\textbf{-2.1\%}) & 5.5\% (\textbf{-0.6\%}) \\
+\bottomrule
+\end{tabular}
+\caption{This table presents the cultural error rates ($ERR^C$) for each culture $C$ and the corresponding CIC for the CARPET dataset. The reported values evaluate the performance of MTL as a baseline, alongside the architectural interventions of DM, DMMIN, and PARB strategies, specifically under the configuration where Ind. culture serves as the majority.}
+\label{ch3:tab:mtl_and_da:CI}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind.}$} & \textbf{ERR$^{Jap.}$} & \textbf{ERR$^{Scan.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+MTL          & 25.1\% & 14.4\% & 37.9\% & 25.8\% & 11.4\% \\
+MTL + DM     & 23.3\% (-1.8\%) & 11.9\% (\textbf{-2.5\%}) & 33.9\% (\textbf{-4.0\%}) & 23.0\% (\textbf{-2.8\%}) & 11.1\% (\textbf{-0.3\%}) \\
+MTL +  DMMIN & 26.8\% (+1.7\%) & 12.1\% (\textbf{-2.3\%}) & 33.1\% (\textbf{-4.8\%}) & 24.0\% (\textbf{-1.8\%}) & 11.9\% (+0.5\%) \\
+\hline
+MTL + PARB     & 23.5\% (\textbf{-1.6\%}) & 12.7\% (\textbf{-1.7\%}) & 32.2\% (\textbf{-5.7\%}) & 22.8\% (\textbf{-3.0\%}) & 10.1\% (\textbf{-1.3\%})  \\
+MTL + PARB + DM & 23.3\% (\textbf{-1.8\%}) & 12.8\% (\textbf{-1.6\%}) & 33.1\% (\textbf{-4.8\%}) & 23.1\% (\textbf{-2.7\%}) & 10.3\% (\textbf{-1.1\%}) \\
+MTL + PARB + DMMIN & 25.8\% (+0.7\%) & 13.1\% (\textbf{-1.3\%}) & 34.8\% (\textbf{-3.1\%}) & 24.6\% (\textbf{-1.2\%}) & 11.5\% (+0.1\%) \\
+\bottomrule
+\end{tabular}
+\caption{This table presents the cultural error rates ($ERR^C$) for each culture $C$ and the corresponding CIC for the CARPET dataset. The reported values evaluate the performance of MTL as a baseline, alongside the architectural interventions of DM, DMMIN, and PARB strategies, specifically under the configuration where Japan. culture serves as the majority.}
+\label{ch3:tab:mtl_and_da:CJ}
+\end{table}
+%
+%
+\begin{table} [H]
+\centering
+\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Method} & \textbf{ERR$^{Ind.}$} & \textbf{ERR$^{Jap.}$} & \textbf{ERR$^{Scan.}$} & \textbf{ERR} & \textbf{CIC} \\
+\midrule
+MTL & 22.5\% & 20.9\% & 23.8\% & 22.4\% & 2.2\% \\
+MTL +  DM    & 26.3\% (+3.8\%) & 17.8\% (\textbf{-3.1}\%) & 21.3\% (\textbf{-2.5}\%) & 21.8\% (\textbf{-0.6}\%) & 4.3\% (+2.1\%) \\
+MTL +  DMMIN & 26.6\% (+4.1\%) & 18.9\% (\textbf{-2.0}\%) & 18.5\% (\textbf{-5.3}\%) & 21.3\% (\textbf{-1.1}\%) & 3.9\% (+1.7\%) \\
+\hline
+MTL + PARB     & 20.5\% (\textbf{-2.0}\%) & 17.5\% (\textbf{-3.4}\%) & 24.2\% (+0.4\%) & 20.7\% (\textbf{-1.7}\%) & 3.2\% (+1.0\%) \\
+MTL + PARB + DM & 23.1\% (+0.6\%) & 16.6\% (\textbf{-4.3}\%) & 22.2\% (\textbf{-1.6}\%) & 20.7\% (\textbf{-1.7}\%) & 4.1\% (+1.9\%) \\
+MTL + PARB + DMMIN & 22.9\% (+0.4\%) & 17.7\% (\textbf{-3.2}\%) & 21.6\% (\textbf{-2.2}\%) & 20.7\% (\textbf{-1.7}\%) & 3.6\% (+1.4\%) \\
+\bottomrule
+\end{tabular}
+\caption{This table presents the cultural error rates ($ERR^C$) for each culture $C$ and the corresponding CIC for the CARPET dataset. The reported values evaluate the performance of MTL as a baseline, alongside the architectural interventions of DM, DMMIN, and PARB strategies, specifically under the configuration where Scand. culture serves as the majority.}
+\label{ch3:tab:mtl_and_da:CS}
+\end{table}
+%
+The tables presented above demonstrate that the integration of MTL with DM and DMMIN techniques yields a positive mitigation effect, further reducing underrepresentation bias. Consistent improvements were observed in both the CIC and ERR metrics across all datasets and cultural cohorts. Furthermore, the PARB technique served to further enhance the overall mitigation strategy.
 
 \section{Conclusion}
+%\color{red}Non presenta solo empirical evaluation ma introduce anche la metodologia. VERIFICA CHE TUTTE INTRODUZIONI E CONCLUSIONI SIANO COERENTI CON IL CONTENUTO!!!!
+%\color{black}
+This chapter presented the methodology and empirical evaluation of the proposed mitigation strategies for cultural underrepresentation bias across the LAMP and CARPET datasets. 
+The experimental findings, spanning OS, RT, ADV, DM, and hybrid MTL configurations, consistently validate the effectiveness of the proposed framework.
 
-This chapter presented a comprehensive empirical evaluation of the cultural competence of standard ML algorithms and the effectiveness of the proposed mitigation strategies across the LAMP and CARPET datasets.
+The baseline augmentation strategies, OS and RT, demonstrated reliable improvements in minority cultural error rates and CIC across most configurations. 
+Their combination proved particularly effective, suggesting that geometric variance and class-balancing operate synergistically rather than redundantly. The hybrid RT + OS configuration achieved the most substantial CIC reductions among the simpler strategies, with gains of up to $6.3$ percentage points on the LAMP dataset.
 
-The baseline evaluation demonstrated that standard ML algorithms—LSVM, GSVM, and RESNET—are inherently culturally incompetent under conditions of minority under-representation. Across all majority culture permutations and both datasets, the models consistently exhibited significantly lower error rates for the dominant culture while incurring substantially higher error rates for minority cultures, as quantified by the CIC metric. These disparities persisted even as the minority representation level $p_u$ increased, confirming that cultural incompetence is a structural limitation of standard learning algorithms rather than an artifact of extreme data scarcity.
+The adversarial sampling strategies, DIV and NODIV, further extended these improvements by enriching the training distribution with culturally boundary-crossing edge cases. The analysis of the cultural discriminator revealed that minority underrepresentation directly degrades discriminator reliability, manifesting as measurable precision and recall deficits for minority classes. Both RT integration and an increased minority data threshold ($p_u = 20\%$) effectively addressed these deficits, confirming that discriminator quality is a key bottleneck in the adversarial augmentation pipeline. Despite this, visual inspection revealed no perceptible differences between adversarially transformed samples across configurations, suggesting that the perturbations operate at a statistical rather than a visually salient level.
 
-The MTL-inspired mitigation strategy, applied to the RESNET architecture, demonstrated consistent improvements in both class-specific error rates and CIC across the vast majority of experimental configurations. The task-weighting parameter $\gamma$ proved to be an effective regularization mechanism, enabling the model to balance classification performance with cultural fairness. These results validate the theoretical grounding of the proposed framework and confirm that MTL-based mitigation can be applied effectively across diverse cultural contexts and datasets of varying complexity.
+Diffusion-based augmentation, particularly DMMIN, produced consistent performance gains on both datasets, outperforming RT as a standalone strategy in most configurations. The minority-focused variant proved especially beneficial in scenarios of severe cultural scarcity, as its targeted training distribution more faithfully approximated the underrepresented cultural manifold. The LAMP dataset responded more readily to diffusion-based generation than the CARPET dataset, likely reflecting the greater visual complexity and intra-class variability inherent in carpet imagery.
 
-Taken together, these findings establish that standard ML algorithms are not culturally competent by default, and that the proposed MTL-inspired mitigation strategy represents a principled and effective approach to reducing cultural bias in object classification tasks.
+The most substantial and consistent improvements were achieved through the hybrid MTL framework augmented with DA techniques. 
+The combination of MTL with DM or DMMIN reduced both CIC and class-specific error rates across all datasets and majority culture permutations. The further integration of PARB at the head of the processing pipeline provided an additional regularization effect, yielding the strongest overall mitigation performance. Notably, the MTL + PARB + DM and MTL + PARB + DMMIN configurations achieved CIC reductions of up to $8.7$ percentage points on the LAMP dataset relative to the MTL baseline, underscoring the complementary nature of these strategies.
+
+Taken together, these results establish a clear hierarchy of mitigation effectiveness: simple resampling and transformation strategies provide a reliable foundation, adversarial and generative methods add targeted distributional enrichment, and the full hybrid MTL + PARB + generative pipeline achieves the most robust reduction of cultural bias. The consistency of these findings across both datasets and all majority culture permutations supports the generalizability of the proposed framework.
+
+

@@ -2,7 +2,7 @@
 %*******************************************************************************
 %****************************** Third Chapter **********************************
 %*******************************************************************************
-\chapter{Culturally Competent Architectures}
+\chapter{Toward Culturally Competent Robotic Architectures }
 \label{ch5}
 
 % **************************** Define Graphics Path **************************
@@ -12,276 +12,276 @@
     \graphicspath{{Chapter5/Figs/Vector/}{Chapter5/Figs/}}
 \fi
 
+The second part of this thesis proposes a novel framework for implementing cultural competence in SRs.
+%\color{red} Nell'introduzione avevi parlato di due parti, prima con due 
+%\color{black}
+It also presents the experiments designed and conducted during my research stay at ETH Zurich, in which a possible implementation of the proposed framework was deployed on the Pepper SR.
+
+This chapter presents the proposed framework and its constituent components. 
+In addition, it presents the implementation evaluated on the Pepper SR.
+The chapter also introduces the cultural dimensions used to characterize participants and the measures adopted to assess the cultural competence exhibited by the robot during the experiments. 
 
 \section{System Architecture}
-The proposed architectural framework is predicated on the premise that social robotic agents require the capacity to represent and reason upon environmental knowledge. 
-To facilitate this, the system must acquire raw sensory data, abstract these inputs into semantic representations, perform high-level inference, and subsequently execute contextually appropriate behavioral responses via its actuators. 
-With the recent advent of LLM-based agents, traditional system architectures can be dynamically restructured to integrate flexible reasoning components. 
-This paradigm shift enables agents to autonomously adapt to their immediate deployment contexts while seamlessly incorporating distinct behavioral and cultural nuances.
 
-Cultural competence may be integrated at various granularities and abstraction layers across each stage of this functional sequence. 
-For instance, the semantic interpretation of sensory data—previously addressed in the context of inferring object states (e.g., a lamp) or detecting environmental features (e.g., floor coverings) from visual inputs—represents a critical intervention point. 
-The proposed system architecture aims to encapsulate all such stages; consequently, the schema presented in Figure~\ref{ch5:fig:CCF} is intentionally abstract and generalized to ensure broad applicability across diverse robotic platforms and social contexts.
+The proposed architectural framework is based on the premise that SRs require the ability to represent, reason about, and act upon environmental knowledge~\citep{SocialRobotics}, which is inherently influenced by cultural factors. 
+To support this capability, the system must acquire raw sensory data, abstract these inputs into semantic representations, perform high-level reasoning, and subsequently generate contextually appropriate behavioral responses through its actuators. 
+The recent emergence of LLM-based agents has enabled traditional robotic architectures to be extended with flexible reasoning components that can dynamically adapt their behavior to the interaction context. 
+This abstraction enables cultural competence to be incorporated at different levels of granularity throughout the system pipeline. 
+The proposed architecture is intended to encompass all such levels; consequently, the schema presented in Figure~\ref{ch5:fig:CCF} is deliberately abstract and general in order to remain applicable across a wide range of robotic platforms, implementations, and social contexts.
+We remark here, that cultural competence is the ability of a system to adapt to different cultural contexts.
+A component is therefore culturally competent, when it can embed cultural parameters that can vary depending on the context and still works properly.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{Figs/CulturalCompetenceFramework.drawio.png}
-    \caption{General Schema for Culturally Competent Social Robots.}
+    \includegraphics[width=\linewidth]{Figs/architecture.drawio.png}
+    \caption{General Schema for Culturally Competent SRs.}
     \label{ch5:fig:CCF}
 \end{figure}
 
-Typically, cognitive architectures engineered for social robotics must integrate intrinsic social parameters. 
-For example, consider the a priori linguistic assumptions inherent in human-to-human interaction: while an individual may default to the localized dominant language, they must possess the cognitive flexibility to transition to a common lingua franca upon encountering a non-native interlocutor. 
-Within this architectural framework, language serves as a fundamental cultural variable that requires dynamic adaptation contingent upon the specific communicative requirements and preferences of the user.
-
-While existing literature has extensively investigated the adaptation of robotic behaviors based on cultural parameters, these methodologies frequently exhibit restricted flexibility regarding the acquisition and manipulation of such knowledge. 
-Furthermore, a significant portion of current architectures fails to account for intra-cultural heterogeneity—specifically "edge cases" wherein individual preferences diverge significantly from the statistical mode of a cultural demographic. 
-For example, in various geographic regions, populations may prioritize regional dialects or minority languages over the official national language—a nuance often overlooked by models predicated on generalized or monolithic cultural datasets.
-
-The proposed architecture exploits two fundamental characteristics of LLMs: first, having been pre-trained on expansive, heterogeneous datasets, these models can capture complex cultural distributions more effectively than classical, shallow ML approaches. This pre-training enables them to implicitly embed multi-layered cultural frameworks that shape the broader distribution of preferences within a national culture, including its constituent subcultures. Second, these generative architectures can be seamlessly integrated with external tools to execute targeted actions, effectively operating as a dedicated cultural adapter. Furthermore, the selection of LLMs is predicated on the premise that the most authoritative ground truth regarding user profiles is elicited directly from the participants themselves through natural language dialogue. This capability enables the system to interrogate the user in real time and dynamically refine latent cultural variables, ensuring a personalized and contextually aware interaction.
-
-Within this architectural design, a specialized Cultural Adapter component is initialized utilizing Cultural Default Preferences as a priori information. This component leverages the core Cognitive Architecture as the primary user interface, while simultaneously maintaining the User Preferences component as a stateful repository for the runtime evaluation of the cultural variables. Through this systematic integration, the framework facilitates dynamic, online adaptation tailored to idiosyncratic human requirements.
-
-However, the Cultural Adapter’s functional scope extends beyond knowledge acquisition; as a comprehensive framework, it must also facilitate the adaptation of sensory interpretation and communicative modalities. 
-For instance, various Speech-To-Text (STT) engines demonstrate heterogeneous performance metrics across different linguistic domains. 
-The adapter is therefore empowered to dynamically select the optimal STT engine predicated on linguistic data obtained during the initial heuristic phase or through subsequent real-time interactions. 
-Correspondingly, the Text-To-Speech (TTS) engine is programmatically selected and configured based on the active language parameter to ensure phonetic and prosodic alignment with the user's cultural context.
-
-The operational workflow is structured as follows: raw sensory inputs are ingested and processed by the LLM, which performs high-level optimization of parameters within a predefined set of cultural variables. 
-Upon the establishment of these variables and their resultant values, the system executes a global reconfiguration of its constituent modules to ensure rigorous alignment with the inferred cultural context.
-
-One might contend that the Cultural Adapter is redundant, under the premise that cultural domain knowledge is already inherently embedded within the latent representations of LLMs. 
-However, conventional methodologies typically rely on injecting external knowledge through prompting techniques—such as Retrieval-Augmented Generation (RAG)—or through fine-tuning, both of which lack the requisite flexibility for real-time, "on-the-fly" adaptation. 
-In this regard, the proposed architecture may be conceptualized as a variant of the RAG paradigm; rather than merely retrieving static domain knowledge, the LLM is utilized to dynamically tune every constituent module of the robotic architecture.
-
-\section{Measuring Culture and Cultural Competence}
-\label{ch5:sec:measuring_cultural_competence}
-Drawing from the preceding discussions, it is evident that a categorical, nation-centric approach lacks the requisite granularity to encapsulate the nuances of individual preferences and behaviors—elements that are indispensable for the advancement of culturally competent social robotics. 
-To mitigate this limitation, we investigated methodologies for quantifying both the multi-dimensional cultural profiles of users and the subsequent cultural competence of robotic agents.
-
-The granularity of these measurements dictates the formation of various cultural clusters. 
-For instance, while demographic variables such as age, gender, and nationality serve as foundational targets for cultural measurement, higher-fidelity dimensions—such as specific aesthetic or musical preferences—offer deeper insights. 
-Given the vast dimensionality of potential cultural features and the systemic scarcity of comprehensive datasets, an alternative metric for quantifying cultural alignment is required.
-
-In the relevant literature, the Inclusion of Other in the Self (IOS) scale is frequently utilized as a psychological metric for the perceived distance between an individual and a conceptual entity. 
-This can be operationalized through an Intersection Over Self (IOS) approach—a similarity measure between two sets defined as the cardinality of the intersection divided by the cardinality of the subject's set.
-
-In this framework, the IOS facilitates the measurement of alignment between an individual's specific profile and broader constructs such as national culture or linguistic groups. 
-This methodology enables a more granular understanding of the degree to which an individual’s preferences converge with or diverge from normative cultural expectations. 
-Furthermore, this metric serves as a dual-purpose evaluative tool for robotic cultural competence: users can quantitatively assess the "intersection" between the robot's exhibited behaviors and their own internal cultural values.
-
-While this metric effectively quantifies cultural proximity or "closeness," it is imperative to distinguish such proximity from the broader construct of cultural competence. 
-To achieve a comprehensive evaluation of a robot's cultural aptitude, one must integrate the user’s perceived competence of the agent. 
-The existing literature offers established psychometric instruments for this purpose, most notably the Robotic Social Attributes Scale (RoSAS), which is specifically designed to evaluate the multi-dimensional perceptions of SRs.
-
-The following evaluative items are operationalized through the Inclusion of Other in the Self (IOS) scale. 
-This pictorial measure assesses the perceived interpersonal or intercultural distance between the user (or their demographic identity) and the robotic agent, Pepper.
-
+The architecture can be described from a temporal interaction perspective as follows:
 \begin{itemize}
-\item Which illustration best characterizes the relationship between Pepper and your country of origin?
-\item Which illustration best characterizes the relationship between Pepper and your national culture?
-\item Which illustration best characterizes the relationship between Pepper and your individual preferences?
+    \item Sensors Component: captures raw environmental signals and converts them into low-level digital representations (e.g., audio sampled as a waveform);
+    \item Perception Component: transforms low-level sensor data into higher-level representations (e.g., speech signals converted into text via a Speech-to-Text (STT) system);
+    \item Cultural Adapter Component: reasons over high-level representations, initial cultural priors, and learned user preferences to adapt both perception and action parameters. For example, if the user requests a language change, the system updates the user preference model, reconfigures the perception pipeline (e.g., STT language settings), and adapts the action pipeline to generate output in the target language using Text-to-Speech (TTS);
+    \item Cultural Initial Preferences and User Preferences Components: These components act as memory repositories. The Cultural Initial Preferencescomponent stores the user's national culture or initial preference profile, while the User Preferences component stores the preferences learned and updated by the Cultural Adapter component. These preferences are represented as cultural parameters that influence the entire processing pipeline.
+    \item Action Component: converts high-level system commands into modality-specific outputs (e.g., text into speech synthesis commands using TTS);
+    \item Actuators Component: execute low-level control signals to produce physical effects in the environment (e.g., rendering synthesized audio through speakers).
 \end{itemize}
 
-To evaluate the user's perception of the robotic agent, we utilized the Robotic Social Attributes Scale (RoSAS)~\citep{carpinella2017robotic}. 
-Given that the experimental protocol required participants to complete this assessment across three distinct interaction strategies, we elected to reduce the number of measured dimensions to minimize the cognitive burden on the subjects. 
-Table~\ref{ch5:tab:rosas} delineates the specific items selected for each dimension; these items were prioritized based on having the highest factor loadings as identified in the original psychometric validation.
-\begin{table}[]
+Current SR architectures often rely on predefined cultural models and fixed national-level parameters. 
+While such approaches can capture broad cultural tendencies, they typically provide limited flexibility in the acquisition and manipulation of cultural knowledge~\citep{akinade2023culturally}. 
+Consequently, they are not designed to take into account intra-cultural heterogeneity and individual preferences that diverge from the statistical norm of a cultural group. 
+For example, in many regions users may prefer regional dialects or minority languages over the official national language, a nuance that is difficult to represent through monolithic cultural models. 
+Recent advances in LLMs offer a potential solution to these limitations. 
+Owing to their large-scale pre-training on diverse and heterogeneous corpora, LLMs can capture complex cultural distributions and implicitly encode both dominant cultural patterns and subcultural variations. 
+Furthermore, their ability to interact with external tools and knowledge sources enables them to function as adaptive reasoning components within larger robotic systems.
+
+The proposed framework is based on two premises. 
+First, cultural domain knowledge is partially encoded within the latent representations of LLMs. 
+Second, knowledge-injection techniques such as Retrieval-Augmented Generation (RAG)\cite{lewis2020retrieval} allow LLMs to access external and continuously updatable sources of information. 
+%\color{red} Citazione mancante \color{black} 
+In this context, RAG is not employed solely to retrieve static cultural priors. 
+Rather, the combination of implicit cultural knowledge and retrieved information enables the LLM to dynamically configure the constituent modules of the robotic architecture, including user preference modeling, perception, and action generation. 
+Compared with alternatives such as fine-tuning, RAG is particularly suitable due to the scarcity of culturally annotated data, its lower computational requirements, and its ability to incorporate new information without retraining.
+
+An illustrative example of this adaptive capability is language selection during interaction. 
+In human-to-human communication, individuals may default to a locally dominant language, yet communication often becomes more effective when interlocutors switch to a mutually intelligible language. 
+Conversely, when both individuals share a native language, interaction may be equally or more effective in that language. 
+Accordingly, the proposed framework treats language as a dynamic cultural variable whose value should be inferred and continuously refined according to the communicative needs and preferences of the user. 
+More broadly, the framework assumes that the user is the most reliable source of information regarding their own cultural characteristics. 
+Through natural language dialogue, the system can directly query users, acquire personalized cultural information, and iteratively update its representation of relevant cultural variables over time.
+
+We propose two conceptual approaches with respect to classical frameworks. The first is the Foreknowledge (F) approach, in which fixed cultural parameters are provided to the system and augmented by LLM capabilities. In this setting, the robot is initialized with national-level cultural priors but does not update them during interaction.
+
+The second approach, the Adaptation (A) strategy, extends the F approach by introducing a dynamic adaptation mechanism. In this configuration, the LLM is used to update the memory bank and modify cultural parameters based on interaction data. As a result, the system progressively adapts its behavior to align with individual user preferences.
+
+Both approaches are evaluated against a Baseline (B) condition in which cultural factors are not explicitly modeled. A completely culture-neutral system is not strictly achievable, since any artifact necessarily reflects design assumptions shaped by its creators. However, for the purposes of this work, the baseline refers to a system that does not explicitly embed language- or culture-specific parameters, but instead relies on default behavior derived from general population-level assumptions.
+
+Language provides a concrete example. If language is treated as a cultural parameter and Italian culture is used as the reference context, a baseline system may default to English due to its widespread international use. In contrast, the F approach initializes interaction in Italian, reflecting linguistic norms associated with the target cultural context. The A approach introduces an additional layer of personalization: when interacting with individuals belonging to minority populations in Italy, such as tourists, expatriates, or exchange students, the system may infer a preference for English and switch accordingly.
+
+%\color{red} Per far vedere che è un'idea generale, metterei anche un altro esempio, sottolineando che non è stato implementato. Oppure quello prossemico (implementato) e poi un esempio non implementato.
+%\color{black}
+Another example could be interpersonal distance. Interpersonal distance depends on context and on culture. Some culture might prefer being closer, some further. In this case, a baseline system might just perform an overall average of all the samples collected. F approach would initialize the system depending on the clusters. Italians might have a tendency of preferring a certain distance. The A approach would optimize that value asking for references to the user. 
+%\color{blue}
+Both examples have been included in the implementation. 
+More examples could be found, such as dinner time or food preferences, which however have not been implemented in this thesis.
+%\color{black}
+\section{System Implementation}
+\label{sec:sys_impl}
+
+The system is implemented on the Pepper SR, a semi-humanoid platform originally developed by Aldebaran Robotics and later acquired by SoftBank Robotics Europe. Pepper is designed for human–robot interaction, supporting speech-based communication, basic autonomous navigation, and expressive non-verbal behaviors. Figure~\ref{ch6:fig:pepper} shows the robot used in this study.
+%\color{red} Foto robot intero se vuoi far vedere come è fatto, e più piccola.
+%\color{black}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.3\linewidth]{Chapter5/Figs/SBR_Pepper-Hero_FullRobot.jpg}
+\caption{Pepper social robot used in this study.}
+\label{ch6:fig:pepper}
+\end{figure}
+
+The version used in this work is Pepper 1.8. The platform is programmable via an Android-based SDK, allowing development through Android Studio using Kotlin and Java. The SDK exposes APIs for speech synthesis and recognition, navigation, and basic gesture-based interaction, including head and torso movements that simulate social engagement cues.
+
+To support the computational requirements of the proposed architecture, the system adopts a client--server configuration. Due to the limitations of Pepper's onboard hardware, low-level functions such as motor control, localization, and sensor acquisition are executed directly on the robot, while high-level modules—including dialogue management, cultural adaptation, and path planning—run on an external server. The server is hosted on a Windows 11 workstation equipped with an Intel Core i7-13620H CPU (10 cores, 16 threads), 16 GB DDR5 RAM (5200 MT/s), and an NVIDIA GeForce RTX 4060 Laptop GPU with 8 GB GDDR6 VRAM.
+
+%Having described the system implementation \color{red} Non mi sembra che tu abbia descritto il system implementation. Non dici nulla di come implementi il sistema che nelle tre versioni baseline, F e A. Io terrei solo il paragrafo che segue e poi mi fermerei. I dettagli del setup sperimentale vengono dopo.
+%\color{black}, the following section presents the experimental scenario used to evaluate the proposed framework. 
+
+The selected application domain is home assistance, a context in which culturally adaptive interaction is particularly relevant. In this scenario, Pepper must navigate within an indoor environment while maintaining a conversation with the user. This setting provides opportunities to apply the cultural adaptation module at multiple levels of the system, including language selection, communication style, and proxemic behavior during navigation.
+
+The experimental setup consists of a controlled indoor environment in which the robot navigates while interacting with a stationary participant. Pepper moves from point A to point B and back while conversing with the participant, who remains standing in a fixed position. Points A and B correspond to opposite corners of a approximately $3 \times 3$ m room, while the human is positioned near a different corner of the same environment. This configuration allows the robot to generate different navigation paths while accounting for proxemic constraints.
+Figure~\ref{fig:upper_view} represents an upper map of the room with the robots trajectory from A to B and humans position.
+
+\begin{figure}[ht]
     \centering
-    \begin{tabular}{c|c|c}
-        \textbf{Warmth} & \textbf{Competence} & \textbf{Discomfort} \\
-        \hline
-         Happy & Capable & Scary \\
-         Feeling & Responsive & Strange \\
-         Social & Interactive & Awkward \\
-         Organic & Reliable & Dangerous \\
-         Compassionate & Competent & Awful \\
-         Emotional & Knowledgable & Aggressive \\
-    \end{tabular}
-    \caption{Table of RoSAS questionnaire items for each attribute.}
-    \label{ch5:tab:rosas}
-\end{table}
+    \includegraphics[width=\linewidth, trim={0 0 0 2.0cm}, clip]{Figs/40_45_to_80_80_prox=17.68_back=True.png}
+    \caption{Map of the room generated by the SLAM algorithm of Pepper. Red piece-wise line is an example of the trajectory generated by the path planning algorithm of the robot from point A to point B. The red bubble is the area of proximity to human in which the robot must not enter, while its center is the human position.}
+    \label{fig:upper_view}
+\end{figure}
 
-To quantify the perceived proximity between a user and their respective national identity, we employ the Inclusion of Other in the Self (IOS) scale, as developed by Aron et al.~\citep{aron1999relationship}. 
-This psychological instrument utilizes a series of increasingly overlapping circles to measure the degree of cognitive and emotional integration between the self and a target construct.
-The evaluative items are structured as follows:
+%\color{red} Mettere figura dall'alto con i punti della stanza, dove è il robot, dove è l'umano.
+%\color{black}
+Although intentionally simplified, the scenario preserves the key components required to evaluate the proposed framework, including culturally conditioned dialogue, perception, and navigation behaviors. At the same time, the controlled nature of the environment limits potential confounding factors and facilitates the analysis of the cultural adaptation mechanisms under investigation.
+
+\subsection{Cultural Parameters}
+\label{ch6:sec:cultural_parameters}
+
+The proposed framework encodes cultural information as a structured set of parameters that jointly condition high-level decision-making and low-level interaction behavior. These parameters are represented through two complementary mechanisms: Cultural Initial Preferences, which define prior assumptions at system initialization, and User Preferences, which are iteratively updated during interaction. Together, they influence perception, dialogue, and action modules in a unified manner. The selected parameter space is grounded in the interaction modalities relevant to the experimental scenario, namely language, communication style, and proxemics.
+
+Language is treated as a primary interface variable for human–robot communication. It determines the operational language used by STT, TTS, and language generation components within the dialogue system. Rather than assuming a fixed mapping between language and nationality, language is modeled as an individual-level preference that may vary independently of cultural affiliation. Empirical evidence suggests that linguistic preferences are context-dependent and cannot be reliably inferred from national identity alone, as users may select dialects, minority languages, or non-native languages depending on situational and personal factors. In the proposed system, language selection conditions all linguistic modules, ensuring consistency across STT, TTS, and LLM-based response generation.
+
+Communication style defines how information is linguistically structured during interaction. It is operationalized using the high-context versus low-context distinction from cultural communication theory, where high-context communication relies on implicit meaning and contextual cues, whereas low-context communication emphasizes explicit and direct expression. This parameter modulates the prompting strategy of the language model, influencing response verbosity, explicitness, and interactional framing. As such, it ensures that generated outputs remain aligned with the selected communicative profile.
+
+Proxemics models interpersonal distance regulation during human–robot interaction. It is implemented as a preferred interaction distance $D_{pref}$ associated with each cultural profile. This parameter directly influences the navigation module by shaping the cost function used in path planning, penalizing trajectories that violate socially acceptable distances. Given the variability of proxemic preferences across individuals and contexts, baseline values are derived from prior literature and subsequently refined through a preliminary empirical study conducted for the experimental setup.
+
+All cultural parameters are integrated into a unified system representation that links dialogue and navigation modules. While language and communication style primarily condition the dialogue system and language model behavior, proxemics directly affects motion planning. Importantly, all parameters remain dynamically adjustable during interaction and can be updated when user-specific preferences are inferred while performing A paradigm, while they are static otherwise. This design frames cultural adaptation as a system-level property rather than a module-specific feature, ensuring coherence between linguistic behavior and physical navigation.
+
+\subsection{Conversation}
+\label{ch6:sec:conversation}
+
+The dialogue management system operates on the client-side and governs the linguistic behavior of the robot during human--robot interaction. It conditions LLM outputs according to experimental constraints, cultural parameters, and interaction state. The system is implemented as a rule-conditioned interface using the Ollama framework~\footnote{\href{https://ollama.com/}{https://ollama.com/}}, enabling local deployment of a Llama 3.1 8B model.
+The LLM is deployed locally and selected for computational efficiency, multilingual capability, and long-context support (up to 128k tokens). On the robot, STT and TTS modules are dynamically updated in the A condition to maintain consistency between input and output language.
+
+To simplify the dynamics of the conversation, the SR will always wait for users input to answer and cannot be interrupted. 
+This dynamics simplify the implementation, but it is also a standard for most of artificial intelligence applications.
+
+Interaction is structured into four phases: presentation, chitchat, navigation, and termination. The presentation phase is executed deterministically and consists of a fixed greeting message, whose language depends on the experimental condition (Table~\ref{ch6:tab:greetings}).
+
 %
-\begin{itemize}
-\item Which illustration best characterizes your relationship with \textbf{[country]}?
-\item Which illustration best characterizes your relationship with \textbf{[language]}?
-\item Which illustration best characterizes your relationship with \textbf{[culture]}?
-\end{itemize}
-%
-For the purpose of this study, the variables are defined within the following sets:
-%
-\begin{itemize}
-\item $\text{[country]} \in \{ \text{Germany}, \text{Italy} \}$
-\item $\text{[language]} \in \{ \text{German}, \text{Italian} \}$
-\item $\text{[culture]} \in \{ \text{German Culture}, \text{Italian Culture} \}$
-\end{itemize}
-%
-
-\section{Cultural Parameters}
-To operationalize the proposed paradigm, it is necessary to extract specific cultural parameters that can be encoded within the robot’s knowledge base and dynamically adapted via the LLM
-\subsection{Language}
-Language constitutes one of the most critical cultural parameters, as it not only reflects how individuals express themselves but also, according to certain linguistic hypotheses, influences cognitive processes. 
-Consequently, it is reasonable to posit a reciprocal relationship wherein the primary language spoken informs communicative styles, and conversely, communicative needs shape linguistic choices.
-
-Existing literature suggests that reliance on a lingua franca may not represent the optimal solution for effective intercultural communication~\citep{pavan2009communicating}. 
-While individuals generally prefer to utilize their native tongue, the official national language does not always align with personal preferences within a specific geographic territory. 
-The motivations for this divergence are multifaceted and highly contextual; in certain regions, local dialects or minority languages are so deeply entrenched that they are prioritized over the national standard. 
-Furthermore, immigrant populations may exhibit a preference for their native language over the local vernacular.
-\subsection{Communication Style}
-Communication style pertains to the manner in which an individual conveys information, typically characterized by specific behavioral dimensions. 
-However, a scientific consensus regarding these dimensions is lacking, and empirical validation through rigorous experimentation remains sparse in the existing literature.
-
-One of the most prominent frameworks is the high-context and low-context continuum. Initially conceptualized by Hall~\citep{hall1973silent}, this dimension measures the degree to which message meaning is derived from the surrounding context versus explicit verbalization, resulting in varying levels of communicative directness. 
-High-context cultures often prioritize group harmony and relational well-being over individual achievement, exhibiting collectivist traits. 
-Conversely, low-context cultures favor explicit, direct, and task-oriented communication.
-
-Empirically, Germans are categorized as a quintessential low-context culture~\citep{fenkl2024handbook}, whereas Italians are classified as high-context, particularly in comparative studies. 
-For instance, Griggs~\citep{griggs1985going} ranked 15 countries, identifying Germany as having the lowest context and Italy as occupying a median position (7th). Beyond Hall's work, Hofstede utilized statistical analysis to define six foundational cultural dimensions~\citep{hofstede1984culture}, which have subsequently been mapped to communicative behaviors~\citep{smith2011communication,house2006communicative}. 
-While Smith et al.~\citep{smith2011communication} acknowledge that subcultural behaviors can occasionally be orthogonal to national averages, they maintain that most subcultures remain largely coherent with national norms.
-
-From a ML perspective, these findings suggest that initializing a system with national-level cultural priors—while remaining receptive to learning idiosyncratic individual preferences—constitutes an effective adaptive strategy, even when specific user parameters contradict national-level assumptions.
-
-It is also pertinent to highlight the divergent attitudes toward "small talk" within German and Italian communicative norms; empirical evidence suggests that Germans exhibit a lower propensity for phatic communication than their Italian counterparts~\citep{house2006communicative}. 
-This distinction fundamentally informs the execution of the country-based strategy, particularly in autonomous modes where the robot does not solicit direct user feedback.
-
-Conversely, as Italians demonstrate a higher inclination toward small talk, the system should engage in brief, rapport-building dialogue during feedback intervals. 
-In contrast, the culture-independent strategy should maintain a neutral communicative baseline, eschewing specific cultural sociability markers to serve as a control or a generalized interface.
-\subsection{Proxemics}
-Proxemics, as established in the literature, exerts a significant influence on the perception of agency and social presence. 
-Extensive empirical research corroborates that proxemic behavior is mediated by cultural variables, a phenomenon observed not only in interpersonal dynamics but also within the domain of human-robot interaction (HRI). 
-However, spatial preferences are not governed exclusively by cultural norms; they are influenced by a confluence of environmental and individual factors, which complicates the initialization of optimal spatial parameters within novel interactive contexts.
-
-To ascertain appropriate comfort distance parameters within this specific framework, a preliminary online study was conducted to establish the ground-truth initial proxemic values. 
-It should be emphasized that this empirical investigation is essential, as the criteria for optimal interpersonal distance between a robot and a human are highly contingent upon the situational context.
-
-\section{Additional Cultural Dimensions}
-
-Culture both influences and is influenced by trust in technology and individual personality traits. 
-Consequently, it is pertinent to incorporate validated psychometric assessments to evaluate the participants' technological trust and personality profiles.
-These metrics, integrated with the Inclusion of Other in the Self (IOS) scale for assessing cultural proximity, are essential for estimating the values of various cultural dimensions.
-
-The authors acknowledge that numerous other factors contribute to the multifaceted construct of "culture"; however, the scope of this study is intentionally delimited. 
-This limitation is methodologically justified by the requirement to mitigate the cognitive burden on participants and maintain the internal validity of the experimental results.
-
-Trust in technology, and specifically within the domain of Social Robotics, constitutes an expansive field of research characterized by a plurality of evaluative frameworks. 
-In the present study, we have adopted the methodological recommendations of Schrum et al. \citep{schrum2020four}, utilizing the 14-item Trust Perception sub-scale as developed by Schaefer \citep{schaefer2016measuring}.
 \begin{table}[]
-    \centering
-    \begin{tabular}{l|c|c|c|c|c}
-         \textbf{Items} & \textbf{Alias} & \multicolumn{4}{c|}{\textbf{Range}} \\
-         \hline
-         Function successfully& Trust Q1 & 0\% & 10\% & \dots & 100\% \\
-         Act consistenly & Trust Q2 & 0\% & 10\% & \dots & 100\% \\
-         Reliable & Trust Q3 & 0\% & 10\% & \dots & 100\% \\
-         Predictable & Trust Q4 & 0\% & 10\% & \dots & 100\% \\
-         Dependable & Trust Q5 & 0\% & 10\% & \dots & 100\% \\
-         Follow directions & Trust Q6 & 0\% & 10\% & \dots & 100\% \\
-         Meet the needs of the mission & Trust Q7 & 0\% & 10\% & \dots & 100\% \\
-         Perform exactly as instructed & Trust Q8 & 0\% & 10\% & \dots & 100\% \\
-         Have errors$^a$ & Trust Q9 & 0\% & 10\% & \dots & 100\% \\
-         Provide appropriate information & Trust Q10 & 0\% & 10\% & \dots & 100\% \\
-         Malfunction$^a$ & Trust Q11 & 0\% & 10\% & \dots & 100\% \\
-         Communicate with people & Trust Q12 & 0\% & 10\% & \dots & 100\% \\
-         Provide Feedback & Trust Q13 & 0\% & 10\% & \dots & 100\% \\
-         Unresponsive$^a$ & Trust Q14 & 0\% & 10\% & \dots & 100\% \\
-    \end{tabular}
-    \caption{14-items Trust Perception sub-scale items. In items marked with "a", the scale must be inverted during the statistical analysis.}
-    \label{tab:trust-scale}
+\centering
+\begin{tabular}{c|c|c}
+\textbf{Language}  & \textbf{Sentence} \\
+\toprule
+English  & \makecell{Hello, I am Pepper. I will be moving around the room.\\ Talk to me, but please stay where you are.} \\
+\midrule
+German & \makecell{Hallo, ich bin Pepper. Ich bewege mich im Raum.\\ Sprich mit mir, aber bitte bleib, wo du bist.}\\
+\midrule
+Italian  & \makecell{Ciao, sono Pepper. Mi muoverò nella stanza.\\ Parla con me, ma per favore rimani dove sei.}\\
+\bottomrule
+\end{tabular}
+\caption{Greeting sentences used during the presentation phase.}
+\label{ch6:tab:greetings}
 \end{table}
+%
 
-%\textcolor{red}{\textbf{TODO:} }literature trust in technology:
-%\begin{itemize}
-%    \item  Human Computer Trust Model \citep{sousa2014model}.
-%    \item Empirically Derived (ED)~\citep{jian2000foundations} (drawback: "assesses trust in automation in general, not considering the system’s intricate interactions with human-robot." according to \citep{pinto2022trust})
-%    \item Human-Computer Trust \citep{madsen2000measuring} (drawback: "The HTC showed agreement between items and target dimensions but stopped confirming factor analysis." according to \citep{pinto2022trust})
-%    \item SHAPE Automation Trust Index (SATI)~\citep{kelly2003guidelines} (drawback: "the SATI scale neglected psychometric tests of construct validity." according to \citep{pinto2022trust})
-%    \item Trust Perceived Scale-HRI~\citep{schaefer2016measuring} 
-%    \item HRI Trust Scale~\citep{yagoda2012you} (drawback: "The HRI Trust Scale is incomplete as a measure of trust and is intended to be paired with Rotter’s interpersonal trust inventory when applied\citep{rotter1967new}" according to \citep{pinto2022trust}).
-%\end{itemize}
-%Following the same procedure in: \citep{pinto2022trust} we can use HCTM (5 point scale) with the following items:
-%\begin{itemize}
-%    \item I believe that there could be negative consequences when using (…)
-%    \item I feel I must be cautious when using (…)
-%    \item It is risky to interact with (…)
-%    \item I believe that (…) will act in my best interest
-%    \item I believe that (…) will do its best to help me if I need help
-%    \item I believe that (…) is interested in under- standing my needs and preferences
-%    \item I think that (…) is competent and effective in (…)
-%    \item I think that (…) performs its role as (…) very well
-%    \item I believe that (…) has all the functionalities I would expect from
-%    \item If I use (...), I think i would be able to depend on
-%it completely
-%    \item  I can always rely on (...) for (...)
-%    \item I can trust the information presented to me by
-%(...).
-%    \item I can always rely on (...) for personal care \&
-%assistance.
-%    \item  I can trust the information presented to me by
-%(...).
-%\end{itemize}
-%Trust is context dependent, however the context is the same for any experiment's session. 
-%Trust is cultural dependent, so a cross-correlation is necessary.
+%\color{blue}
+Because the robot is designed to travel  between locations A and B and backwards, and the duration of each navigation task cannot be predicted a priori, the overall interaction is divided into three phases based on the robot's trajectory. The following section explains how this trajectory is generated; for now, it can be considered as a sequence of (n) waypoints.
 
-%\citep{lingg2023building} used in a navigation scenario for assistive robots three questionnaires (they are not used in robotics, just in this case): 
-%\begin{itemize}
-%    \item Trust in Automated Systems Test (TOAST)~\citep{wojton2020initial};
-%    \item Trust in Automation (TiA)~\citep{korber2019theoretical};
-%    \item Trust Perception Scale (TPS) ~\citep{schaefer2016measuring}
-%\end{itemize}
+Accordingly, the trajectory is partitioned into three equal segments. During the first (n/3) waypoints, the robot engages the user in a chit-chat phase. Between the (n/3)-th and (2n/3)-th waypoints, the robot discusses three predefined cultural topics: language, communication style, and/or proxemics. Finally, during the last third of the trajectory, the robot concludes the interaction by greeting the user.
 
-As discussed in the preceding section, numerous personality assessments are established and widely utilized within the scientific community. 
-In the field of social robotics, the Five-Factor Model (FFM), commonly referred to as the OCEAN model~\citep{goldberg1981language}, serves as the standard psychometric instrument for evaluating participant personality traits. 
-To maintain methodological rigor while minimizing the cognitive burden on the subjects, we have implemented the abbreviated 10-item Big Five Inventory (BFI-10)~\citep{rammstedt2007measuring}.
-\begin{table}[]
-    \hspace{-0.5in}
-    %\centering
-    \begin{tabular}{l|c|c|c|c|c|c}
-    I see myself as someone who … & Alias & \makecell{Disagree \\ Strongly} & \makecell{Disagree \\a little} & \makecell{Neither agree \\nor disagree} &  \makecell{Agree \\a little} & \makecell{Agree \\strongly} \\
-         \hline
-         1. … is reserved& BFM 1 & (1) & (2)&  (3)& (4)& (5) \\
-         2. … is generally trusting& BFM 2 & (1) & (2)&  (3)& (4)& (5) \\
-         3. … tends to be lazy	 & BFM 3 & (1) & (2)&  (3)& (4)& (5) \\
-         4. … is relaxed, handles stress well & BFM 4 & (1) & (2)&  (3)& (4)& (5) \\
-         5. … has few artistic interests& BFM 5 & (1) & (2)&  (3)& (4)& (5) \\
-         6. … is outgoing, sociable& BFM 6 & (1) & (2)&  (3)& (4)& (5) \\
-         7. … tends to find fault with others& BFM 7 & (1) & (2)&  (3)& (4)& (5) \\
-         8. … does a thorough job& BFM 8 & (1) & (2)&  (3)& (4)& (5) \\
-         9. … gets nervous easily& BFM 9 & (1) & (2)&  (3)& (4)& (5) \\
-         10. … has an active imagination  & BFM 10 & (1) & (2)&  (3)& (4)& (5) \\
-    \end{tabular}
-    \caption{10 Items of personality Big Five Model.}
-    \label{tab:BFM-10}
-\end{table}
+%\color{black}
+%After initialization, dialogue is coupled to navigation progress. The robot trajectory is divided into three segments \color{red} non capisco cosa siano questi segmenti rispetto ai punti A e B che hai citato prima e che ti ho fatto mettere nella figura. Chiarisci
+%\color{black}, each associated with a conversational context. 
+%The first segment supports chitchat for initial rapport building \color{red} Cosa è initial rapport building?
+%\color{black}. The second segment corresponds to the main navigation phase, during which predefined topics (Language, Communication Style, Proxemics) are discussed to elicit user preferences consistently across conditions. The final segment terminates the interaction.
 
-Crucially, closed-ended quantitative metrics are not the sole mechanism for evaluating cultural competence or architectural efficacy during human-robot interactions. Open-ended qualitative inquiries, which allow participants to elaborate extensively on their subjective perceptions of the experience, can uncover critical phenomenological perspectives that might otherwise be overlooked. Furthermore, incorporating non-verbal behavioral analysis can introduce valuable nuances to the evaluation framework.
+The same structure is used across all conditions, which differ only in cultural parameter initialization and update strategy. In the Baseline (B) condition, English is used exclusively with neutral parameter settings. In the Foreknowledge (F) condition, parameters are initialized from a predefined profile and kept fixed. In the A condition, parameters are updated at runtime from dialogue-based inferences.
 
-However, because experimental investigators may harbor implicit biases when evaluating their proprietary architectures against baseline solutions, a double-blind methodological approach is highly recommended. Specifically, employing independent annotators to evaluate and code the participants' behavioral responses separately—subsequently measuring inter-rater reliability to merge the datasets—constitutes a rigorous strategy for mitigating evaluator bias. For example, a structured coding scheme consisting of predefined behavioral descriptors can be provided to the annotators, enabling the quantification and frequentative analysis of specific behavioral occurrences.
+Cultural and proxemic variables are represented as discrete profiles, each defining a preferred interaction distance $D_{pref}$ and a communication style (high- vs low-context), derived from prior human--robot interaction and proxemics literature. Proxemic values are mapped to navigation cost functions to ensure consistency between dialogue state and motion planning.
 
-\begin{table}[]
-    \hspace{-0.8in}
-    %\centering
-    \begin{tabular}{c|c|c}
-    \textbf{Category} & \textbf{Codes (examples)} & \textbf{Notes} \\
-    \hline
-       Head orientation & Toward / Away / Tracking / Neutral & Direction relative to robot’s position \\
-       \hline
-        Torso orientation & Toward / Away / Neutral & Degree of bodily alignment\\
-        \hline
-       Posture  & Lean forward / Lean back / Upright / Freeze & Indicates engagement vs. caution \\
-       \hline
-        Arms/Hands & Open / Crossed / Self-touch / Fidgeting & Defensive vs. relaxed \\
-        \hline
-       Facial affect  & Smile / Neutral / Frown / Raised brows & Visible even in B\&W \\
-       \hline
-     Proxemics & Comfortable / Invasion / Withdrawal signal &  Robot’s distance vs. human adjustment\\
-    \end{tabular}
-    \caption{Table containing the signals to interpret during the video qualitative analysis.}
-    \label{tab:signals}
-\end{table}
+The conversation module follows a three-stage pipeline: (i) state tracking aligned with the dialogue phases, (ii) optional LLM-based interpretation of user input, and (iii) prompt construction for response generation. The LLM is constrained through system prompts encoding language consistency, response formatting, and behavioral rules.
+
+In the A condition, an additional inference step extracts updates to cultural variables from user utterances. This is implemented as constrained semantic parsing using the LLM, mapping input to discrete variables including language, communication style, and proxemics. The process is rule-driven and does not involve learning.
+
+Adaptation is implemented via runtime updates of the system prompt. When state changes are detected, updated parameters are injected into the prompt, conditioning subsequent outputs. This ensures alignment between dialogue and navigation modules, which share proxemic variables. Behavioral changes thus reflect structured state updates rather than learned policy adaptation.
+
+
+%\color{red} Lo hai già detto all'inizio della sezione\color{black} 
 
 
 
+\subsection{Navigation}
+\label{ch6:sec:navigation}
+
+Autonomous navigation refers to the capability of a robotic system to move from an initial configuration (Point A) to a target configuration (Point B) without external teleoperation. In social robotics, this problem is additionally constrained by the requirement to adhere of social conventions, like maintaining socially appropriate interpersonal distances, typically formalized through proxemic models.
+
+The experimental setting adopts two simplifying assumptions. First, humans are modeled as static obstacles within each planning episode. Although this assumption can be relaxed using online tracking and receding-horizon replanning, such extensions are not required in the present experiments. Second, the environment is assumed to be sufficiently large and sparsely structured to ensure the existence of at least one feasible path satisfying both geometric and social constraints, including a maximum interaction range on the order of 1.5 m.
+
+The Pepper robot provides native Simultaneous Localization and Mapping (SLAM) capabilities. A static occupancy grid is extracted via onboard APIs and used as the planning representation (Figure~\ref{ch6:fig:map}). To reduce odometry drift, localization is reset before each experimental session using the built-in Pepper routines.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.5\linewidth]{Chapter5/Figs/map_image_1752681775.png}
+\caption{Occupancy grid map generated by the Pepper robot.}
+\label{ch6:fig:map}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.8\linewidth}
+\includegraphics[width=\linewidth, trim={0.0cm 0.0cm 0.0cm 1.9cm}, clip]{Figs/40_45_to_80_80_prox=17.68_back=True.png}
+%\caption{$r_{human}=0.893$m}
+\end{subfigure} 
+\begin{subfigure}{0.8\linewidth}
+\includegraphics[width=\linewidth, trim={0.0cm 0.0cm 0.0cm 1.9cm}, clip]{Figs/40_45_to_80_80_prox=21.68_back=False.png}
+%\caption{$r_{human}=1.084$m}
+\end{subfigure} 
+\caption{Navigation results using our RRT* inspired algorithm, using radii $r_{human}\in\{0.893m, 1.084m\}$.}
+\label{ch6:fig:path_res}
+\end{figure}
+
+The navigation module is based on a sampling-based planner inspired by the RRT* (Rapidly-exploring Random Tree Star) algorithm~\citep{karaman2011sampling}. The implementation retains the core structure of RRT*, including incremental tree expansion, nearest-neighbor selection, and local rewiring, but modifies both the sampling strategy and cost function to incorporate social constraints. As a result, the classical guarantees of probabilistic completeness and asymptotic optimality do not strictly apply, and the method is interpreted as an RRT*-inspired heuristic.
+
+After an initial phase of uniform exploration to obtain a feasible solution, the search is biased toward an informed region of the state space analogous to Informed RRT*. In its ideal formulation, this region is defined as the prolate hyperspheroid:
+
+\[
+\mathcal{X}_{\text{sub}} =
+\left\{
+z \in \mathcal{X} \;\middle|\;
+\|z - z_{\text{start}}\|_2 + \|z - z_{\text{goal}}\|_2 \leq c_{\text{best}}
+\right\},
+\]
+
+where $c_{\text{best}}$ is the cost of the best solution found so far. In the present implementation, this bias is approximated via rejection sampling over the full configuration space rather than direct sampling from $\mathcal{X}_{\text{sub}}$.
+
+Social constraints are encoded through a human-aware cost function. Humans are modeled as circular regions with interaction radii derived from proxemic theory. The incremental cost of extending a node $z_{\text{new}}$ is defined as:
+
+\[
+C(z_{\text{new}}) = C(z_{\text{parent}}) + d(z_{\text{parent}}, z_{\text{new}}) + \alpha \sum_{h \in H} P(z_{\text{new}}, h),
+\]
+
+where $d(\cdot)$ denotes Euclidean edge cost, $\alpha$ is a weighting factor, and $P(\cdot)$ is a proxemic penalty enforcing socially acceptable distances and collision avoidance.
+
+In our context, the penalty from the human is defined as the following piece-wise function.
+
+$$
+P(z_{\text{new}}, h) = \begin{cases} 
+\infty & \text{if } 0 \le d < r_h \\ 
+(d - r_h)^2 & \text{otherwise}
+\end{cases}
+$$
+
+The distance $d$ denotes the Euclidean distance from the human, and $r_h$ represents the human’s proxemic radius. This penalty term enforces that trajectory samples remain outside the human’s proxemic region while encouraging the robot to stay close to, but not violate, the boundary defined by $r_h$.
+
+Since $r_h$ is a cultural parameter, it directly influences trajectory planning: larger values of $r_h$ cause the robot to maintain greater distances from humans, whereas smaller values allow it to pass closer.
+When the Cultural Adapter modifies this value in the Adaptation (A) paradigm, the path-planning pipeline is retriggered using the robot’s current localization. The destination is set to point B if it has not yet been reached, or to point A if the robot is already returning after reaching B.
+In the other paradigms, namely Baseline (B) and Foreknowledge (F), $r_h$ remains static. Consequently, planning is triggered only twice: initially from point A to point B, and after reaching point B, for the return path from point B to point A. %\color{red} Continuo quindi a non capire i 3 segmenti di cui parli nella conversation. Bisogna fare affetrmazioni non ambigue.
+%\color{black}
+
+The final path is smoothed using cubic spline interpolation (\texttt{CubicSpline}), producing a continuous trajectory $S(t)$ suitable for execution, at the cost of deviating from the discrete optimality assumptions of RRT*-style planners.
+
+Trajectory execution on the Pepper platform is performed via sequential waypoint tracking using the GoTo primitive in the Pepper 1.8 SDK. To mitigate stop-and-go behavior induced by waypoint discretization, a runtime filtering strategy is applied that skips intermediate waypoints when sufficiently close to the current target, improving motion continuity.
+
+
+\subsection{Orchestration and REST API}
+
+The server-side architecture is implemented as a Flask-based REST service that serves as the central orchestration layer for both navigation and dialogue subsystems. It mediates communication between the Pepper robot controller and computational modules responsible for path planning, state estimation, and language-based interaction.
+
+The system is structured as a modular, state-synchronized pipeline in which navigation and interaction processes run concurrently while sharing a unified representation of the robot state. The server maintains an asynchronous estimate of the robot pose $(x, y, \theta)$, received from Pepper’s native localization system via the REST interface. This ensures consistency between the physical platform and the server-side state used for planning and control.
+
+To connect discrete map representations with continuous motion, the system implements bidirectional coordinate transformations between occupancy-grid coordinates and metric world coordinates. These transformations account for map resolution, origin offsets, and axis conventions, ensuring consistent interpretation of spatial information across planning and execution.
+
+The REST interface exposes endpoints for localization updates, dialogue state updates, and trajectory generation. A dedicated endpoint triggers the path-planning pipeline, which is based on a sampling-based strategy inspired by the RRT* (Rapidly-exploring Random Tree Star) framework. The planner combines static obstacle information from the occupancy grid with dynamic cost terms derived from proxemic constraints provided by the dialogue subsystem.
+
+The dialogue subsystem (Conversation Manager) acts as an external state generator that conditions navigation through updates to proxemic parameters. When a change in cultural or interpersonal preferences is detected, the corresponding proxemic radius is updated on the server. This triggers a validation step that checks whether the current trajectory remains feasible under the updated social constraints. If violated, replanning is initiated using the updated cost function, ensuring consistency between motion plans and the current interaction context.
+
+Communication between modules is implemented via JSON-based payloads exchanged through the REST interface. This design decouples dialogue interpretation, state management, and motion planning while maintaining runtime coupling through shared state synchronization.
+
+%\color{red}Da qui in poi stai parlando di protocollo per esperimenti, non è più una descrizione del sistema. Da qualche parte nel prossimo capitolo andranno 
+%\color{black}
+
+%\color{red}
+
+
+%\color{black}

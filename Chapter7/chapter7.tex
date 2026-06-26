@@ -4,41 +4,340 @@
     \graphicspath{{Chapter7/Figs/Vector/}{Chapter7/Figs/}}
 \fi
 
-\chapter{Preliminary Online Experiment}
+\chapter{Experiments}
 \label{ch7}
-\section{Introduction}
+
+This chapter presents the design and protocol of the preliminary online survey used to ground the proxemic parameterization and of the main study. 
+Then, it presents the design and protocol of the main study.
+
+%\color{red} Scusa ma questo capitolo presenta tutto. Sia lo studio preliminare online sia il main study, giusto? Per favore aggiornalo.
+%\color{black}
+
+The results of the online study are then reported. %structured to mirror the analysis pipeline of the main experimental results.
+%\color{blue}
+Then, results of the main study are reported.
+%\color{red} Anche questo, contiene sia preliminare online sia main study.
+%\color{black}
+
+The chapter concludes with a discussion of the findings.
+
+\section{Preliminary Online Survey}
 \label{ch7:sec:intr}
 
-As delineated in the preceding chapter, a preliminary experimental phase was conducted to empirically determine the preferred interaction distances for German and Italian cohorts relative to a Baseline group. 
-This study was facilitated via the Prolific~\footnote{\href{https://www.prolific.com/}{https://www.prolific.com/}} crowdsourcing platform. 
-The methodological framework described herein serves as a foundational precursor to the primary investigation regarding socially-aware navigation and environmental interaction.
+A preliminary survey was conducted to empirically estimate culturally conditioned preferences for interpersonal distance in German and Italian cohorts. The study was deployed via the Prolific\footnote{\href{https://www.prolific.com/}{https://www.prolific.com/}} crowdsourcing platform. This phase serves as a calibration step for proxemic parameters subsequently integrated into the Cultural initial preferences component.% \color{red} farei riferimento esplicito al modulo "Cultural initial preference" in architettura 5.1, se è appropriato.
+%\color{black}. 
+The objective is to obtain quantitative estimates of preferred interpersonal distances under controlled and standardized stimuli, rather than to derive generalizable anthropological claims.
 
-This chapter provides a comprehensive description of the experimental protocol, the structured questionnaires employed, and the specific inclusion and exclusion criteria for participant selection. 
-Subsequently, the empirical results are presented, followed by a critical analysis and discussion of the findings.
+Participants are presented with six video stimuli shown as high-resolution rendered sequences from a fixed external camera perspective. Each stimulus depicts a Pepper robot navigating an indoor environment between two spatially separated targets and executing a return trajectory. The underlying navigation strategy is consistent with the RRT*-based framework described in Section~\ref{ch6:sec:navigation}, ensuring methodological alignment with the main experimental study.
 
-\section{Experiments}
-\label{ch7:sec:exps}
+The primary manipulation consists of varying the minimum robot–human distance during navigation. Across conditions, this distance ranges from $0.42\,\mathrm{m}$ to $1.5\,\mathrm{m}$ in discrete increments, covering proxemic configurations from close interpersonal proximity to socially conservative spacing. Participants evaluate each stimulus using a 5-point Likert scale assessing perceived comfort and appropriateness of the robot’s motion. A snapshot of the third view video shown to the participant is included in Figure~\ref{fig:online_survey_video}.
 
-The primary objective of this investigation is to establish a ground truth regarding the preferred interaction distances for two specific national cultures: German and Italian. 
-By quantifying these proxemic preferences under controlled conditions, we aim to validate the empirical basis for the cultural parameters integrated into the robot's navigation and adaptation modules.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{Chapter7/Figs/GIFSnapshot.png}
+    \caption{Snapshot of Third view Video included in the preliminary online survey.}
+    \label{fig:online_survey_video}
+\end{figure}
 
-The study commences with a questionnaire incorporating the same metrics detailed in Section~\ref{ch5:sec:measuring_cultural_competence}. 
-Following the initial assessment, participants are presented with six video recordings—rendered as high-quality GIFs—captured from a static camera perspective. 
-These videos depict the Pepper robot navigating between two points within a room and executing a return trajectory.
-The navigational algorithm employed in these stimuli is identical to the RRT*-based system described in Section~\ref{ch6:sec:navigation} and utilized in the subsequent main study. 
-Participants were tasked with rating each interaction on a 5-point Likert scale. 
-To assess proxemic preferences, the videos were varied according to the robot’s minimum distance from the human, ranging from $0.42\text{m}$ to $1.5\text{m}$ in equidistant increments.
+To reduce confounding effects related to human appearance, each condition is rendered with both a male and a female confederate. For each participant, one version is randomly assigned, ensuring balanced exposure across the dataset. These stimuli constitute third-person perspective evaluations, as participants observe the interaction externally.
 
-To maintain experimental rigor, each stimulus was recorded featuring both male and female subjects. 
-For each participant, one of the two subjects was randomly assigned to mitigate potential gender-related biases or interaction effects. 
-These recordings were formally classified as third-person perspective data, as they allowed participants to evaluate the interaction from an external, objective viewpoint.
+In addition, the protocol includes a complementary set of static first-person perspective images that approximate the viewpoint of a user directly interacting with the robot. These images replicate the same discrete proxemic distance levels as the video conditions and are intended to complement the dynamic stimuli by isolating spatial judgment from motion dynamics.
+An example of the first view images included in the preliminary online survey is in Figure~\ref{fig:online_survey_image}.
 
-Furthermore, the assessment incorporated static imagery captured from an egocentric perspective to approximate a first-person view (FPV). 
-This simulated the visual experience of a user interacting directly with the robot at the same discrete comfort intervals utilized in the video stimuli. 
-These images were formally categorized as first-person perspective data.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{Chapter7/Figs/Immagine3.png}
+    \caption{First view Image included in the preliminary online survey.}
+    \label{fig:online_survey_image}
+\end{figure}
 
-\section{Results}\label{ch7:sec:res}The preliminary online study involved a total of 36 participants, comprising 17 Italian and 19 German nationals. 
-Table~\ref{ch7:tab:online_study_res} presents the descriptive statistics, including the mean and standard deviation, disaggregated by question and cultural cohort. To evaluate the statistical significance and magnitude of the observed differences, we performed a Kolmogorov-Smirnov (KS) Test and calculated Cliff’s Delta, reporting the resulting $p$-values, $d$-values, and the corresponding effect size for each metric.
+\section{Main study}
+%Lo chiamerei così per distinguerlo dal preliminary. Poi in seguito metteremo "Prelimiminary online survey results" e "Main study results"
+\label{ch7:sec:exp}
+
+The experimental design uses the proposed framework and implementation in the controlled scenario presented in Section~\ref{sec:sys_impl}. The objective is to evaluate how different conditions influence perceived robotic competence and cultural alignment during embodied interaction.
+Three adaptive factors, already presented in Section~\ref{ch6:sec:cultural_parameters} are explicitly manipulated: interpersonal distance (proxemics), language, and linguistic style. 
+All modules follow the implementation described in the previous chapter.
+
+%\color{red} Ecco questa parte che segue diventa una sezione a sè che però non può andare qui. Prima dei parlare in dettaglio della parte tecnica e metodologica.
+%\color{black}
+
+Experiments were conducted in Zurich, Switzerland. Participants were recruited from two cultural groups, Italian and German. Swiss nationals were excluded in order to reduce variability associated with the multilingual and multicultural composition of the Swiss population. This decision was made for methodological reasons rather than technical limitations, as Italians and Germans constitute two of the largest expatriate communities in Zurich\footnote{\href{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}}. Restricting the participant pool simplified the definition of baseline and adapted interaction policies, particularly with respect to language initialization. Although the proposed system is capable of adapting to a broader range of linguistic and cultural conditions, Swiss participants were not included in the experimental sample in order to maintain a clearer comparison between the selected cultural groups.
+
+%\color{red}
+\subsection{Research question and hypotheses}
+%\color{black}
+The study addresses the following research question:
+
+\textit{How does a robot’s cultural competence influence user perception during navigational human--robot interaction in a residential scenario?}
+
+The following hypotheses are evaluated:
+
+\noindent \textbf{H1:} Incorporating static national-cultural priors increases perceived robotic competence compared to the Baseline condition, as measured by the RoSAS competence dimension.
+
+\noindent \textbf{H2:} Extending static priors with dynamic user-feedback adaptation increases perceived competence relative to both Baseline and Foreknowledge conditions.
+
+\noindent \textbf{H3:} Static national-cultural priors increase perceived cultural proximity between user and robot compared to Baseline, as measured by the IOS scale.
+
+\noindent \textbf{H4:} Dynamic adaptation further increases perceived cultural proximity relative to both Baseline and Foreknowledge conditions.
+
+%\color{red}
+\subsection{Conditions}
+The following conditions are defined:
+\begin{itemize}
+\item \textbf{Baseline:} The robot operates without explicit cultural modeling. Navigation is executed using a standard planning strategy, and interaction is conducted exclusively in English with a neutral, non-adaptive communicative profile.
+
+\item \textbf{Foreknowledge:} The robot is initialized with static cultural priors derived from the participant’s declared national affiliation. These priors define fixed parameters for language selection, proxemic distance ($D_{pref}$), and communicative style, which remain constant throughout the interaction.
+
+\item \textbf{Adaptation:} The robot is initialized with the same cultural priors as in the Foreknowledge condition but additionally incorporates a feedback-driven update mechanism. During interaction, it adjusts proxemic distance, linguistic style, and, when necessary, language selection based on observed user responses and dialogue cues. When uncertainty in the inferred user state is high, the system may explicitly query user preferences (e.g., preferred distance).
+\end{itemize}
+
+
+%\color{black}
+
+%\color{red}
+\subsection{Participants}
+Experiments were conducted in Zurich, Switzerland. Participants were recruited from two cultural groups, Italian and German. Swiss nationals were excluded in order to reduce variability associated with the multilingual and multicultural composition of the Swiss population. This decision was made for methodological reasons rather than technical limitations, as Italians and Germans constitute two of the largest expatriate communities in Zurich\footnote{\href{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}}. Restricting the participant pool simplified the definition of baseline and adapted interaction policies, particularly with respect to language initialization. Although the proposed system is capable of adapting to a broader range of linguistic and cultural conditions, Swiss participants were not included in the experimental sample in order to maintain a clearer comparison between the selected cultural groups.
+\color{black}
+
+Participant inclusion is restricted to individuals belonging to the target cultural cohorts required for parameter validation. Cultural affiliation is used as an initialization variable for both navigation and dialogue systems and is therefore essential for experimental control.
+Recruitment process has been conducted using DeSciL. platform~\footnote{\href{https://www.descil.ethz.ch/lab}{https://www.descil.ethz.ch/lab}} and experiments have been approved by ETH Zurich Ethics Commission~\footnote{Project 25 ETHICS-226: Cultural Competence for Social Robotics during Navigation  }
+
+Two cultural cohorts are considered:
+
+\begin{itemize}
+\item \textbf{Demographic feasibility:} Cohorts must be sufficiently represented in the recruitment region to ensure balanced sampling.
+\item \textbf{Cross-cultural differentiation:} Cohorts must exhibit measurable differences in communicative style and proxemic preference, consistent with the intended manipulation.
+\end{itemize}
+
+Sample size determination is based on an initial power analysis conducted independently of cultural stratification, with subsequent adjustments to ensure balanced allocation across cohorts and conditions.
+
+%\color{red}
+\subsection{Measuring user's Cultural Affinity and Robot's Cultural Competence}
+\label{ch5:sec:measuring_cultural_competence}
+
+The scope of the experiments is to evaluate the perceived cultural competence of conditions B, F, and A. The results should be interpreted in relation to population-level statistics, such as affinity with national culture. This section describes the methods used to measure user cultural affinity and robot cultural competence.
+
+Participants' cultural affinity is measured using an adapted Inclusion of Other in the Self (IOS) scale~\citep{aron1999relationship}, a standard instrument for assessing perceived closeness between entities such as individuals, groups, or abstract concepts. The adaptation consists in pairing the participant’s self-representation with a cultural construct (e.g., country, language, or cultural group), allowing quantification of perceived alignment with culturally associated profiles.
+
+The same instrument is also used to assess perceived closeness between the robot and the participant’s cultural references. This provides a direct measure of perceived overlap between the robot’s behavior and user expectations, and serves as an indirect indicator of perceived cultural competence.
+
+Table~\ref{tab:cultural_affinity_questions} reports example items used to assess participant--culture closeness.
+
+\begin{table}[]
+\centering
+\begin{tabular}{l|c}
+\textbf{Question} & \textbf{Alias} \\
+\midrule
+\makecell[l]{Which illustration best characterizes your \\ relationship with \textbf{[country]}?} & Cultural Affinity Q1 \\
+\makecell[l]{Which illustration best characterizes your \\ relationship with \textbf{[language]}?} & Cultural Affinity Q2 \\
+\makecell[l]{Which illustration best characterizes your \\ relationship with \textbf{[culture]}?} & Cultural Affinity Q3 \\
+\end{tabular}
+\caption{Cultural affinity questions.}
+\label{tab:cultural_affinity_questions}
+\end{table}
+
+Table~\ref{tab:cultural_closeness_questions} reports items used to assess robot--culture closeness.
+
+\begin{table}[]
+\centering
+\begin{tabular}{l|c}
+\textbf{Question} & \textbf{Alias} \\
+\midrule
+\makecell[l]{Which illustration best characterizes the relationship \\ between Pepper and your country of origin?} & Cultural Closeness Q1 \\
+\makecell[l]{Which illustration best characterizes the relationship \\ between Pepper and your national culture?} & Cultural Closeness Q2 \\
+\makecell[l]{Which illustration best characterizes the relationship \\ between Pepper and your individual preferences?} & Cultural Closeness Q3 \\
+\end{tabular}
+\caption{Cultural closeness questions.}
+\label{tab:cultural_closeness_questions}
+\end{table}
+
+In all cases, the IOS measure is implemented as a seven-point pictorial scale representing varying degrees of overlap between the two entities under evaluation (Figure~\ref{fig:ios_scale}).
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{Chapter5/Screenshot 2026-06-18 234435.png}
+\caption{Inclusion of Other in the Self (IOS) scale illustration.}
+\label{fig:ios_scale}
+\end{figure}
+
+While IOS captures perceived cultural proximity, it does not fully characterize the broader construct of cultural competence. A complete evaluation therefore complements proximity-based measures with established assessments of perceived robot attributes.
+
+To this end, the study employs the Robotic Social Attributes Scale (RoSAS)~\citep{carpinella2017robotic}, a validated instrument for multidimensional evaluation of SRs. Only the Competence dimension is considered to reduce participant burden while preserving construct validity. Responses are collected on a 7-point Likert scale (1 = strongly disagree, 7 = strongly agree), and the Competence score is computed as the mean of the corresponding items reported in Table~\ref{ch5:tab:rosas}.
+
+\begin{table}[]
+\centering
+\begin{tabular}{c|c|c}
+\textbf{Warmth} & \textbf{Competence} & \textbf{Discomfort} \\
+\hline
+Happy & Capable & Scary \\
+Feeling & Responsive & Strange \\
+Social & Interactive & Awkward \\
+Organic & Reliable & Dangerous \\
+Compassionate & Competent & Awful \\
+Emotional & Knowledgeable & Aggressive \\
+\end{tabular}
+\caption{RoSAS questionnaire items for each attribute dimension.}
+\label{ch5:tab:rosas}
+\end{table}
+
+ In this thesis, we will name: Cultural Affinity the IOS questionnaire for measuring how much a participant is close to its national culture; Cultural Proximity the IOS questionnaire for measuring how much a robot is close to participants national culture; and Competence the scale taken from RoSaS questionnaire that measures the perceived Competence of the robot from the participant. 
+The sum of Cultural Proximity and Competence is called Cultural Competence questionnaire.
+
+\subsection{Additional Measures}
+
+Culture is a multifaceted construct shaped by additional factors such as trust in technology and individual personality traits. Consequently, validated psychometric instruments are included to assess participants’ trust in technology and personality profiles. Together with the IOS scale for cultural proximity, these measures support the characterization of user-related cultural factors and the interpretation of culturally grounded behavioral dimensions. Other participant characteristics, such as age, may also influence cultural nuances. However, introducing too many dimensions at this stage of the study would have increased participant cognitive load during questionnaire completion and potentially biased the main study results.
+
+Trust in technology, particularly in social robotics, has been extensively studied through multiple conceptual and measurement frameworks. In this work, we follow the recommendations of Schrum et al.~\citep{schrum2020four} and adopt the 14-item Trust Perception subscale developed by Schaefer~\citep{schaefer2016measuring}. Responses are collected using a 0\%--100\% continuous percentage scale, as defined in the original instrument. The trust score is computed as the mean across all items, after reverse-coding negatively worded items. The related questions are presented in Table~\ref{tab:trust-scale}.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{l|c|c|c|c|c}
+         \textbf{Items} & \textbf{Alias} & \multicolumn{4}{c|}{\textbf{Range}} \\
+         \hline
+         Function successfully& Trust Q1 & 0\% & 10\% & \dots & 100\% \\
+         Act consistenly & Trust Q2 & 0\% & 10\% & \dots & 100\% \\
+         Reliable & Trust Q3 & 0\% & 10\% & \dots & 100\% \\
+         Predictable & Trust Q4 & 0\% & 10\% & \dots & 100\% \\
+         Dependable & Trust Q5 & 0\% & 10\% & \dots & 100\% \\
+         Follow directions & Trust Q6 & 0\% & 10\% & \dots & 100\% \\
+         Meet the needs of the mission & Trust Q7 & 0\% & 10\% & \dots & 100\% \\
+         Perform exactly as instructed & Trust Q8 & 0\% & 10\% & \dots & 100\% \\
+         Have errors$^a$ & Trust Q9 & 0\% & 10\% & \dots & 100\% \\
+         Provide appropriate information & Trust Q10 & 0\% & 10\% & \dots & 100\% \\
+         Malfunction$^a$ & Trust Q11 & 0\% & 10\% & \dots & 100\% \\
+         Communicate with people & Trust Q12 & 0\% & 10\% & \dots & 100\% \\
+         Provide Feedback & Trust Q13 & 0\% & 10\% & \dots & 100\% \\
+         Unresponsive$^a$ & Trust Q14 & 0\% & 10\% & \dots & 100\% \\
+    \end{tabular}
+    \caption{14-items Trust Perception sub-scale items. In items marked with "a", the scale must be inverted during the statistical analysis.}
+    \label{tab:trust-scale}
+\end{table}
+
+Numerous personality assessment instruments are available and widely used in the literature. In social robotics, the Five-Factor Model (FFM), also known as the OCEAN model~\citep{goldberg1981language}, is among the most commonly adopted frameworks for assessing personality traits. To ensure methodological rigor while minimizing participant burden, this study employs the abbreviated 10-item Big Five Model (BFM-10)~\citep{rammstedt2007measuring}. This instrument provides a concise measure of the five major personality dimensions: Openness, Conscientiousness, Extraversion, Agreeableness, and Neuroticism. Responses are collected using a 5-point Likert scale ranging from 1 (strongly disagree) to 5 (strongly agree). Scores for each personality dimension are computed according to the standard BFM-10 scoring procedure, including reverse-coded items where applicable. The related questions are presented in Table~\ref{tab:BFM-10}.
+
+\begin{table}[]
+    \hspace{-0.5in}
+    %\centering
+    \begin{tabular}{l|c|c|c|c|c|c}
+    I see myself as someone who … & Alias & \makecell{Disagree \\ Strongly} & \makecell{Disagree \\a little} & \makecell{Neither agree \\nor disagree} &  \makecell{Agree \\a little} & \makecell{Agree \\strongly} \\
+         \hline
+         1. … is reserved& BFM 1 & (1) & (2)&  (3)& (4)& (5) \\
+         2. … is generally trusting& BFM 2 & (1) & (2)&  (3)& (4)& (5) \\
+         3. … tends to be lazy	 & BFM 3 & (1) & (2)&  (3)& (4)& (5) \\
+         4. … is relaxed, handles stress well & BFM 4 & (1) & (2)&  (3)& (4)& (5) \\
+         5. … has few artistic interests& BFM 5 & (1) & (2)&  (3)& (4)& (5) \\
+         6. … is outgoing, sociable& BFM 6 & (1) & (2)&  (3)& (4)& (5) \\
+         7. … tends to find fault with others& BFM 7 & (1) & (2)&  (3)& (4)& (5) \\
+         8. … does a thorough job& BFM 8 & (1) & (2)&  (3)& (4)& (5) \\
+         9. … gets nervous easily& BFM 9 & (1) & (2)&  (3)& (4)& (5) \\
+         10. … has an active imagination  & BFM 10 & (1) & (2)&  (3)& (4)& (5) \\
+    \end{tabular}
+    \caption{10 Items of personality Big Five Model.}
+    \label{tab:BFM-10}
+\end{table}
+
+Importantly, closed-ended quantitative measures are not sufficient to fully capture cultural competence or the complexity of human–robot interaction outcomes. Open-ended qualitative responses are therefore collected to complement structured scales and provide additional insight into participants’ subjective experience. In Figure~\ref{open_question} the final question asked to the participant is presented.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=01.0\linewidth]{Chapter5/Figs/Screenshot 2026-06-23 234408.png}
+    \caption{Final open-ended question of the main study questionnaire.}
+    \label{fig:open_question}
+\end{figure}
+
+Furthermore, non-verbal behavioral analysis is used as a complementary evaluation layer to provide behavioral grounding for subjective measures. To mitigate potential evaluator bias—particularly when assessing systems developed by the authors—a double-blind annotation protocol is recommended. In this setting, independent annotators code participant behavior using a predefined annotation scheme, and inter-rater reliability is computed prior to aggregation. A structured coding scheme with predefined behavioral categories is used to observe interaction signals, enabling systematic quantification and frequency analysis of behavioral patterns. These signals are mapped into Table~\ref{tab:signals}.
+
+
+\begin{table}[]
+    \hspace{-0.8in}
+    %\centering
+    \begin{tabular}{c|c|c}
+    \textbf{Category} & \textbf{Codes (examples)} & \textbf{Notes} \\
+    \hline
+       Head orientation & Toward / Away / Tracking / Neutral & Direction relative to robot’s position \\
+       \hline
+        Torso orientation & Toward / Away / Neutral & Degree of bodily alignment\\
+        \hline
+       Posture  & Lean forward / Lean back / Upright / Freeze & Indicates engagement vs. caution \\
+       \hline
+        Arms/Hands & Open / Crossed / Self-touch / Fidgeting & Defensive vs. relaxed \\
+        \hline
+       Facial affect  & Smile / Neutral / Frown / Raised brows & Visible even in B\&W \\
+       \hline
+     Proxemics & Comfortable / Invasion / Withdrawal signal &  Robot’s distance vs. human adjustment\\
+    \end{tabular}
+    \caption{Table containing the signals to interpret during the video qualitative analysis.}
+    \label{tab:signals}
+\end{table}
+%\color{black}
+
+%\color{red}
+\subsection{Experimental Protocol and Data Collection}
+%\color{black}
+
+The experimental procedure follows a fixed and standardized sequence to ensure consistency across participants and conditions, and is complemented by a structured data acquisition pipeline.
+
+%\subsection{Experimental Procedure}
+
+\begin{itemize}
+\item \textbf{Reception and Identification:} Participants are welcomed and eligibility criteria are verified, including cultural affiliation (Italian or German).
+
+\item \textbf{Initial Briefing:} Participants are informed about the study and robot capabilities. The robot is introduced in autonomous mode to familiarize participants with baseline behavior. Participants are assigned a fixed spatial position in the environment; rotation is permitted, while translational movement is restricted.
+
+\item \textbf{Study Overview:} The session structure is explained, consisting of a baseline questionnaire followed by three interaction blocks, each followed by a post-interaction questionnaire. Participants are informed that sessions are video-recorded; recordings are anonymized by removing audio and converting visual data to grayscale.
+
+\item \textbf{Informed Consent:} Written consent is obtained prior to participation.
+
+\item \textbf{Pre-test Assessment:} Participants complete baseline psychometric instruments. The questionnaires include: Cultural Affinity questions, Trust questionnaire, BFM Questionnaire. %\color{red}
+%Scusa ma prima hai citato anche il RoSAS. Se non lo usi inutile citarlo. \color{black}
+
+
+\item \textbf{Interaction Instructions:} Standardized constraints are provided:
+\begin{enumerate}
+    \item Participants are required to engage verbally with the robot.
+    \item Speech must be produced in the language currently used by the robot.
+    \item In cases of code-switching, responses should follow the perceived dominant language of the robot utterance.
+    \item If comprehension fails, English is used as a fallback language.
+    \item Speech must be clear and sufficiently loud for recognition.
+    \item Failed recognition must be addressed by repeating the utterance.
+    \item Interaction is strictly dyadic and contingent on speech recognition.
+    \item The robot may not maintain continuous eye contact due to navigation constraints.
+    \item The system operates in half-duplex mode.
+    \item The interaction ends only upon explicit instruction from the experimenter, regardless of task completion.
+\end{enumerate}
+
+\item \textbf{System Initialization:} The assigned experimental condition is configured and the first interaction block is initiated.
+
+\item \textbf{Iterative Evaluation:} After each block, the environment is reset and participants complete the corresponding questionnaire on Cultural Competence. The Questionnaire is composed by questions regarding the perception of robot's Cultural Proximity and Competence (coming from RoSaS questionnaire).
+
+\item \textbf{Debriefing:} Upon completion of all blocks, participants are informed about the experimental conditions and complete a final qualitative assessment.
+
+\item \textbf{Compensation:} Participants are remunerated for participation.
+\end{itemize}
+
+Data collection is structured into three phases: pre-interaction profiling, in-interaction behavioral recording, and post-interaction assessment.
+
+\begin{itemize}
+    \item \textbf{Pre-interaction Profiling:} Participants complete psychometric questionnaires capturing Cultural Affinity, Trust and BFM.
+
+    \item \textbf{In-interaction Recording:} During each interaction block, multimodal data is collected, including video recordings of proxemic behavior and answers to perceived Cultural Competence of the robot. %\color{red} Per favore usa il nome univoco dei questionari ovunque. Come si chiama questo? Prima non lo chiami esattamente così. \color{black}
+
+
+    \item \textbf{Post-interaction Assessment:} Participants complete open-ended questionnaires designed to capture qualitative impressions of the interaction and perceived system behavior.
+\end{itemize}
+
+All questionnaires are administered via Google Forms, and video recordings are captured using fixed-position cameras.
+Behavioral annotation follows establishedHRI coding methodologies~\citep{9515502}, using a structured schema (Table~\ref{tab:signals}) to discretize non-verbal behaviors. To reduce observer bias, a double-blind annotation protocol is employed, with two independent annotators blinded to conditions and hypotheses. Inter-rater agreement is used to consolidate annotations.
+
+
+
+\section{Preliminary Online Survey Results}
+\label{ch7:sec:res}
+
+The preliminary online study involved 36 participants, comprising 17 Italian and 19 German respondents. Table~\ref{ch7:tab:online_study_res} reports descriptive statistics (mean and standard deviation) disaggregated by question and cultural cohort.
+
+Group differences were assessed using Kolmogorov--Smirnov (KS) tests, complemented by Cliff’s Delta as a non-parametric effect size measure. The corresponding $p$-values and effect sizes are reported for each comparison.
 
 \begin{table}[]
 \centering
@@ -53,341 +352,523 @@ Language & 0.79 & 0.73 & 0.22 & 0.22 & 0.88 & 0.20 & Small \\
 Culture & 0.65 & 0.54 & 0.21 & 0.21 & 0.63 & 0.26 & Small \\
 \addlinespace
 Video 1 & 0.37 & 0.35 & 0.16 & 0.16 & 1.00 & 0.09 & Negligible \\
-\addlinespace
 Video 2 & 0.27 & 0.30 & 0.14 & 0.16 & 0.95 & -0.17 & Small \\
-\addlinespace
 Video 3 & 0.38 & 0.40 & 0.14 & 0.15 & 0.88 & -0.11 & Negligible \\
-\addlinespace
 Video 4 & 0.51 & 0.53 & 0.14 & 0.15 & 0.88 & -0.07 & Negligible \\
-\addlinespace
 Video 5 & 0.54 & 0.51 & 0.13 & 0.15 & 0.75 & 0.11 & Negligible \\
-\addlinespace
 Video 6 & 0.50 & 0.44 & 0.20 & 0.20 & 0.88 & 0.18 & Small \\
 \addlinespace
 Image 1 & 0.24 & 0.24 & 0.19 & 0.18 & 1.00 & -0.01 & Negligible \\
-\addlinespace
 Image 2 & 0.37 & 0.40 & 0.18 & 0.18 & 0.97 & -0.09 & Negligible \\
-\addlinespace
 Image 3 & 0.44 & 0.40 & 0.13 & 0.14 & 0.91 & 0.16 & Small \\
-\addlinespace
 Image 4 & 0.42 & 0.46 & 0.12 & 0.17 & 0.75 & -0.15 & Small \\
-\addlinespace
 Image 5 & 0.40 & 0.39 & 0.20 & 0.19 & 1.00 & 0.03 & Negligible \\
-\addlinespace
 Image 6 & 0.36 & 0.32 & 0.23 & 0.21 & 0.73 & 0.07 & Negligible \\
 \bottomrule
 \end{tabular}
-\caption{Statistics of the results of the online study for each question and each national culture.}
+\caption{Statistics of the online study results for each question and cultural cohort.}
 \label{ch7:tab:online_study_res}
 \end{table}
 
-Figure~\ref{ch7:fig:culture_answeres_distributions} illustrates the probability distributions regarding the degree to which German and Italian participants identify with their respective national territories, languages, and cultures, alongside the aggregate sample average.
-
+\begin{comment}
+    
+Figure~\ref{ch7:fig:culture_answeres_distributions} illustrates response distributions for perceived identification with national territory, language, and culture, along with the aggregated sample distribution.
 \begin{figure*}
 \centering
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
-\includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about user culture_German.pdf}
-\caption{Germans answers distribution on subjects assessment of culture.}
+\includegraphics[width=\columnwidth, trim={0 0.7cm 0 0}, clip]{Chapter7/Figs/frequences of answers about user culture_German.pdf}
+\caption{German cohort: cultural self-assessment distributions.}
 \end{subfigure} \\
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
-\includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about user culture_Italian.pdf}
-\caption{Italian answers distribution on subjects assessment of culture.}
+\includegraphics[width=\columnwidth, trim={0 0.7cm 0 0}, clip]{Chapter7/Figs/frequences of answers about user culture_Italian.pdf}
+\caption{Italian cohort: cultural self-assessment distributions.}
 \end{subfigure} \\
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
-\includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about user culture_Italian.pdf}
-\caption{Global answers distribution on subjects assessment of culture.}
+\includegraphics[width=\columnwidth, trim={0 0.7cm 0 0}, clip]{Chapter7/Figs/frequences of answers about user culture_GLOBALE.pdf}
+\caption{Aggregated sample distributions.}
 \end{subfigure}
-\caption{Distributions of the answers on the questions related to on subjects culture.}
+\caption{Distributions of responses to culture-related self-assessment items.}
 \label{ch7:fig:culture_answeres_distributions}
 \end{figure*}
 
-Figure~\ref{ch7:fig:1st_view_answeres_distributions} illustrates the probability distributions of preferences for both German and Italian cohorts, as well as the aggregate sample average, regarding the robot's proximity distances. 
-These data points were captured while participants evaluated static imagery from an egocentric (first-person) perspective.
+\end{comment}
+
+Figure~\ref{ch7:fig:1st_view_answeres_distributions} reports preferred robot proximity distributions derived from first-person perspective stimuli for both cohorts and the aggregated sample.
 
 \begin{figure*}
 \centering
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
 \includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about first view images_German.pdf}
-\caption{Germans answers distribution on $1^{st}$ View Images.}
+\caption{German cohort: first-person view responses.}
 \end{subfigure} \\
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
 \includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about first view images_Italian.pdf}
-\caption{Italian answers distribution on $1^{st}$ View Images.}
+\caption{Italian cohort: first-person view responses.}
 \end{subfigure} \\
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
 \includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about first view images_GLOBALE.pdf}
-\caption{Global answers distribution on $1^{st}$ View Images.}
+\caption{Aggregated sample: first-person view responses.}
 \end{subfigure}
-\caption{Distributions of the answers on the questions related to $1^{st}$ View Images.}
+\caption{Distributions of responses for first-person perspective stimuli.}
 \label{ch7:fig:1st_view_answeres_distributions}
 \end{figure*}
 
-Figure~\ref{ch7:fig:3rd_view_answeres_distributions} illustrates the probability distributions of preferences for German and Italian cohorts, as well as the aggregate sample average, regarding the robot's proximity distances. 
-These ratings were elicited while participants observed video sequences of the robot navigating a bidirectional trajectory between two points from a third-person perspective. 
+Figure~\ref{ch7:fig:3rd_view_answeres_distributions} reports analogous distributions for third-person video stimuli depicting robot navigation between two spatial targets.
 
 \begin{figure*}
 \centering
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
 \includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about third view videos_German.pdf}
-\caption{Germans answers distribution on $3^{rd}$ View Videos.}
+\caption{German cohort: third-person view responses.}
 \end{subfigure} \\
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
 \includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about third view videos_Italian.pdf}
-\caption{Italian answers distribution on  $3^{rd}$ View Videos.}
+\caption{Italian cohort: third-person view responses.}
 \end{subfigure} \\
 \begin{subfigure}[b]{0.75\columnwidth}
 \centering
 \includegraphics[width=\columnwidth]{Chapter7/Figs/frequences of answers about third view videos_GLOBALE.pdf}
-\caption{Global answers distribution on  $3^{rd}$ View Videos.}
+\caption{Aggregated sample: third-person view responses.}
 \end{subfigure}
-\caption{Distributions of the answers on the questions related to  $3^{rd}$ View Videos.}
+\caption{Distributions of responses for third-person perspective stimuli.}
 \label{ch7:fig:3rd_view_answeres_distributions}
 \end{figure*}
 
-The empirical findings derived from this preliminary study demonstrate significant intrinsic value. 
-An analysis of the data distributions reveals distinct variances between the German and Italian cohorts regarding their proxemic and communicative preferences. 
-These disparities are corroborated by the statistical results presented in Table~\ref{ch7:tab:online_study_res}, which identifies specific metrics where the distribution shift reaches statistical significance between the two cultures. 
-Furthermore, the results indicate that these cross-cultural differences are mitigated as the cohorts converge toward a unified consensus on certain neutral parameters.
+Overall, the results indicate measurable differences between German and Italian cohorts in proxemic and communicative preferences. Several items exhibit small but non-negligible effect sizes, while other metrics show convergence across cohorts, suggesting partial alignment under neutral or non-contextual conditions.
 
-\begin{comment}
-    %
-\begin{table}[ht]
-\centering
-{\footnotesize
-\begin{tabular}{lll}
-\toprule
-q$_i$ & Italian & German \\
-\midrule
-q1 & \makecell[l]{Quale immagine descrive meglio il tuo rapporto\\ con [paese]?} & \makecell[l]{Welches Bild beschreibt Ihre Beziehung\\ zu [Land] am besten?} \\
-q2 & \makecell[l]{Quale immagine descrive meglio il tuo rapporto\\ con [lingua]?} & \makecell[l]{Welches Bild beschreibt Ihre Beziehung\\ zu [Sprache] am besten?} \\ 
-q3 & \makecell[l]{Quale immagine descrive meglio il tuo rapporto\\ con [cultura]?} & \makecell[l]{Welches Bild beschreibt Ihre Beziehung\\ zu [Kultur] am besten?} \\
-q4 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata dall'umano  (1 è il peggiore, 5 è il migliore).} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zum Menschen\\ einhält (1 ist der Hammer, 5 ist der Beste).} \\
-q5 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata dall'umano  (1 è il peggiore, 5 è il migliore).} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zum Menschen\\ einhält (1 ist der Hammer, 5 ist der Beste).} \\
-q6 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata dall'umano  (1 è il peggiore, 5 è il migliore).} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zum Menschen\\ einhält (1 ist der Hammer, 5 ist der Beste).} \\
-q7 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata dall'umano  (1 è il peggiore, 5 è il migliore).} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zum Menschen\\ einhält (1 ist der Hammer, 5 ist der Beste).} \\
-q8 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata dall'umano  (1 è il peggiore, 5 è il migliore).} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zum Menschen\\ einhält (1 ist der Hammer, 5 ist der Beste).} \\
-q10 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata da te  (1 è il peggiore, 5 è il migliore). Così è\\ come vedresti il robot dalla tua prospettiva.} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zu Ihnen einhält\\ (1 ist der Hammer, 5 ist der Beste). Das ist\\ so, dass der Roboter Ihr Ziel verlässt.} \\
-q10 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata da te  (1 è il peggiore, 5 è il migliore). Così è\\ come vedresti il robot dalla tua prospettiva.} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zu Ihnen einhält\\ (1 ist der Hammer, 5 ist der Beste). Das ist\\ so, dass der Roboter Ihr Ziel verlässt.} \\
-q11 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata da te  (1 è il peggiore, 5 è il migliore). Così è\\ come vedresti il robot dalla tua prospettiva.} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zu Ihnen einhält\\ (1 ist der Hammer, 5 ist der Beste). Das ist\\ so, dass der Roboter Ihr Ziel verlässt} \\
-q12 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata da te  (1 è il peggiore, 5 è il migliore). Così è\\ come vedresti il robot dalla tua prospettiva.} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zu Ihnen einhält\\ (1 ist der Hammer, 5 ist der Beste). Das ist\\ so, dass der Roboter Ihr Ziel verlässt} \\
-q13 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata da te  (1 è il peggiore, 5 è il migliore). Così è\\ come vedresti il robot dalla tua prospettiva.} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zu Ihnen einhält\\ (1 ist der Hammer, 5 ist der Beste). Das ist\\ so, dass der Roboter Ihr Ziel verlässt} \\
-q14 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata da te  (1 è il peggiore, 5 è il migliore). Così è\\ come vedresti il robot dalla tua prospettiva.} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zu Ihnen einhält\\ (1 ist der Hammer, 5 ist der Beste). Das ist\\ so, dass der Roboter Ihr Ziel verlässt} \\
-q15 & \makecell[l]{Valuta quanto bene il robot mantiene una distanza\\ appropriata da te  (1 è il peggiore, 5 è il migliore). Così è\\ come vedresti il robot dalla tua prospettiva.} & \makecell[l]{Bewerten Sie, wie gut der Roboter einen\\ angemessenen Abstand zu Ihnen einhält\\ (1 ist der Hammer, 5 ist der Beste). Das ist\\ so, dass der Roboter Ihr Ziel verlässt} \\
-\bottomrule
-\end{tabular}
-}
-\caption{Question index (use q1, q2 ... in other tables)}
-\label{tab:questions_index}
-\end{table}
-%
-\end{comment}
+%\color{blue}
+These results will be used in the main study for initializing the proximity values of the main study. 
+German and Italian preferences will be embedded in the Cultural Initial Preferences component during F and A conditions. 
+The average value will be embedded in the Cultural Initial Preferences component during B condition
+%\color{red}
+%Ricordare che i risultati di questo online questionnaire servono per inizializzar il sistema, con riferimento alla figura corrispondente nell'architettura. \color{black}
 
-\begin{comment}
-    \begin{landscape}
-\begin{table}[ht]
-\centering
-{\scriptsize
-\begin{tabular}{rrrrrrrrrrrrrrlrrl}
-\toprule
-q$_i$ &  $\mu_i$ & $\mu_g$ & $\sigma_i$ & $\sigma_g$ & $\Delta_\mu$ & shapiro$_{a_p}$ & shapiro$_{b_p}$ & levene$_p$ & mannwhitney$_u$ & mannwhitney$_p$ & ass. & chosen\_test & chosen\_stat & chosen\_p  \\
-\midrule
-q1 &  4.300 & 4.273 & 1.636 & 0.905    & 0.027 & 0.627 & 0.001 & 0.167 & 55.500 & 1.000 & F & mannwhitney & 55.500 & 1.000  \\
-q2 & 5.400 & 5.273 & 1.578 & 1.272    & 0.127 & 0.141 & 0.518 & 0.601 & 60.500 & 0.718 & T & t-test & 0.204 & 0.840  \\
-q3 &  4.700 & 4.636 & 1.567 & 0.924    & 0.064 & 0.037 & 0.217 & 0.091 & 57.000 & 0.913 & F & mannwhitney & 57.000 & 0.913  \\
-q4 &  3.300 & 3.364 & 1.160 & 1.120    & -0.064 & 0.328 & 0.141 & 0.830 & 53.000 & 0.911 & T & t-test & -0.128 & 0.900  \\
-q5 &  2.800 & 2.818 & 1.033 & 1.079    & -0.018 & 0.043 & 0.032 & 0.724 & 50.000 & 0.731 & F & mannwhitney & 50.000 & 0.731 \\
-q6 & 3.100 & 3.636 & 0.876 & 0.924    & -0.536 & 0.026 & 0.217 & 0.451 & 36.000 & 0.164 & F & mannwhitney & 36.000 & 0.164 \\
-q7 &  3.700 & 4.091 & 0.823 & 0.944    & -0.391 & 0.045 & 0.002 & 0.215 & 42.500 & 0.373 & F & mannwhitney & 42.500 & 0.373 \\
-q8 & 4.200 & 3.909 & 0.919 & 1.044    & 0.291 & 0.004 & 0.079 & 0.452 & 64.000 & 0.525 & F & mannwhitney & 64.000 & 0.525 \\
-q9 & 4.000 & 3.545 & 1.247 & 1.368    & 0.455 & 0.008 & 0.084 & 0.820 & 65.000 & 0.482 & F & mannwhitney & 65.000 & 0.482 \\
-q10 & 2.600 & 2.818 & 1.265 & 1.079    & -0.218 & 0.445 & 0.047 & 0.743 & 48.000 & 0.636 & F & mannwhitney & 48.000 & 0.636 \\
-q11 & 3.200 & 3.818 & 1.135 & 0.874    & -0.618 & 0.029 & 0.006 & 0.224 & 38.000 & 0.228 & F & mannwhitney & 38.000 & 0.228 \\
-q12 & 3.600 & 3.818 & 0.699 & 0.751    & -0.218 & 0.008 & 0.018 & 0.778 & 46.000 & 0.514 & F & mannwhitney & 46.000 & 0.514 \\
-q13 & 3.600 & 3.727 & 0.843 & 1.104    & -0.127 & 0.172 & 0.097 & 0.500 & 49.500 & 0.711 & T & t-test & -0.295 & 0.772 \\
-q14 & 3.500 & 3.091 & 1.354 & 0.944    & 0.409 & 0.276 & 0.095 & 0.138 & 67.500 & 0.380 & T & t-test & 0.810 & 0.428 \\
-q15 &3.100 & 2.636 & 1.524 & 0.924    & 0.464 & 0.055 & 0.004 & 0.061 & 61.000 & 0.687 & F & mannwhitney & 61.000 & 0.687 \\
-\bottomrule
-\end{tabular}}
-\caption{Full corresponding question diagnostics and test results}
-\label{tab:corresponding_full}
-\end{table}
-\end{landscape}
-%
-%
-\begin{table}[ht]
-\centering
-\begin{tabular}{llllrr}
-\toprule
-group & italiano & deutsch & test & stat & p \\
-\midrule
-culture & {'n': 10, 'mean': 4.8, 'std': 1.5169820591889789, 'median': 5.0} & {'n': 11, 'mean': 4.7272727272727275, 'std': 0.8668997355606654, 'median': 4.666666666666667} & t-test & 0.137 & 0.893 \\
-\bottomrule
-\end{tabular}
-\caption{Culture group summary and test}
-\label{tab:culture}
+\section{Main study results}
+
+This section reports the empirical findings of the main experiment, organized according to the temporal structure of the evaluation pipeline. 
+
+As a dataset overview, Table~\ref{ch9:tab:metadata} summarizes participant distribution across cultural cohorts.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+       \textbf{Category}  & \textbf{Count} \\
+       \hline
+        Total participants & 81 \\
+        Italian & 38 \\
+        German & 43 \\
+        \hline
+    \end{tabular}
+    \caption{Participant distribution by cultural cohort.}
+    \label{ch9:tab:metadata}
 \end{table}
 
-\begin{table}[ht]
+%\color{red} Ovvimente queste sono tutte sottosezioni di 6.4, potrebbe essere diversamente? \color{black}
+\subsection{Population Analysis}
+
+This section reports results from pre-interaction psychometric instruments, including cultural affinity, BFM, and trust. These measures characterize baseline inter-group differences prior to exposure to the experimental manipulation.
+
+Table~\ref{ch9:tab:intro} reports item-level descriptive statistics ($\mu \pm \sigma$) and inferential tests for the German and Italian cohorts. %\color{red} Ricorda qui brevemente su cosa sono queste statistiche usando la stessa terminologia usata nella sezione "Measuring user's Cultural Affinity and Robot's Cultural Competence". La tabella è molto lontana dal testo, andarla a vedere diverse pagine avanti è faticoso. Se vuoi forzare la posizione di una tabella o figura devi mettere ! Guarda come ho fatto io qui sotto. Forse la stessa cosa andrebbe fatta con diverse tabelle nella tesi che vengono messe molto più avanti del testo. Per favore, ricontrolla tutto. \color{black}
+
+Here, we note that Cultural Affinity represents the degree of closeness between a participant and their national culture. Trust measures the participant's initial level of trust, while BFM assesses the participant's personality traits.  The results are normalized with respect to their scales. The aim is to assess whether the German and Italian populations differ with respect to the measured cultural dimensions, rather than just assuming national culture as a proxy for these differences.
+
+\begin{table}[!ht]
 \centering
-\begin{tabular}{lllrrlrrrl}
+\begin{tabular}{lccccc}
 \toprule
-group & italiano\_cols & deutsch\_cols & n\_italiano & n\_deutsch & test & stat & p & cohen\_d & diagnostics \\
+Question & German ($\mu \pm \sigma$) & Italian ($\mu \pm \sigma$) & $p$-value & $f$ & Magnitude \\
 \midrule
-culture & ['q1', '', 'q3'] & ['Welches Bild beschreibt Ihre Beziehung zu [Land] am besten?', 'q2', 'q3'] & 10 & 11 & t-test & 0.137 & 0.893 & 0.060 & {'shapiro\_a\_p': 0.8766233016250535, 'shapiro\_b\_p': 0.6334003315165518, 'levene\_p': 0.12117239597133107, 'mannwhitney\_u': 58.0, 'mannwhitney\_p': 0.8598076138526077, 'assumptions\_ok': True} \\
-videos & [] & [] & 0 & 0 &  &  &  &  &  \\
-images & [] & [] & 0 & 0 &  &  &  &  &  \\
+Culture Affinity Q1 & $0.484 \pm 0.232$ & $0.711 \pm 0.265$ & 0.0001 & 0.46 & \textbf{Large} \\
+Culture Affinity Q2 & $0.764 \pm 0.239$ & $0.921 \pm 0.172$ & 0.0012 & 0.38 & \textbf{Large} \\
+Culture Affinity Q3 & $0.593 \pm 0.237$ & $0.768 \pm 0.203$ & 0.0007 & 0.40 & \textbf{Large} \\
+BFM Q1 & $0.686 \pm 0.238$ & $0.579 \pm 0.297$ & 0.0759 & 0.20 & \textbf{Medium} \\
+BFM Q2 & $0.767 \pm 0.228$ & $0.651 \pm 0.270$ & 0.0388 & 0.24 & \textbf{Medium} \\
+BFM Q3 & $0.419 \pm 0.287$ & $0.428 \pm 0.328$ & 0.8953 & 0.02 & Small \\
+BFM Q4 & $0.541 \pm 0.313$ & $0.599 \pm 0.321$ & 0.4136 & 0.09 & Small \\
+BFM Q5 & $0.517 \pm 0.347$ & $0.572 \pm 0.284$ & 0.4416 & 0.09 & Small \\
+BFM Q6 & $0.622 \pm 0.275$ & $0.750 \pm 0.225$ & 0.0257 & 0.26 & \textbf{Medium} \\
+BFM Q7 & $0.372 \pm 0.246$ & $0.362 \pm 0.207$ & 0.8400 & 0.02 & Small \\
+BFM Q8 & $0.767 \pm 0.192$ & $0.730 \pm 0.196$ & 0.3919 & 0.10 & Small \\
+BFM Q9 & $0.587 \pm 0.313$ & $0.414 \pm 0.330$ & 0.0180 & 0.27 & \textbf{Medium} \\
+BFM Q10 & $0.762 \pm 0.211$ & $0.691 \pm 0.275$ & 0.1946 & 0.15 & Small \\
+Trust Q1 & $0.751 \pm 0.174$ & $0.716 \pm 0.135$ & 0.3135 & 0.11 & Small \\
+Trust Q2 & $0.744 \pm 0.152$ & $0.708 \pm 0.136$ & 0.2630 & 0.13 & Small \\
+Trust Q3 & $0.693 \pm 0.186$ & $0.637 \pm 0.179$ & 0.1710 & 0.16 & Small \\
+Trust Q4 & $0.684 \pm 0.195$ & $0.771 \pm 0.164$ & 0.0335 & 0.24 & \textbf{Medium} \\
+Trust Q5 & $0.621 \pm 0.187$ & $0.632 \pm 0.214$ & 0.8120 & 0.03 & Small \\
+Trust Q6 & $0.791 \pm 0.136$ & $0.816 \pm 0.146$ & 0.4260 & 0.09 & Small \\
+Trust Q7 & $0.735 \pm 0.166$ & $0.745 \pm 0.152$ & 0.7823 & 0.03 & Small \\
+Trust Q8 & $0.728 \pm 0.212$ & $0.742 \pm 0.184$ & 0.7499 & 0.04 & Small \\
+Trust Q9 & $0.507 \pm 0.262$ & $0.650 \pm 0.279$ & 0.0198 & 0.27 & \textbf{Medium} \\
+Trust Q10 & $0.712 \pm 0.173$ & $0.718 \pm 0.135$ & 0.8461 & 0.02 & Small \\
+Trust Q11 & $0.414 \pm 0.237$ & $0.471 \pm 0.193$ & 0.2414 & 0.13 & Small \\
+Trust Q12 & $0.728 \pm 0.149$ & $0.779 \pm 0.151$ & 0.1296 & 0.17 & Small \\
+Trust Q13 & $0.656 \pm 0.155$ & $0.716 \pm 0.178$ & 0.1086 & 0.18 & \textbf{Medium} \\
+Trust Q14 & $0.335 \pm 0.186$ & $0.297 \pm 0.195$ & 0.3791 & 0.10 & Small \\
 \bottomrule
 \end{tabular}
-\caption{Automatic group comparisons}
-\label{tab:groups_auto}
+\caption{Normalized results for cultural affinity, personality, and trust questionnaires for German and Italian cohorts.}
+\label{ch9:tab:intro}
 \end{table}
 
-\begin{table}[ht]
+The Cultural Affinity, BFM, and Trust questionnaires were used to derive higher-level features from the participants' responses. Table~\ref{ch9:tab:intro_high_level} summarizes the results for these higher-level features.
+
+\begin{table}[!ht]
 \centering
-\begin{tabular}{lrrlrrr}
+\begin{tabular}{lccccc}
 \toprule
-group & n\_italiano & n\_deutsch & test & stat & p & cohen\_d \\
+Feature & German $\mu \pm \sigma$ & Italian $\mu \pm \sigma$  & $p$-value & $f$ & Magnitude \\
 \midrule
-culture & 10 & 11 & t-test & 0.137 & 0.893 & 0.060 \\
-videos & 0 & 0 &  &  &  &  \\
-images & 0 & 0 &  &  &  &  \\
+Cultural Affinity & $0.614 \pm 0.187$ & $0.800 \pm 0.177$ & 0.00002 & 0.51 & \textbf{Large} \\
+Extraversion & $0.654 \pm 0.121$ & $0.664 \pm 0.159$ & 0.7404 & 0.04 & Small \\
+Agreeableness & $0.570 \pm 0.140$ & $0.507 \pm 0.154$ & 0.0563 & 0.22 & \textbf{Medium} \\
+Conscientiousness & $0.593 \pm 0.145$ & $0.579 \pm 0.173$ & 0.6911 & 0.05 & Small \\
+Neuroticism & $0.564 \pm 0.155$ & $0.507 \pm 0.142$ & 0.0882 & 0.19 & \textbf{Medium} \\
+Openness & $0.640 \pm 0.205$ & $0.632 \pm 0.162$ & 0.8479 & 0.02 & Small \\
+Trust & $0.650 \pm 0.092$ & $0.671 \pm 0.084$ & 0.9344 & 0.01 & Small \\
 \bottomrule
 \end{tabular}
-\caption{Group comparisons (means and tests)}
-\label{tab:groups}
+\caption{High-level aggregated features for cultural affinity, personality traits, and trust.}
+\label{ch9:tab:intro_high_level}
 \end{table}
 
-\begin{table}[ht]
+Cultural affinity shows the strongest divergence, with higher values in the Italian cohort ($\mu = 0.800 \pm 0.177$) compared to the German cohort ($\mu = 0.614 \pm 0.187$), a difference that is statistically significant ($p < 0.001$, $f = 0.51$). This pattern is consistent across all individual items.
+
+In contrast, BFM personal traits exhibit
+limited cross-cultural separation. 
+%\color{red} anche qui da' informazioni per ricordare che riguarda la personalità \color{black}
+Extraversion, conscientiousness, and openness show no significant differences between groups, with consistently small effect sizes. Agreeableness and neuroticism display weak-to-moderate effects, but with limited statistical robustness across items. 
+
+%\color{red}
+%Non manca il ROSAS?
+%\color{black}
+
+Finally, dispositional trust does not differ meaningfully between cohorts ($p = 0.9344$, $f = 0.01$), indicating comparable baseline attitudes toward automated systems.
+
+\subsection{Conditions Evaluation}
+
+This section presents post-interaction evaluations across the three experimental conditions: B, F and A. 
+%\color{red}Le hai chiamate "conditions" e devi chiamarle così ovunque \color{black}
+The evaluation of the conditions is done throught Cultural Competence, which is a composition of Cultural Closeness, Competence (from RoSaS questionnaire).
+%\color{red}Devi usare il nome usatto del protocollo e delle sue sottoscale, non puoi dire "Metrics include". Devi dire che riporti i risultati del questionario A fatto dopo l'interazione e in particolare delle sue sottoscae. Domanda: è prassi calcolare la media delle sue sottoscale?\color{black}
+
+\begin{table}[!ht]
 \centering
-\begin{tabular}{llrrrr}
+\begin{tabular}{llccc}
 \toprule
-comparison & test\_used & u & p & n\_a & n\_b \\
+Nationality & Condition & Culture Closeness & Competence & Average \\
 \midrule
-Deutsch vs Italiano & mannwhitney & 12678.000 & 0.700 & 165 & 150 \\
+\multirow{3}{*}{Global}
+ & B & $0.294 \pm 0.232$ & $0.644 \pm 0.200$ & $0.469 \pm 0.192$ \\
+ & F & $0.346 \pm 0.225$ & $0.603 \pm 0.203$ & $0.474 \pm 0.193$ \\
+ & A & $0.273 \pm 0.209$ & $0.530 \pm 0.229$ & $0.401 \pm 0.186$ \\
+\midrule
+\multirow{3}{*}{German}
+ & B & $0.305 \pm 0.238$ & $0.616 \pm 0.196$ & $0.460 \pm 0.198$ \\
+ & F & $0.335 \pm 0.211$ & $0.590 \pm 0.202$ & $0.462 \pm 0.184$ \\
+ & A & $0.261 \pm 0.195$ & $0.499 \pm 0.221$ & $0.380 \pm 0.175$ \\
+\midrule
+\multirow{3}{*}{Italian}
+ & B & $0.282 \pm 0.227$ & $0.675 \pm 0.202$ & $0.479 \pm 0.188$ \\
+ & F & $0.358 \pm 0.241$ & $0.617 \pm 0.206$ & $0.487 \pm 0.206$ \\
+ & A & $0.287 \pm 0.227$ & $0.565 \pm 0.235$ & $0.426 \pm 0.198$ \\
 \bottomrule
 \end{tabular}
-\caption{Per-language comparison results (flat)}
-\label{tab:perlang}
-\end{table}
-\begin{table}[ht]
-\centering
-\begin{tabular}{lrrlrrr}
-\toprule
-q\_label & question\_index & mean\_diff & chosen\_test & chosen\_stat & chosen\_p & assumptions\_met \\
-\midrule
-q1 & 1 & 0.027 & mannwhitney & 55.500 & 1.000 & False \\
-q2 & 2 & 0.127 & t-test & 0.204 & 0.840 & True \\
-q3 & 3 & 0.064 & mannwhitney & 57.000 & 0.913 & False \\
-q4 & 4 & -0.064 & t-test & -0.128 & 0.900 & True \\
-q5 & 5 & -0.018 & mannwhitney & 50.000 & 0.731 & False \\
-q6 & 6 & -0.536 & mannwhitney & 36.000 & 0.164 & False \\
-q7 & 7 & -0.391 & mannwhitney & 42.500 & 0.373 & False \\
-q8 & 8 & 0.291 & mannwhitney & 64.000 & 0.525 & False \\
-q9 & 9 & 0.455 & mannwhitney & 65.000 & 0.482 & False \\
-q10 & 10 & -0.218 & mannwhitney & 48.000 & 0.636 & False \\
-q11 & 11 & -0.618 & mannwhitney & 38.000 & 0.228 & False \\
-q12 & 12 & -0.218 & mannwhitney & 46.000 & 0.514 & False \\
-q13 & 13 & -0.127 & t-test & -0.295 & 0.772 & True \\
-q14 & 14 & 0.409 & t-test & 0.810 & 0.428 & True \\
-q15 & 15 & 0.464 & mannwhitney & 61.000 & 0.687 & False \\
-\bottomrule
-\end{tabular}
-\caption{Per-question statistical results (first 50 rows)}
-\label{tab:questions}
-\end{table}
-%
-%
-\begin{table}[ht]
-\centering
-\begin{tabular}{lrrrrrrrr}
-\toprule
-metric & count & mean & std & min & 25\% & 50\% & 75\% & max \\
-\midrule
-q1 & 11.000 & 4.273 & 0.905 & 3.000 & 3.500 & 5.000 & 5.000 & 5.000 \\
-q2 & 11.000 & 5.273 & 1.272 & 3.000 & 4.500 & 5.000 & 6.000 & 7.000 \\
-q3 & 11.000 & 4.636 & 0.924 & 3.000 & 4.000 & 5.000 & 5.000 & 6.000 \\
-q4 & 11.000 & 3.364 & 1.120 & 1.000 & 3.000 & 4.000 & 4.000 & 5.000 \\
-q5 & 11.000 & 2.818 & 1.079 & 1.000 & 2.500 & 3.000 & 3.500 & 4.000 \\
-q6 & 11.000 & 3.636 & 0.924 & 2.000 & 3.000 & 4.000 & 4.000 & 5.000 \\
-q7 & 11.000 & 4.091 & 0.944 & 3.000 & 3.000 & 4.000 & 5.000 & 5.000 \\
-q8 & 11.000 & 3.909 & 1.044 & 2.000 & 3.000 & 4.000 & 5.000 & 5.000 \\
-q9 & 11.000 & 3.545 & 1.368 & 1.000 & 3.000 & 3.000 & 5.000 & 5.000 \\
-q10 & 11.000 & 2.818 & 1.079 & 1.000 & 2.000 & 3.000 & 4.000 & 4.000 \\
-q11 & 11.000 & 3.818 & 0.874 & 3.000 & 3.000 & 4.000 & 4.500 & 5.000 \\
-q12 & 11.000 & 3.818 & 0.751 & 3.000 & 3.000 & 4.000 & 4.000 & 5.000 \\
-q13 & 11.000 & 3.727 & 1.104 & 2.000 & 3.000 & 4.000 & 4.500 & 5.000 \\
-q14 & 11.000 & 3.091 & 0.944 & 2.000 & 2.500 & 3.000 & 3.500 & 5.000 \\
-q15 & 11.000 & 2.636 & 0.924 & 1.000 & 2.500 & 3.000 & 3.000 & 4.000 \\
-q1 & 0.000 &  &  &  &  &  &  &  \\
-q2 & 0.000 &  &  &  &  &  &  &  \\
-q3 & 0.000 &  &  &  &  &  &  &  \\
-q4 & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva. & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 0.000 &  &  &  &  &  &  &  \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 0.000 &  &  &  &  &  &  &  \\
-\bottomrule
-\end{tabular}
-\caption{Summary statistics for Deutsch}
-\label{tab:stats_Deutsch}
+\caption{Descriptive statistics ($\mu \pm \sigma$) by nationality and condition.}
+\label{tab:nat_desc_stats}
 \end{table}
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \centering
-\begin{tabular}{lrrrrrrrr}
+\begin{tabular}{lccccc}
 \toprule
-metric & count & mean & std & min & 25\% & 50\% & 75\% & max \\
+\textbf{Pair} & \textbf{Difference} & \textbf{F-statistic} & \textbf{Critical Value} & \textbf{$p$-value} & \textbf{Preferred} \\
 \midrule
-Welches Bild beschreibt Ihre Beziehung zu [Land] am besten? & 0.000 &  &  &  &  &  &  &  \\
-q2 & 0.000 &  &  &  &  &  &  &  \\
-q3 & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zum Menschen einhält (1 ist der Hammer, 5 ist der Beste). & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zum Menschen einhält (1 ist der Hammer, 5 ist der Beste) & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zum Menschen einhält (1 ist der Hammer, 5 ist der Beste). & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zum Menschen einhält (1 ist der Hammer, 5 ist der Beste). .1 & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zum Menschen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt. & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zum Menschen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zu Ihnen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt. & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zu Ihnen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zu Ihnen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zu Ihnen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zu Ihnen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt & 0.000 &  &  &  &  &  &  &  \\
-Bewerten Sie, wie gut der Roboter einen angemessenen Abstand zu Ihnen einhält (1 ist der Hammer, 5 ist der Beste). Das ist so, dass der Roboter Ihr Ziel verlässt & 0.000 &  &  &  &  &  &  &  \\
-q1 & 10.000 & 4.300 & 1.636 & 2.000 & 3.250 & 4.500 & 5.000 & 7.000 \\
-q2 & 10.000 & 5.400 & 1.578 & 2.000 & 5.000 & 5.500 & 6.750 & 7.000 \\
-q3 & 10.000 & 4.700 & 1.567 & 3.000 & 3.000 & 5.000 & 6.000 & 7.000 \\
-q4 & 10.000 & 3.300 & 1.160 & 1.000 & 3.000 & 3.500 & 4.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 10.000 & 2.800 & 1.033 & 1.000 & 2.250 & 3.000 & 3.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 10.000 & 3.100 & 0.876 & 2.000 & 3.000 & 3.000 & 3.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 10.000 & 3.700 & 0.823 & 2.000 & 3.250 & 4.000 & 4.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 10.000 & 4.200 & 0.919 & 2.000 & 4.000 & 4.000 & 5.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata dall'umano  (1 è il peggiore, 5 è il migliore) & 10.000 & 4.000 & 1.247 & 2.000 & 3.250 & 4.500 & 5.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva. & 10.000 & 2.600 & 1.265 & 1.000 & 2.000 & 2.500 & 3.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 10.000 & 3.200 & 1.135 & 2.000 & 2.000 & 3.500 & 4.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 10.000 & 3.600 & 0.699 & 3.000 & 3.000 & 3.500 & 4.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 10.000 & 3.600 & 0.843 & 2.000 & 3.000 & 4.000 & 4.000 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 10.000 & 3.500 & 1.354 & 1.000 & 3.000 & 3.500 & 4.750 & 5.000 \\
-Valuta quanto bene il robot mantiene una distanza appropriata da te  (1 è il peggiore, 5 è il migliore). Così è come vedresti il robot dalla tua prospettiva & 10.000 & 3.100 & 1.524 & 1.000 & 2.000 & 2.500 & 4.750 & 5.000 \\
+\multicolumn{6}{c}{Global Cultural Closeness} \\
+\midrule
+B--F & 0.05144 & 7.5324 & 5.9794 & \textbf{0.00748} & F \\
+B--A & 0.02126 & 1.6389 & 5.9794 & 0.2042 & None \\
+F--A & 0.07270 & 24.0574 & 5.9794 & textbf{< $0.001$} & F \\
+\midrule
+\multicolumn{6}{c}{Global Competence} \\
+\midrule
+B--F & 0.0409 & 4.1650 & 5.9794 & 0.0446 & B \\
+B--A & 0.1137 & 22.4622 & 5.9794 & textbf{< $0.001$} & B \\
+F--A & 0.07279 & 11.0041 & 5.9794 & \textbf{0.00137} & F \\
+\midrule
+\multicolumn{6}{c}{Global Average} \\
+\midrule
+B--F & 0.00527 & 0.0981 & 5.9794 & 0.7550 & None \\
+B--A & 0.06747 & 14.8462 & 5.9794 & \textbf{0.00023} & B \\
+F--A & 0.07275 & 20.4364 & 5.9794 & \textbf{0.00021} & F \\
+\midrule
+\multicolumn{6}{c}{German Cultural Closeness} \\
+\midrule
+B--F & 0.02972 & 1.4246 & 6.2180 & 0.2393 & None \\
+B--A & 0.04393 & 4.8855 & 6.2180 & \textbf{0.0326} & B \\
+F--A & 0.07364 & 15.4469 & 6.2180 & textbf{< $0.001$} & F \\
+\midrule
+\multicolumn{6}{c}{German Competence} \\
+\midrule
+B--F & 0.02568 & 0.7157 & 6.2180 & 0.4024 & None \\
+B--A & 0.1168 & 11.7691 & 6.2180 & \textbf{0.00136} & B \\
+F--A & 0.09109 & 8.2312 & 6.2180 & \textbf{0.00642} & F \\
+\midrule
+\multicolumn{6}{c}{German Average} \\
+\midrule
+B--F & 0.00202 & 0.00685 & 6.2180 & 0.9345 & None \\
+B--A & 0.08035 & 12.7635 & 6.2180 & \textbf{0.00090} & B \\
+F--A & 0.08236 & 13.1652 & 6.2180 & \textbf{0.00077} & F \\
+\midrule
+\multicolumn{6}{c}{Italian Cultural Closeness} \\
+\midrule
+B--F & 0.07602 & 7.2964 & 6.2883 & \textbf{0.0104} & F \\
+B--A & 0.00439 & 0.0263 & 6.2883 & 0.8720 & None \\
+F--A & 0.07164 & 9.1387 & 6.2883 & \textbf{0.00453} & F \\
+\midrule
+\multicolumn{6}{c}{Italian Competence} \\
+\midrule
+B--F & 0.05811 & 5.1793 & 6.2883 & \textbf{0.0287} & B \\
+B--A & 0.1102 & 10.4405 & 6.2883 & \textbf{0.00259} & B \\
+F--A & 0.05208 & 3.0058 & 6.2883 & 0.0913 & None \\
+\midrule
+\multicolumn{6}{c}{Italian Average} \\
+\midrule
+B--F & 0.00896 & 0.1481 & 6.2883 & 0.7025 & None \\
+B--A & 0.05291 & 3.7181 & 6.2883 & 0.0615 & None \\
+F--A & 0.06186 & 7.2820 & 6.2883 & \textbf{0.0104} & F \\
 \bottomrule
 \end{tabular}
-\caption{Summary statistics for Italiano}
-\label{tab:stats_Italiano}
+\caption{Pairwise evaluation of conditions for Cultural Closeness and Competence across cohorts.}
+\label{tab:significance_stats}
+\end{table}
+The results indicate a systematic trade-off between perceived cultural closeness and perceived competence. \color{red} Sono scale, hanno un nome, maiuscole ovunque. E verifica che si chiamino proprio così\color{black} At the global level, Condition F yields the highest Cultural Closeness, significantly exceeding both Baseline ($p = 0.00748$) and Adaptation comparisons ($p < 0.001$). Conversely, Condition B achieves the highest Competence ratings, significantly outperforming both F and A. For the composite Average score, no significant difference is observed between B and F, indicating that gains in cultural closeness under F are offset by reduced competence. Cohort-level analysis shows reduced sensitivity in the German sample, where differences between conditions are generally not significant except for the consistent underperformance of A. In contrast, the Italian cohort exhibits stronger differentiation across conditions, with F improving cultural closeness but reducing competence relative to B. Overall, Condition A performs worst across most metrics, while B maximizes perceived competence and F maximizes cultural alignment.
+
+\subsection{Proximity Analysis}
+
+This section analyzes behavioral markers extracted from video recordings to characterize implicit participant responses during interaction. These measures are interpreted descriptively and not causally.
+
+Tables~\ref{tab:main_pct_global}--\ref{tab:main_pct_italian} report behavioral distributions for head and torso orientation, arm posture, facial affect, and proxemic signals across cohorts and conditions.
+
+% ---------------- GLOBAL ----------------
+\begin{table}[!ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Condition B (\%) & Condition F (\%) & Condition A (\%) \\
+\midrule
+Head orientation & Away & 4.4\% & 7.5\% & 3.8\% \\
+~ & Neutral & 10.1\% & 11.9\% & 10.6\% \\
+~ & Tracking & 85.5\% & 80.6\% & 85.6\% \\
+\midrule
+Torso orientation & Neutral & 74.2\% & 71.9\% & 73.8\% \\
+~ & Tracking & 25.8\% & 28.1\% & 26.2\% \\
+\midrule
+Arms/Hands & Back & 25.2\% & 26.9\% & 31.2\% \\
+~ & Crossed & 32.7\% & 26.9\% & 26.2\% \\
+~ & Fidgeting & 1.3\% & 0.6\% & 1.9\% \\
+~ & Neutral/Side & 35.8\% & 39.4\% & 33.1\% \\
+~ & Self-touch & 5.0\% & 6.2\% & 7.5\% \\
+\midrule
+Facial affect & Frown & 3.1\% & 3.8\% & 2.5\% \\
+~ & Neutral & 56.0\% & 61.9\% & 58.8\% \\
+~ & Raised brows & 0.6\% & 0.6\% & 0.0\% \\
+~ & Smile & 40.3\% & 33.8\% & 38.8\% \\
+\midrule
+Proxemics & Comfortable & 98.7\% & 98.8\% & 98.1\% \\
+~ & Withdrawal signal & 1.3\% & 1.2\% & 1.9\% \\
+\bottomrule
+\end{tabular}
+\caption{Main percentages: Global results.}
+\label{tab:main_pct_global}
 \end{table}
 
-\end{comment}
-%
+% ---------------- GERMAN ----------------
+\begin{table}[!ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Condition B (\%) & Condition F (\%) & Condition A (\%) \\
+\midrule
+Head orientation & Away & 4.6\% & 9.3\% & 3.5\% \\
+~ & Neutral & 9.2\% & 12.8\% & 11.8\% \\
+~ & Tracking & 86.2\% & 77.9\% & 84.7\% \\
+\midrule
+Torso orientation & Neutral & 70.1\% & 67.4\% & 71.8\% \\
+~ & Tracking & 29.9\% & 32.6\% & 28.2\% \\
+\midrule
+Arms/Hands & Back & 25.3\% & 27.9\% & 28.2\% \\
+~ & Crossed & 23.0\% & 18.6\% & 17.6\% \\
+~ & Fidgeting & 1.1\% & 0.0\% & 0.0\% \\
+~ & Neutral/Side & 47.1\% & 45.3\% & 48.2\% \\
+~ & Self-touch & 3.4\% & 8.1\% & 5.9\% \\
+\midrule
+Facial affect & Frown & 4.6\% & 4.7\% & 3.5\% \\
+~ & Neutral & 55.2\% & 61.6\% & 54.1\% \\
+~ & Raised brows & 1.1\% & 1.2\% & 0.0\% \\
+~ & Smile & 39.1\% & 32.6\% & 42.4\% \\
+\midrule
+Proxemics & Comfortable & 97.7\% & 97.7\% & 97.6\% \\
+~ & Withdrawal signal & 2.3\% & 2.3\% & 2.4\% \\
+\bottomrule
+\end{tabular}
+\caption{Main percentages: German results.}
+\label{tab:main_pct_german}
+\end{table}
+
+% ---------------- ITALIAN ----------------
+\begin{table}[!ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Feature & Behavior & Condition B (\%) & Condition F (\%) & Condition A (\%) \\
+\midrule
+Head orientation & Away & 4.2\% & 5.4\% & 4.0\% \\
+~ & Neutral & 11.1\% & 10.8\% & 9.3\% \\
+~ & Tracking & 84.7\% & 83.8\% & 86.7\% \\
+\midrule
+Torso orientation & Neutral & 79.2\% & 77.0\% & 76.0\% \\
+~ & Tracking & 20.8\% & 23.0\% & 24.0\% \\
+\midrule
+Arms/Hands & Back & 25.0\% & 25.7\% & 34.7\% \\
+~ & Crossed & 44.4\% & 36.5\% & 36.0\% \\
+~ & Fidgeting & 1.4\% & 1.4\% & 4.0\% \\
+~ & Neutral/Side & 22.2\% & 32.4\% & 16.0\% \\
+~ & Self-touch & 6.9\% & 4.1\% & 9.3\% \\
+\midrule
+Facial affect & Frown & 1.4\% & 2.7\% & 1.3\% \\
+~ & Neutral & 56.9\% & 62.2\% & 64.0\% \\
+~ & Smile & 41.7\% & 35.1\% & 34.7\% \\
+\midrule
+Proxemics & Comfortable & 100.0\% & 100.0\% & 98.7\% \\
+~ & Withdrawal signal & 0.0\% & 0.0\% & 1.3\% \\
+\bottomrule
+\end{tabular}
+\caption{Main percentages: Italian results.}
+\label{tab:main_pct_italian}
+\end{table}
+
+% ---------------- TEXT ----------------
+
+Head orientation remains highly stable across conditions, with tracking dominating in all cohorts (approximately 78\%--87\%). This indicates sustained visual attention toward the robot.
+
+A localized deviation is observed under Condition F, particularly in the German cohort, where increased "away" head orientation and reduced tracking suggest intermittent attentional disengagement.
+
+Gestural behavior shows cohort-specific patterns. The Italian cohort exhibits higher variability in arm posture, particularly reductions in crossed arms under Condition F, which aligns with improved perceived cultural closeness. The German cohort shows comparatively stable distributions across conditions.
+
+Facial affect remains broadly stable, with smiling rates ranging between 32\% and 42\% across conditions. Variations are not consistently aligned with perceived competence, suggesting affective expression is not a direct proxy for evaluation.
+
+In the Italian cohort, Condition A is associated with increased self-touch and fidgeting, potentially indicating elevated tension, although effect sizes remain small.
+
+Proxemic behavior is largely invariant across conditions, with over 97\% of observations classified as comfortable distance, indicating no meaningful shift in spatial comfort thresholds.
+
+Overall, behavioral effects are selective and heterogeneous, with stronger modulation in expressive and attentional markers than in spatial behavior.
+
+\subsection{Open Question}
+
+This section presents a qualitative analysis of participants’ open-ended responses regarding whether and why their subjective evaluations changed across interaction sessions. The order of interactions was not fixed across participants; therefore, the analysis focuses on recurring themes rather than sequential effects. The objective is to triangulate these qualitative findings with the quantitative results reported in the questionnaire-based and behavioral analyses.
+
+A first and dominant theme concerns the role of linguistic localization. Across both German and Italian cohorts, interaction in the participant’s native language was frequently associated with increased perceived proximity and engagement. Participants described native-language interaction as more natural, easier to follow, and more personally engaging. In several cases, this was explicitly linked to a stronger sense of rapport with the system, consistent with higher Cultural Affinity and Cultural Proximity scores observed in the expressive or adaptive conditions (see Tables~\ref{ch9:tab:intro_high_level} and \ref{tab:nat_desc_stats}). These accounts suggest that linguistic alignment contributes to perceived social closeness.
+
+However, linguistic alignment alone was not sufficient to determine evaluation changes. Perceived system competence—described in terms of reliability, coherence, and responsiveness—emerged as a central factor. When interaction was perceived as smooth and responsive, participants reported more positive evaluations. Conversely, breakdowns such as misinterpretations, irrelevant responses, or language switching were consistently associated with lower ratings. These reports align with the quantitative findings on Competence, where improved cultural or adaptive behavior did not always translate into higher perceived competence.
+
+In relation to the experimental conditions, participants often contrasted more neutral interactions with more adaptive or culturally informed ones. The neutral condition was commonly described as more general, fluent, or open-ended, while adaptive conditions were described as more structured and culturally specific. Some participants found adaptive interactions more natural and engaging, while others perceived them as less fluid or occasionally less aligned with their expectations. This variability is consistent with the mixed effects observed in Cultural Closeness and Competence across conditions (see Tables~\ref{tab:nat_desc_stats} and \ref{tab:significance_stats}).
+
+Importantly, the qualitative responses also indicate heterogeneity in sensitivity to the manipulations. A subset of participants reported minimal or no change in their evaluations across conditions, often stating that their judgments were driven primarily by functional performance rather than language or cultural adaptation. This aligns with the stability observed in proxemic behavior (Tables~\ref{tab:main_pct_global}--\ref{tab:main_pct_italian}), where spatial comfort remained largely invariant.
+
+Several participants reported, even though the question did not explicitly concern the A condition, that this condition was perceived as less responsive. This raises a significant implementation issue because, although the nominal response time is below one second, the adaptive scenario effectively introduces two sequential processes (one inference step for updating cultural parameters and one for generating the response), which increases perceived latency and negatively impacts judgments of the robot’s cultural competence.
+
+Overall, the qualitative findings are consistent with the quantitative results in suggesting that evaluations are influenced by both linguistic/cultural alignment and perceived system competence. Linguistic localization primarily affects perceived proximity and engagement, while competence-related factors act as a stabilizing determinant of overall evaluation.
+
+It is important to note that higher perceived competence rates for the English language may stem from the tendency of LLMs, TTS, and STT systems to perform better in that language due to the same issue identified in the first two parts of this thesis: the underrepresentation of certain cultures. A mitigation strategy should be applied and further experiments conducted to validate this assumption.
+
+\subsection{Cross Correlations}
+
+This section examines associations between baseline psychological traits (trust, personality, and cultural affinity) and post-interaction evaluation outcomes using Spearman rank correlations.
+
+Table~\ref{tab:meaningful_correlations} reports statistically significant results across global and cohort-specific analyses.
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{lllcc}
+\toprule
+\textbf{Group} & \textbf{Trait} & \textbf{Outcome} & \textbf{$r_s$} & \textbf{$p$-value} \\
+\midrule
+\multirow{4}{*}{Global} 
+ & Trust & Cultural Affinity & 0.177 & 0.0057 \\
+ & Trust & Competence & 0.164 & 0.0106 \\
+ & Trust & Average & 0.175 & 0.0064 \\
+ & Neuroticism & Competence & -0.159 & 0.0133 \\
+\midrule
+\multirow{7}{*}{German} 
+ & Trust & Cultural Affinity & 0.193 & 0.0284 \\
+ & Agreeableness & Cultural Affinity & -0.188 & 0.0327 \\
+ & Agreeableness & Competence & -0.257 & 0.0033 \\
+ & Agreeableness & Average & -0.276 & 0.0016 \\
+ & Conscientiousness & Cultural Affinity & -0.310 & 0.0004 \\
+ & Neuroticism & Competence & -0.276 & 0.0015 \\
+ & Neuroticism & Average & -0.248 & 0.0045 \\
+\midrule
+\multirow{7}{*}{Italian} 
+ & Trust & Competence & 0.201 & 0.0318 \\
+ & Agreeableness & Cultural Affinity & 0.387 & $<0.001$ \\
+ & Agreeableness & Competence & 0.221 & 0.0179 \\
+ & Agreeableness & Average & 0.350 & 0.0001 \\
+ & Openness & Cultural Affinity & 0.230 & 0.0138 \\
+ & Openness & Average & 0.246 & 0.0084 \\
+ & Cultural Affinity & Cultural Affinity & 0.281 & 0.0024 \\
+\bottomrule
+\end{tabular}
+\caption{Statistically Significant Spearman Correlations ($p < 0.05$).}
+\label{tab:meaningful_correlations}
+\end{table}
+
+The correlation structure indicates that user evaluations are systematically modulated by baseline psychological traits, with clear cohort-dependent differences. Trust shows a consistently positive association with all outcomes at the global level; however, this relationship differs across cohorts. In the German group, trust primarily predicts Cultural Affinity, whereas in the Italian group it is more strongly associated with perceived Competence. Agreeableness exhibits a clear polarity inversion across cohorts. It is negatively associated with evaluation outcomes in the German sample, suggesting more critical evaluation tendencies, while showing strong positive associations in the Italian sample, indicating higher sensitivity to rapport-building cues. Conscientiousness and neuroticism in the German cohort are both negatively associated with evaluation outcomes, which may reflect reduced tolerance for variability or perceived inconsistency in robot behavior. In the Italian cohort, openness is positively associated with evaluation metrics, suggesting greater receptivity to adaptive interaction styles. Finally, baseline cultural affinity is a significant predictor of post-interaction cultural affinity in the Italian cohort, indicating temporal stability in cultural perception.
+
+Overall, these patterns suggest that different cultural and personality dimensions systematically shape perceptions of robot cultural competence. This provides evidence that alternative adaptive strategies may be effective, even in cases where participants do not explicitly endorse the proposed adaptation mechanism.
+
+\section{Discussion}
+In this chapter, I presented two sets of results: those of the preliminary online study and those of the main study.
+
+Regarding the preliminary online study, the results indicate that, on average, the two populations—namely Germans and Italians—do not exhibit substantial differences in their perceived affinity with their respective countries. Overall, mild effect sizes were observed for affinity with respect to language and culture, with Italians reporting a stronger sense of affinity than Germans.
+
+Negligible effect sizes were also found for the assessment of the preferred interaction distance. However, a discrepancy emerged in the preferences expressed by the Italian participants. While German participants consistently preferred the fourth distance (ordered from the closest to the farthest), Italian participants selected the third distance in the image-based questionnaire and the fifth distance in the video-based questionnaire.
+
+Since the images were presented from a first-person perspective, their results were considered more reliable, as they better approximate the participant's own viewpoint during an interaction. One might argue that, under these circumstances, the third-person videos provide little additional value. However, including a second modality is useful for disambiguating the results and provides an additional source of evidence.
+
+%\color{red}
+%Dato che è la discussion del capitolo, dovresti mettere anche un paragrafo sull'online study.
+%\color{black}
+
+Perceived quality of human--robot interaction is jointly determined by two partially independent dimensions, namely cultural/linguistic alignment and perceived functional competence. The presented dimensions interact in a non-trivial manner across experimental conditions and cultural cohorts, producing systematic trade-offs rather than a single globally optimal configuration.
+
+At baseline, the two cohorts (Germans and Italians) are broadly comparable in personality structure and dispositional trust, with the primary divergence located in initial cultural affinity. This asymmetry is relevant for interpreting downstream effects, as it introduces a pre-existing bias in the reception of culturally adaptive behaviors, particularly within the Italian sample. Overall, trust and most BFM traits do not exhibit meaningful between-group differences, supporting the assumption of general psychological comparability prior to exposure.
+
+Across conditions, the evaluation data indicate a stable dissociation between Cultural Closeness and Competence. The F condition consistently increases perceived cultural proximity, whereas the B condition is generally associated with higher perceived competence. The A condition underperforms on both dimensions and functions as a lower-bound reference across most comparisons. These effects vary in magnitude across cohorts, indicating that cultural background modulates sensitivity to interaction strategies.
+
+The most consistent global effect is the advantage of the F condition in increasing Cultural Closeness. This suggests that explicit or implicit contextual alignment strategies embedded in F are effective in strengthening perceived social and cultural resonance. In contrast, competence judgments tend to favor the B condition, indicating that reduced behavioral variability or expressive complexity may enhance perceived reliability and task effectiveness. The absence of significant differences between B and F on the global composite score further suggests that these effects partially compensate when aggregated, reinforcing the interpretation of a trade-off rather than a unidirectional improvement.
+
+Cultural stratification reveals distinct evaluative patterns across cohorts. The German sample exhibits a more conservative response profile, with fewer significant distinctions between B and F and a stronger penalization of the A condition across metrics. This pattern is consistent with a stability-oriented evaluation strategy, in which deviations from expected interaction structure are primarily interpreted as performance degradation. The Italian sample, by contrast, shows higher sensitivity to cultural and expressive variation, with F producing clearer gains in Cultural Closeness and stronger modulation of engagement-related variables. This sensitivity is accompanied by a more pronounced separation between social and competence-based evaluations.
+
+Behavioral (proxemic and kinesic) results provide limited evidence of condition-driven modulation of overt physical behavior. Head and torso orientation, facial affect, and proxemic distance remain largely stable across conditions, with only minor, non-significant variations. This suggests that the experimental manipulations primarily affect evaluative and cognitive processes rather than embodied behavior. Participants adjust their judgments without corresponding large-scale changes in physical engagement, consistent with prior findings in HRI where subjective perception is more sensitive than overt behavior in short interaction windows.
+
+Qualitative data help clarify these quantitative patterns. Participants consistently report that linguistic localization and culturally congruent behavior increase perceived naturalness and engagement. However, these effects are contingent on system reliability: when interaction flow is disrupted or task execution is perceived as inconsistent, cultural adaptation loses effectiveness and is overridden by competence-based reassessment. This suggests a hierarchical evaluation process in which functional performance acts as a gating factor for the impact of culturally adaptive features.
+
+An additional qualitative finding concerns perceived authenticity. The B condition is frequently described as more mechanical or constrained, whereas F and A are associated with greater naturalness. However, this perceived naturalness does not translate uniformly into higher competence judgments, reinforcing the distinction between social presence and functional credibility. A subset of participants shows limited sensitivity to condition variation, indicating heterogeneity in evaluative strategies, with some users relying primarily on task-level performance cues.
+
+Cross-correlational analyses further support a differentiated trait–outcome mapping. Dispositional trust shows a stable positive association with all post-interaction evaluations, although its role differs by cohort, being more relational in the German sample and more competence-oriented in the Italian sample. Agreeableness exhibits a clear inversion across cohorts, with negative associations in the German sample and positive associations in the Italian sample. This suggests that identical personality traits are interpreted through culturally contingent evaluative frameworks rather than invariant psychological mechanisms. Other traits, such as conscientiousness and neuroticism, show more localized effects, primarily within the German cohort, where they are associated with more critical evaluations of both cultural and functional dimensions.
+
+Overall, the findings indicate that HRI quality in this experimental setup is not governed by a single optimization objective. Instead, it reflects a structured multi-objective space in which cultural alignment, perceived competence, and user personality jointly determine outcomes. The F condition is effective in increasing social and cultural resonance but introduces potential costs in perceived reliability. The B condition maximizes perceived competence but reduces cultural engagement. The A condition does not consistently dominate either dimension, suggesting that partial or unstable adaptation is insufficient to outperform simpler baselines.
+
+These results have direct implications for the design of culturally adaptive robotic systems. Effective systems must balance expressive alignment with the preservation of perceived operational reliability. More importantly, adaptation strategies must account for cultural differences in evaluative weighting, as identical behavioral modifications can yield systematically different perceptual outcomes across user groups.
+
+Despite this adaptation strategy being perceived as ineffective, overall results indicate that alternative approaches may still be beneficial, as different cohorts and cultural dimensions exhibit distinct preferences and show systematic correlations with cultural proximity and perceived competence.
