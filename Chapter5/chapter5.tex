@@ -12,14 +12,9 @@
     \graphicspath{{Chapter5/Figs/Vector/}{Chapter5/Figs/}}
 \fi
 
-The second part of this thesis proposes a novel framework for implementing cultural competence in SRs.
-%\color{red} Nell'introduzione avevi parlato di due parti, prima con due 
-%\color{black}
-It also presents the experiments designed and conducted during my research stay at ETH Zurich, in which a possible implementation of the proposed framework was deployed on the Pepper SR.
+The second part of this thesis proposes a novel framework for embedding cultural competence in SRs. It includes the experiments designed and conducted during my research stay at ETH Zurich, in which an implementation of the proposed framework was deployed on the Pepper SR.
 
-This chapter presents the proposed framework and its constituent components. 
-In addition, it presents the implementation evaluated on the Pepper SR.
-The chapter also introduces the cultural dimensions used to characterize participants and the measures adopted to assess the cultural competence exhibited by the robot during the experiments. 
+This chapter describes the proposed framework and its constituent components. In addition, it presents the implementation evaluated on the Pepper SR.
 
 \section{System Architecture}
 
@@ -43,7 +38,7 @@ The architecture can be described from a temporal interaction perspective as fol
     \item Sensors Component: captures raw environmental signals and converts them into low-level digital representations (e.g., audio sampled as a waveform);
     \item Perception Component: transforms low-level sensor data into higher-level representations (e.g., speech signals converted into text via a Speech-to-Text (STT) system);
     \item Cultural Adapter Component: reasons over high-level representations, initial cultural priors, and learned user preferences to adapt both perception and action parameters. For example, if the user requests a language change, the system updates the user preference model, reconfigures the perception pipeline (e.g., STT language settings), and adapts the action pipeline to generate output in the target language using Text-to-Speech (TTS);
-    \item Cultural Initial Preferences and User Preferences Components: These components act as memory repositories. The Cultural Initial Preferencescomponent stores the user's national culture or initial preference profile, while the User Preferences component stores the preferences learned and updated by the Cultural Adapter component. These preferences are represented as cultural parameters that influence the entire processing pipeline.
+    \item Cultural Initial Preferences and User Preferences Components: These components act as memory repositories. The Cultural Initial Preferences component stores the user's national culture or initial preference profile, while the User Preferences component stores the preferences learned and updated by the Cultural Adapter component. These preferences are represented as cultural parameters that influence the entire processing pipeline.
     \item Action Component: converts high-level system commands into modality-specific outputs (e.g., text into speech synthesis commands using TTS);
     \item Actuators Component: execute low-level control signals to produce physical effects in the environment (e.g., rendering synthesized audio through speakers).
 \end{itemize}
@@ -59,7 +54,6 @@ Furthermore, their ability to interact with external tools and knowledge sources
 The proposed framework is based on two premises. 
 First, cultural domain knowledge is partially encoded within the latent representations of LLMs. 
 Second, knowledge-injection techniques such as Retrieval-Augmented Generation (RAG)\cite{lewis2020retrieval} allow LLMs to access external and continuously updatable sources of information. 
-%\color{red} Citazione mancante \color{black} 
 In this context, RAG is not employed solely to retrieve static cultural priors. 
 Rather, the combination of implicit cultural knowledge and retrieved information enables the LLM to dynamically configure the constituent modules of the robotic architecture, including user preference modeling, perception, and action generation. 
 Compared with alternatives such as fine-tuning, RAG is particularly suitable due to the scarcity of culturally annotated data, its lower computational requirements, and its ability to incorporate new information without retraining.
@@ -75,7 +69,7 @@ We propose two conceptual approaches with respect to classical frameworks. The f
 
 The second approach, the Adaptation (A) strategy, extends the F approach by introducing a dynamic adaptation mechanism. In this configuration, the LLM is used to update the memory bank and modify cultural parameters based on interaction data. As a result, the system progressively adapts its behavior to align with individual user preferences.
 
-Both approaches are evaluated against a Baseline (B) condition in which cultural factors are not explicitly modeled. A completely culture-neutral system is not strictly achievable, since any artifact necessarily reflects design assumptions shaped by its creators. However, for the purposes of this work, the baseline refers to a system that does not explicitly embed language- or culture-specific parameters, but instead relies on default behavior derived from general population-level assumptions.
+Both approaches are evaluated against a Baseline (B) condition in which cultural factors are not explicitly modeled. A complete culture-neutral system is not strictly achievable, since any artifact necessarily reflects design assumptions shaped by its creators. However, for the purposes of this work, the baseline refers to a system that does not explicitly embed language- or culture-specific parameters, but instead relies on default behavior derived from general population-level assumptions.
 
 Language provides a concrete example. If language is treated as a cultural parameter and Italian culture is used as the reference context, a baseline system may default to English due to its widespread international use. In contrast, the F approach initializes interaction in Italian, reflecting linguistic norms associated with the target cultural context. The A approach introduces an additional layer of personalization: when interacting with individuals belonging to minority populations in Italy, such as tourists, expatriates, or exchange students, the system may infer a preference for English and switch accordingly.
 
@@ -123,6 +117,9 @@ Figure~\ref{fig:upper_view} represents an upper map of the room with the robots 
 %\color{black}
 Although intentionally simplified, the scenario preserves the key components required to evaluate the proposed framework, including culturally conditioned dialogue, perception, and navigation behaviors. At the same time, the controlled nature of the environment limits potential confounding factors and facilitates the analysis of the cultural adaptation mechanisms under investigation.
 
+To facilitate the understanding of certain design choices explained below, we anticipate here that two national cultures were selected for the study: Germans and Italians. The rationale for this choice is presented in the Participants section (Section~\ref{sec:participant}) in the next chapter.
+
+
 \subsection{Cultural Parameters}
 \label{ch6:sec:cultural_parameters}
 
@@ -166,7 +163,7 @@ Italian  & \makecell{Ciao, sono Pepper. Mi muoverò nella stanza.\\ Parla con me
 %
 
 %\color{blue}
-Because the robot is designed to travel  between locations A and B and backwards, and the duration of each navigation task cannot be predicted a priori, the overall interaction is divided into three phases based on the robot's trajectory. The following section explains how this trajectory is generated; for now, it can be considered as a sequence of (n) waypoints.
+Because the robot is designed to travel  between locations A and B and backwards, and the duration of each navigation task cannot be predicted a priori, the remaining interaction is divided into three phases based on the robot's trajectory. The following section explains how this trajectory is generated; for now, it can be considered as a sequence of (n) waypoints.
 
 Accordingly, the trajectory is partitioned into three equal segments. During the first (n/3) waypoints, the robot engages the user in a chit-chat phase. Between the (n/3)-th and (2n/3)-th waypoints, the robot discusses three predefined cultural topics: language, communication style, and/or proxemics. Finally, during the last third of the trajectory, the robot concludes the interaction by greeting the user.
 

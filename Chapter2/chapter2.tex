@@ -12,7 +12,7 @@
     \graphicspath{{Chapter2/Figs/Vector/}{Chapter2/Figs/}}
 \fi
 
-In this chapter, I present the social robotics use cases that serve as the primary empirical reference for this study. Furthermore, I revisit established ML frameworks to formalize an architecture for culturally competent ML, together with the definition of appropriate evaluation metrics. I then propose a set of mitigation strategies based on Multi-Task Learning (MTL), designed to address cultural bias in robotic perception.
+In this chapter, I present the social robotics use cases that serve as the primary empirical reference for this study. Furthermore, I revisit established ML frameworks to formalize an architecture for culturally competent ML, together with the definition of appropriate evaluation metrics. I then propose a mitigation strategy based on Multi-Task Learning (MTL), designed to address cultural bias in robotic perception.
 
 The subsequent section presents the empirical evaluations conducted using the methodologies introduced in this chapter. The analysis begins with a formal characterization of the main objective: quantifying the cultural competence of ML models under conditions of significant data sparsity and under-representation.
 
@@ -231,7 +231,7 @@ To rigorously evaluate the underlying characteristics of the curated datasets, a
 
 The computational pipeline was established using the TensorFlow ecosystem \citep{abadi2016tensorflow}. 
 A fundamental challenge in image dataset analysis involves the transition from high-dimensional raw pixel intensities to meaningful semantic representations. 
-To bridge this gap, we employed the ResNet50 architecture \citep{He_2016_CVPR}, pre-trained on the ImageNet-1k corpus, to serve as a fixed feature extractor.
+To bridge this gap, we employed the ResNet50 architecture \citep{He_2016_CVPR}, pre-trained on the ImageNet corpus, to serve as a fixed feature extractor.
 
 To accommodate domain-specific visual scales, images within the LAMP dataset were rescaled to $120 \times 120$ pixels, whereas the CARPET dataset utilized a $200 \times 200$ pixel resolution. By removing the terminal fully connected layer and applying Global Average Pooling (GAP), each image $x_i \in \mathcal{X}$ is projected onto a latent feature vector $z \in \mathbb{R}^{2048}$. This dimensionality ensures that the extracted embeddings encapsulate the complex morphological and textural nuances inherent to the specific domain geometries. To prevent subsequent distance metrics from being influenced by varying feature magnitudes, the embedding space is normalized via Z-score standardization using the Scikit-learn library \citep{pedregosa2011scikit}. 
 
@@ -840,7 +840,7 @@ Evaluations are conducted using minority representation levels $p_u \in \{5\%, 1
 The performance metrics for the MTL interventions are detailed in Tables~\ref{ch3:tab:ris:mtl:lamp} and~\ref{ch3:tab:ris:mtl:carpet}, and further elucidated through the graphical representations in Figures~\ref{ch3:fig:ris:mtl:lamp} and~\ref{ch3:fig:ris:mtl:carpet}.
 
 Table~\ref{ch3:tab:ris:mtl:lamp} details the performance of the mitigated RESNET architecture on the LAMP dataset across each permutation of majority culture and minority representation levels ($p_u \in \{5\%, 10\%\}$). 
-The table enumerates the results for varying threshold values $\tau \in \{0, 0.05, 0.1\}$ across all cultural combinations (Chin., Fren, and Turk.).
+The table enumerates the results for varying threshold values $\tau \in \{0, 0.1, 0.2\}$ across all cultural combinations (Chin., Fren, and Turk.).
 Specifically, it reports the optimal task-weighting parameter identified during model selection, denoted as $\gamma^*$, the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$), and the resulting CIC. 
 Furthermore, to quantify the efficacy of the MTL approach, we provide the percentage improvement ($\%\text{Imp.}$) relative to the non-mitigated baseline configurations established in Section~\ref{ch3:sec:exp_standard_ml} (see Table~\ref{ch3:tab:ris:ml:lamp}).
 
@@ -892,7 +892,7 @@ Figure~\ref{ch3:fig:ris:mtl:carpet} is the counterpart of Figure~\ref{ch3:fig:ri
 & 0.2 & 1.578 & $17.8\% (\mathbf{-2.4\%})$ & $18.4\% (\mathbf{-4.2\%})$ & $12.5\% (\mathbf{-0.6\%})$ & $3.7\% (\mathbf{-1.8\%})$ \\
 \bottomrule
 \end{tabular}
-\caption{LAMP dataset and the RESNET algorithm: For each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, for different values of $\tau \in {0, 0.05, 0.1}$, and for each possible combination of the cultures (Chin., Fren, and Turk.), the optimal $\gamma$ selected during the model selection phase, denoted as $\gamma^*$, the error on the test set for each culture (ERR$^\text{Chin.}$, ERR$^\text{Fren}$, and ERR$^\text{Turk.}$), and the CIC using our mitigation approach.
+\caption{LAMP dataset and the RESNET algorithm: For each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, for different values of $\tau \in {0, 0.1, 0.2}$, and for each possible combination of the cultures (Chin., Fren, and Turk.), the optimal $\gamma$ selected during the model selection phase, denoted as $\gamma^*$, the error on the test set for each culture (ERR$^\text{Chin.}$, ERR$^\text{Fren}$, and ERR$^\text{Turk.}$), and the CIC using our mitigation approach.
 Additionally, we report the improvements (\%Imp.) with respect to the non-mitigated scenario described in Section~\ref{ch3:sec:exp_standard_ml}.}
 \label{ch3:tab:ris:mtl:lamp}
 \end{table}
@@ -939,7 +939,7 @@ Additionally, we report the improvements (\%Imp.) with respect to the non-mitiga
 & 0.2\%& 2.1544 & $33.0\% (\mathbf{-0.7\%})$ & $27.5\% (\mathbf{-6.9}\%)$ & $35.3\% (+0.1\%)$ & $4.5\% (+1.9\%)$ \\
 \bottomrule
 \end{tabular}
-\caption{CARPET dataset and the RESNET algorithm: For each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, for different values of $\tau \in {0, 0.05, 0.1}$, and for each possible combination of the cultures (Ind., Japan. and Scand.), we report the optimal $\gamma$ selected during the model selection phase, namely $\gamma^*$, the error on the test set for each culture (ERR$^\text{Ind.}$, ERR$^\text{Japan.}$, and ERR$^\text{Scand.}$), and the CIC using our mitigation approach. In addition to ERR and CIC, we also report the improvements (\%Imp.) relative to the non-mitigated scenario presented in Section~\ref{ch3:sec:exp_standard_ml}.}
+\caption{CARPET dataset and the RESNET algorithm: For each combination of majority culture and $p_u$ (percentage of minority culture) in the training set, for different values of $\tau \in {0, 0.1, 0.2}$, and for each possible combination of the cultures (Ind., Japan. and Scand.), we report the optimal $\gamma$ selected during the model selection phase, namely $\gamma^*$, the error on the test set for each culture (ERR$^\text{Ind.}$, ERR$^\text{Japan.}$, and ERR$^\text{Scand.}$), and the CIC using our mitigation approach. In addition to ERR and CIC, we also report the improvements (\%Imp.) relative to the non-mitigated scenario presented in Section~\ref{ch3:sec:exp_standard_ml}.}
 \label{ch3:tab:ris:mtl:carpet}
 \end{table}
 %

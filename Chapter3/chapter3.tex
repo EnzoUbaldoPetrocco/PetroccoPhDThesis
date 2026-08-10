@@ -2,7 +2,7 @@
 %*******************************************************************************
 %****************************** Third Chapter **********************************
 %*******************************************************************************
-\chapter{Data Augmentation Mitigation Strategy}
+\chapter{Data Augmentation Mitigation Strategies}
 %\color{red}Scusa ma come fa questo capitolo a iniziare con Experiments e Results? Qui introduci una nuova metodologia rispetto al capitolo precedente. Forse dipende dal fatto che nella versione precedente era così. Ma devi stare attento, scusa ma non posso guardare io queste cose.
 %\color{black}
 \label{ch3}
@@ -15,15 +15,14 @@
 %
 
 %
-This chapter introduces a specialized suite of task-specific Data Augmentation (DA) techniques designed to mitigate cultural bias within robotic visual perception frameworks. 
-While the term DA traditionally denotes a broad spectrum of domain-agnostic methodologies utilized to expand sample sizes, the strategies developed herein are intrinsically coupled with specific computer vision tasks. 
-Due to its conceptual simplicity and empirical efficacy, DA has been extensively explored within the vision domain. 
-Crucially, although certain underlying principles introduced in this chapter can be generalized to alternative modalities, direct cross-domain transferability cannot be assumed a priori due to the distinct structural characteristics inherent to different data types.
+This chapter introduces a suite of task-specific DA techniques designed to mitigate cultural bias in robotic visual perception systems. While the term DA traditionally refers to a broad range of methods used to increase dataset diversity and effective sample size, the approaches proposed in this chapter are specifically tailored to particular computer vision tasks.
 
-This chapter details and presents the empirical evaluations regarding the methodology presented.
-%\color{red}Stessa cosa. Abbi pazienza ma sono un po' stanco. Quali metodologie nel precedente chapter? Non le stai introducendo qui?
-%\color{black}
-Subsequent sections provide analysis of the results obtained from DA, and its composition with MTL.
+Due to its conceptual simplicity and demonstrated effectiveness, DA has been widely explored in the computer vision literature. Although the underlying principles presented in this chapter may be extended to other modalities, their direct transferability is not guaranteed, as different data types exhibit distinct structural and statistical characteristics.
+
+This chapter presents the proposed methodology and its empirical evaluation. 
+The subsequent sections analyze the results obtained using the DA techniques and their combination with MTL mitigation strategy, resulted successful in the previous chapter. 
+The chapter concludes with a discussion of the findings and their implications.
+
 
 \section{Methods}
 This section provides a description for the set of DA techniques that will be tested.
@@ -32,16 +31,12 @@ The description of these mitigation strategies follows below in this order.
 
 \subsection{Oversampling Techniques}
 \label{ch2:sec:os}
-%\color{red}4.0.1?
-%\color{black}
 The most fundamental DA strategy utilized is OS. 
 In this approach, instances from under-represented cultural groups are replicated within the training distribution until an empirical balance across all cultural contexts is achieved.
 A more sophisticated iteration of this technique, specifically designed for deep learning architectures, involves enforcing a Parity-Balanced Batch (PARB) strategy. 
 Rather than static oversampling of the global dataset, PARB ensures that every stochastic gradient descent (SGD) iteration utilizes a mini-batch in which each cultural context $\mathcal{C}$ is represented with equal frequency.
 
 \subsection{Random Transformations}
-%\color{red}4.0.2
-%\color{black}
 
 \label{ch2:sec:RT}
 In various high-stakes applications~\citep{shorten2019survey}, particularly those involving high-dimensional input spaces such as computer vision, the empirical dataset $\mathcal{D}_n$ often lacks the cardinality required to fully encapsulate the underlying geometric and semantic invariances of the data-generating distribution $\mu$. 
@@ -63,8 +58,6 @@ Within this framework, the variable $g$ serves as a scalar parameter governing t
 
 \subsection{Adversarial Sampling}
 \label{ch2:sec:adv_sampling}
-%\color{red}4.0.3
-%\color{black}
 
 To further bolster the cultural competency of the classification framework, we incorporate an ADV strategy. 
 The fundamental intuition underlying this approach is to augment the training distribution with synthesized samples designed to compel the model to decouple cultural identifiers from the primary discriminative task.
@@ -92,8 +85,6 @@ By training on instances where cultural markers have been stochastically shifted
 
 \subsection{Diffusion Models}
 \label{ch2:sec:diff_model}
-%\color{red}4.0.4
-%\color{black}
 
 The tertiary DA strategy involves enriching the training corpus with synthetic imagery synthesized via a DM. Within the paradigm of generative modeling, the objective transitions from learning a discriminative mapping $f_\Theta: \mathcal{X} \rightarrow \mathcal{Y}$ to approximating the high-dimensional probability density function $\mu$ characterizing the input space $\mathcal{X}$. 
 Diffusion models operationalize this by learning to invert a forward stochastic process that incrementally degrades the data through the sequential addition of Gaussian noise.
@@ -124,7 +115,7 @@ To address our specific objective, the diffusion methodology may be operationali
 \caption{Simplified 2D feature-space visualizations illustrating the primary mitigation strategies delineated in this thesis.}
 \label{ch2:fig:mock_strategies_comparison}\end{figure}
 
-\section{Combining MTL and DA}
+\subsection{Combining MTL and DA}
 \label{ch2:sec:mtl_and_da}
 The mitigation strategies delineated above may be synergistically integrated to address specific operational requirements. 
 Within the scope of this thesis, and primarily due to the inherent sparsity of the empirical dataset, diffusion-based augmentation methodologies are consistently coupled with RT. 
@@ -151,7 +142,8 @@ Within this thesis, a exhaustive evaluation of every permutation of these DA tec
 
 \section{Mitigation Strategies}
 %
-Adhering to the methodologies delineated in the preceding chapter, we expanded the LAMP and CARPET datasets through a hierarchical application of OS, RT, and synthetic imagery generated via adversarial perturbations (ADV) and diffusion models (DM).
+Adhering to the methodologies delineated in the preceding section, we expanded the LAMP and CARPET datasets through a hierarchical application of OS, RT, and synthetic imagery generated via ADV and DMs.
+This section describes the effect of this expansion on cultural competence.
 
 The initial phase of this experimental series is dedicated to evaluating the baseline efficacy of fundamental strategies, specifically OS and RT. 
 Subsequently, we provide a detailed exposition of the experiments involving adversarial sample generation, followed by an analysis of the performance gains derived from diffusion-based augmentation. Finally, we examine the synergistic effects of various hybrid configurations, integrating MTL with the aforementioned DA techniques to establish the most robust mitigation framework.
@@ -472,8 +464,6 @@ This section details the empirical findings derived from the ADV sampling strate
 The analysis is bifurcated: the initial subsection evaluates the performance metrics of the discriminator network, while the subsequent subsection examines the consequential impact of the ADV methodologies on overall model performance.
 \subsection{Discriminator Performance Analysis}
 \label{sec:res:discr}
-%\color{red}4.4.0.1
-%\color{black}
 
 Tables~\ref{ch3:tab:discr:LC}, \ref{ch3:tab:discr:LF}, and \ref{ch3:tab:discr:LT} provide the classification metrics for the discriminator on the LAMP dataset across each majority culture permutation. 
 These tables report the precision (PREC) and recall (REC) for each cultural category—specifically Chin., Fren, and Turk.—alongside the aggregate accuracy (ACC), evaluated at minority representation thresholds of $p_u \in \{5\%, 20\%\}$. 
@@ -697,9 +687,6 @@ In Figures~\ref{ch3:fig:advLC} we reported examples of transformations applied o
 \label{ch3:fig:advLC}
 \end{figure}
 
-%\color{red}In tutte queste figure in cui le caption delle subfigures si avvicinano troppo, metti \hspace{1cm} come ho fatto io qui tra subfugures \color{black}
-
-
 In Figures~\ref{ch3:fig:advCI}, we reported examples of transformations applied on Ind. images from CARPET dataset with and without carpets using PGD and CLSDIV or NOCLSDIV with Ind. as majority cultures.
 
 \begin{figure}
@@ -858,9 +845,8 @@ More samples generated by the discriminator, can be found in the Appendix~\ref{a
 
 It is noteworthy that, despite the results of the discriminator multi-task problem, visual inspection reveals no discernible differences between transformations, regardless of the RT mitigation strategy or the condition where $p_u=20\%$.
 
-\subsubsection{Adversarial Sampling Enhanced Results}
-%\color{red}4.4.0.2
-%\color{black}
+\subsection{Adversarial Sampling Enhanced Results}
+
 \label{ch3:sec:res:discr}
 Tables~\ref{ch3:tab:ADVLC}, \ref{ch3:tab:ADVLF}, and \ref{ch3:tab:ADVLT} delineate the performance metrics for the LAMP dataset across each majority culture permutation. 
 These tables report the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$) and the resulting CIC. 
@@ -1458,7 +1444,10 @@ Qualitatively, the DM and DMMIN strategies are highly effective at reproducing t
 
 Samples of DM generated images can be found in the Appendix~\ref{appendix}.
 
-\section{Multi-Task Learning Mitigation Strategy Enhanced by Data Augmentation Results}\label{ch3:sec:mtl_and_da}Tables~\ref{ch3:tab:mtl_and_da:LC}, \ref{ch3:tab:mtl_and_da:LF}, and \ref{ch3:tab:mtl_and_da:LT} delineate the performance metrics for the LAMP dataset across each majority culture permutation. 
+\section{Multi-Task Learning Mitigation Strategy Enhanced by Data Augmentation Results}
+\label{ch3:sec:mtl_and_da}
+This section presents the results obtained mixing domain-independent (MTL) and some of the tasks-specific (DA) strategies that resulted effective.
+Tables~\ref{ch3:tab:mtl_and_da:LC}, \ref{ch3:tab:mtl_and_da:LF}, and \ref{ch3:tab:mtl_and_da:LT} delineate the performance metrics for the LAMP dataset across each majority culture permutation. 
 These tables report the class-specific test error rates ($\text{ERR}^{\text{Chin.}}$, $\text{ERR}^{\text{Fren}}$, and $\text{ERR}^{\text{Turk.}}$) and the CIC. 
 The experimental evaluation utilizes the MTL framework as the primary baseline, which is subsequently enhanced through the most effective DA strategies: DM and DMMIN. 
 Furthermore, these configurations are augmented with the PARB strategy at the commencement of the processing pipeline.
@@ -1595,13 +1584,16 @@ The tables presented above demonstrate that the integration of MTL with DM and D
 \section{Conclusion}
 %\color{red}Non presenta solo empirical evaluation ma introduce anche la metodologia. VERIFICA CHE TUTTE INTRODUZIONI E CONCLUSIONI SIANO COERENTI CON IL CONTENUTO!!!!
 %\color{black}
-This chapter presented the methodology and empirical evaluation of the proposed mitigation strategies for cultural underrepresentation bias across the LAMP and CARPET datasets. 
+This chapter presented the methodology and empirical evaluation of the proposed DA mitigation strategies for cultural underrepresentation bias across the LAMP and CARPET datasets. 
 The experimental findings, spanning OS, RT, ADV, DM, and hybrid MTL configurations, consistently validate the effectiveness of the proposed framework.
 
 The baseline augmentation strategies, OS and RT, demonstrated reliable improvements in minority cultural error rates and CIC across most configurations. 
 Their combination proved particularly effective, suggesting that geometric variance and class-balancing operate synergistically rather than redundantly. The hybrid RT + OS configuration achieved the most substantial CIC reductions among the simpler strategies, with gains of up to $6.3$ percentage points on the LAMP dataset.
 
-The adversarial sampling strategies, DIV and NODIV, further extended these improvements by enriching the training distribution with culturally boundary-crossing edge cases. The analysis of the cultural discriminator revealed that minority underrepresentation directly degrades discriminator reliability, manifesting as measurable precision and recall deficits for minority classes. Both RT integration and an increased minority data threshold ($p_u = 20\%$) effectively addressed these deficits, confirming that discriminator quality is a key bottleneck in the adversarial augmentation pipeline. Despite this, visual inspection revealed no perceptible differences between adversarially transformed samples across configurations, suggesting that the perturbations operate at a statistical rather than a visually salient level.
+The adversarial sampling strategies, DIV and NODIV, further extended these improvements by enriching the training distribution with culturally boundary-crossing edge cases.
+Analysis of the cultural discriminator revealed that minority underrepresentation directly degrades discriminator reliability, manifesting as measurable precision and recall deficits for minority classes. Despite this limitation, the mitigation strategy remained effective.
+Both RT integration and a higher number of minority samples in the training set ($p_u = 20\%$) improved discriminator performance and enhanced the effectiveness of the mitigation strategy, confirming a correlation between discriminator quality and mitigation effectiveness. Furthermore, these results confirm that RT and ADV can be combined with positive effects.
+Visual inspection revealed no perceptible differences between adversarially transformed samples across configurations, suggesting that the perturbations operate at a statistical rather than a visually salient level.
 
 Diffusion-based augmentation, particularly DMMIN, produced consistent performance gains on both datasets, outperforming RT as a standalone strategy in most configurations. The minority-focused variant proved especially beneficial in scenarios of severe cultural scarcity, as its targeted training distribution more faithfully approximated the underrepresented cultural manifold. The LAMP dataset responded more readily to diffusion-based generation than the CARPET dataset, likely reflecting the greater visual complexity and intra-class variability inherent in carpet imagery.
 

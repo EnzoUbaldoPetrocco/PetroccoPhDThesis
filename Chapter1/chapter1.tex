@@ -51,7 +51,7 @@ The research question addressed in the second part is:
 
 The first part of this thesis, acknowledging the limitations of the culture-as-a-nation approximation, address the measurement and mitigation of cultural incompetence in ML models under underrepresentation scenarios. 
 These scenarios rely on culture-as-a-nation approximations, where certain cultures are underrepresented relative to a dominant majority culture. 
-This contribution consists of two categories of mitigation strategies, namely task-independent (first part) and task-specific (second part) approaches. 
+This contribution consists of two categories of mitigation strategies: task-independent approaches, which modify the model architecture, and task-specific approaches, which modify the data.
 After establishing the individual effectiveness of these techniques, further empirical evidence is provided showing that their strategic combination significantly improves the cultural competence of ML systems.
 
 The experiments presented in the first section of this thesis are available in a GitHub repository\footnote{\url{https://github.com/lucaoneto/CulturalCompetentML.git}\label{ch1:url:repodata}}, together with the two datasets collected.
@@ -60,7 +60,7 @@ The experiments presented in the first section of this thesis are available in a
 %Sopra hai detto: This thesis focuses on the problem of underrepresentation. Anche la terza parte si focalizza su underrepresentation, secondo te? Se non è così, dove hai scritto "This thesis focus on ..." conviene invece dire. "This thesis is composed of three parts: the first two focus on the problem of underrepresentation; the third one focusses on...".
 %The research question addressed in the first two parts is: XXX The research question addressed in the third part is: XXX. Nota infatti che non appare da nessuna parte la question addressed nella third part. Devi stare attento a preservare la struttura in maniera logica e coerente.
 %\color{black}
-The primary contribution of the second part is the development of an adaptive framework designed to address sub-national cultural heterogeneity. 
+The primary contribution of the second part is the development of an adaptive framework designed to address sub-national cultural heterogeneity in SRs. 
 The proposed framework implements a probabilistic belief calibration mechanism based on culture-as-a-nation proxies. 
 The framework begins from an initial state in which the user's culture is inferred using behavioral priors, and culture is implicitly represented within the knowledge of the Large Language Model (LLM) used for user interaction. 
 The user subsequently confirms or refines these behavioral priors, with the LLM acting as a dynamic translation layer that converts explicit feedback into actionable behavioral and navigational parameters.

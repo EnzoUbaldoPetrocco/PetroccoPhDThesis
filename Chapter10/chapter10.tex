@@ -33,13 +33,6 @@ The primary limitation of this work is that, although it develops two key compon
 
 The limitations specific to each of these two research directions are discussed separately in this section.
 
-%\color{red}
-%\La prima grossa limitazione del lavoro è che hai sviluppato due parti importanti per creare un robot culturalmente competente, ma la dissertation non propone una integrazione tra i due. Dato che si tratta di un argomento nuovo, è ragionevole che vengano esplorate prima le componenti essenziali legate a percezione culturalmente competente e azione/interazione culturalmente competente. Una sintesi sarà oggetto di future work.
-
-%Dopo di ché parli separatamente delle limitazioni nella prima e nella seconda parte
-%\color{black}
-
-%\color{red}\color{black}
 In the first parts of this dissertation,  the techniques presented for mitigating cultural incompetence in ML models have limitations in terms of applicability and computational cost. RT and diffusion-model-based approaches are highly task-dependent; while partial generalization to other domains is possible, their implementation remains non-trivial.
 
 Furthermore, diffusion-model-based and ADV techniques require substantial computational resources and training time, which may not be justified in low CIC scenarios, where simpler approaches such as MTL or OS may be sufficient.
@@ -52,13 +45,8 @@ When extending this framework to other modalities, natural language emerges as a
 
 Further extensions of MTL architectures and CIC metrics may relax the hard constraint of national categorization, instead adopting distributional or density-based representations. While more computationally complex, such approaches may better capture fine-grained and underrepresented cultural variation within broader groupings.
 
-%\color{red} \color{black} 
 In the last parts of this dissertation, the experiments were designed as exploratory investigations into the intersection of cultural competence and emerging ML systems.
 Consequently, the system developed and tested with recruited participants has several limitations that will be addressed in future work.
-%\color{red} Non ci sono le limitation. Solo i future work. Riformulerei così:
-%\color{black}
-
-%Several directions for future research emerge from these findings.
 
 First, a systematic comparative evaluation across a broader range of LLMs, particularly with respect to adherence to structured prompt constraints and cultural adaptation capabilities, would strengthen the empirical validity of the proposed architectural framework. Given the rapid pace of progress in LLM development, the use of a compressed and quantized model in this study may have introduced additional forms of cultural incompetence, consistent with the phenomena investigated in the first part of this dissertation. Future work should therefore explore whether the mitigation strategies proposed for reducing cultural incompetence in image classification systems can be extended to LLM-based architectures and evaluate their effectiveness in culturally adaptive HRI scenarios.
 

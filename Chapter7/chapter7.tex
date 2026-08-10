@@ -7,19 +7,8 @@
 \chapter{Experiments}
 \label{ch7}
 
-This chapter presents the design and protocol of the preliminary online survey used to ground the proxemic parameterization and of the main study. 
-Then, it presents the design and protocol of the main study.
-
-%\color{red} Scusa ma questo capitolo presenta tutto. Sia lo studio preliminare online sia il main study, giusto? Per favore aggiornalo.
-%\color{black}
-
-The results of the online study are then reported. %structured to mirror the analysis pipeline of the main experimental results.
-%\color{blue}
-Then, results of the main study are reported.
-%\color{red} Anche questo, contiene sia preliminare online sia main study.
-%\color{black}
-
-The chapter concludes with a discussion of the findings.
+This chapter first presents the design and protocol of the preliminary online survey used to define the proxemic parameterization, followed by the design and protocol of the main study. It then introduces the cultural dimensions used to characterize participants and the measures adopted to assess the cultural competence exhibited by the robot during the experiments.
+Subsequently, the chapter reports the results of both the preliminary online survey and the main study. Finally, it concludes with a discussion of the findings.
 
 \section{Preliminary Online Survey}
 \label{ch7:sec:intr}
@@ -39,7 +28,7 @@ The primary manipulation consists of varying the minimum robot–human distance 
     \label{fig:online_survey_video}
 \end{figure}
 
-To reduce confounding effects related to human appearance, each condition is rendered with both a male and a female confederate. For each participant, one version is randomly assigned, ensuring balanced exposure across the dataset. These stimuli constitute third-person perspective evaluations, as participants observe the interaction externally.
+To reduce confounding effects related to human appearance, each condition is rendered with both a male and a female confederate. Order is randomly assigned, ensuring balanced exposure across the dataset. These stimuli constitute third-person perspective evaluations, as participants observe the interaction externally.
 
 In addition, the protocol includes a complementary set of static first-person perspective images that approximate the viewpoint of a user directly interacting with the robot. These images replicate the same discrete proxemic distance levels as the video conditions and are intended to complement the dynamic stimuli by isolating spatial judgment from motion dynamics.
 An example of the first view images included in the preliminary online survey is in Figure~\ref{fig:online_survey_image}.
@@ -69,7 +58,7 @@ Experiments were conducted in Zurich, Switzerland. Participants were recruited f
 %\color{black}
 The study addresses the following research question:
 
-\textit{How does a robot’s cultural competence influence user perception during navigational human--robot interaction in a residential scenario?}
+\textit{How does a robot’s cultural competence influence user perception during navigational HRI in a residential scenario?}
 
 The following hypotheses are evaluated:
 
@@ -97,22 +86,13 @@ The following conditions are defined:
 
 %\color{red}
 \subsection{Participants}
-Experiments were conducted in Zurich, Switzerland. Participants were recruited from two cultural groups, Italian and German. Swiss nationals were excluded in order to reduce variability associated with the multilingual and multicultural composition of the Swiss population. This decision was made for methodological reasons rather than technical limitations, as Italians and Germans constitute two of the largest expatriate communities in Zurich\footnote{\href{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}}. Restricting the participant pool simplified the definition of baseline and adapted interaction policies, particularly with respect to language initialization. Although the proposed system is capable of adapting to a broader range of linguistic and cultural conditions, Swiss participants were not included in the experimental sample in order to maintain a clearer comparison between the selected cultural groups.
+\label{sec:participant}
+Experiments were conducted in Zurich, Switzerland. Participants were recruited from two cultural groups, Italian and German. Swiss nationals were excluded in order to reduce variability associated with the multilingual and multicultural composition of the Swiss population. This decision was made for methodological reasons as Italians and Germans constitute two of the largest expatriate communities in Zurich\footnote{\href{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}{https://www.bfs.admin.ch/bfs/en/home/statistics/population/migration-integration/by-migration-status.html}}. Restricting the participant pool simplified the definition of baseline and adapted interaction policies, particularly with respect to language initialization. Although the proposed system is capable of adapting to a broader range of linguistic and cultural conditions, Swiss participants were not included in the experimental sample in order to maintain a clearer comparison between the selected cultural groups.
 \color{black}
 
 Participant inclusion is restricted to individuals belonging to the target cultural cohorts required for parameter validation. Cultural affiliation is used as an initialization variable for both navigation and dialogue systems and is therefore essential for experimental control.
-Recruitment process has been conducted using DeSciL. platform~\footnote{\href{https://www.descil.ethz.ch/lab}{https://www.descil.ethz.ch/lab}} and experiments have been approved by ETH Zurich Ethics Commission~\footnote{Project 25 ETHICS-226: Cultural Competence for Social Robotics during Navigation  }
+Recruitment process has been conducted using DeSciL. platform~\footnote{\href{https://www.descil.ethz.ch/lab}{https://www.descil.ethz.ch/lab}} and experiments have been approved by ETH Zurich Ethics Commission~\footnote{Project 25 ETHICS-226: Cultural Competence for Social Robotics during Navigation}.
 
-Two cultural cohorts are considered:
-
-\begin{itemize}
-\item \textbf{Demographic feasibility:} Cohorts must be sufficiently represented in the recruitment region to ensure balanced sampling.
-\item \textbf{Cross-cultural differentiation:} Cohorts must exhibit measurable differences in communicative style and proxemic preference, consistent with the intended manipulation.
-\end{itemize}
-
-Sample size determination is based on an initial power analysis conducted independently of cultural stratification, with subsequent adjustments to ensure balanced allocation across cohorts and conditions.
-
-%\color{red}
 \subsection{Measuring user's Cultural Affinity and Robot's Cultural Competence}
 \label{ch5:sec:measuring_cultural_competence}
 
@@ -237,7 +217,7 @@ Numerous personality assessment instruments are available and widely used in the
     \label{tab:BFM-10}
 \end{table}
 
-Importantly, closed-ended quantitative measures are not sufficient to fully capture cultural competence or the complexity of human–robot interaction outcomes. Open-ended qualitative responses are therefore collected to complement structured scales and provide additional insight into participants’ subjective experience. In Figure~\ref{open_question} the final question asked to the participant is presented.
+Importantly, closed-ended quantitative measures are not sufficient to fully capture cultural competence or the complexity of human–robot interaction outcomes. Open-ended qualitative responses are therefore collected to complement structured scales and provide additional insight into participants’ subjective experience. In Figure~\ref{fig:open_question}, the final question asked to the participant is presented.
 
 \begin{figure}
     \centering
@@ -270,15 +250,10 @@ Furthermore, non-verbal behavioral analysis is used as a complementary evaluatio
     \caption{Table containing the signals to interpret during the video qualitative analysis.}
     \label{tab:signals}
 \end{table}
-%\color{black}
 
-%\color{red}
 \subsection{Experimental Protocol and Data Collection}
-%\color{black}
 
-The experimental procedure follows a fixed and standardized sequence to ensure consistency across participants and conditions, and is complemented by a structured data acquisition pipeline.
-
-%\subsection{Experimental Procedure}
+The experimental procedure follows a fixed sequence to ensure consistency across participants and conditions, and is complemented by a data acquisition pipeline.
 
 \begin{itemize}
 \item \textbf{Reception and Identification:} Participants are welcomed and eligibility criteria are verified, including cultural affiliation (Italian or German).
@@ -289,9 +264,7 @@ The experimental procedure follows a fixed and standardized sequence to ensure c
 
 \item \textbf{Informed Consent:} Written consent is obtained prior to participation.
 
-\item \textbf{Pre-test Assessment:} Participants complete baseline psychometric instruments. The questionnaires include: Cultural Affinity questions, Trust questionnaire, BFM Questionnaire. %\color{red}
-%Scusa ma prima hai citato anche il RoSAS. Se non lo usi inutile citarlo. \color{black}
-
+\item \textbf{Pre-test Assessment:} Participants complete baseline psychometric instruments. The questionnaires include: Cultural Affinity questions, Trust questionnaire, BFM Questionnaire. 
 
 \item \textbf{Interaction Instructions:} Standardized constraints are provided:
 \begin{enumerate}
@@ -321,8 +294,7 @@ Data collection is structured into three phases: pre-interaction profiling, in-i
 \begin{itemize}
     \item \textbf{Pre-interaction Profiling:} Participants complete psychometric questionnaires capturing Cultural Affinity, Trust and BFM.
 
-    \item \textbf{In-interaction Recording:} During each interaction block, multimodal data is collected, including video recordings of proxemic behavior and answers to perceived Cultural Competence of the robot. %\color{red} Per favore usa il nome univoco dei questionari ovunque. Come si chiama questo? Prima non lo chiami esattamente così. \color{black}
-
+    \item \textbf{In-interaction Recording:} During each interaction block, multimodal data is collected, including video recordings of proxemic behavior and answers to perceived Cultural Competence of the robot. 
 
     \item \textbf{Post-interaction Assessment:} Participants complete open-ended questionnaires designed to capture qualitative impressions of the interaction and perceived system behavior.
 \end{itemize}
@@ -442,14 +414,12 @@ Figure~\ref{ch7:fig:3rd_view_answeres_distributions} reports analogous distribut
 \label{ch7:fig:3rd_view_answeres_distributions}
 \end{figure*}
 
+
 Overall, the results indicate measurable differences between German and Italian cohorts in proxemic and communicative preferences. Several items exhibit small but non-negligible effect sizes, while other metrics show convergence across cohorts, suggesting partial alignment under neutral or non-contextual conditions.
 
-%\color{blue}
 These results will be used in the main study for initializing the proximity values of the main study. 
 German and Italian preferences will be embedded in the Cultural Initial Preferences component during F and A conditions. 
 The average value will be embedded in the Cultural Initial Preferences component during B condition
-%\color{red}
-%Ricordare che i risultati di questo online questionnaire servono per inizializzar il sistema, con riferimento alla figura corrispondente nell'architettura. \color{black}
 
 \section{Main study results}
 
@@ -472,14 +442,13 @@ As a dataset overview, Table~\ref{ch9:tab:metadata} summarizes participant distr
     \label{ch9:tab:metadata}
 \end{table}
 
-%\color{red} Ovvimente queste sono tutte sottosezioni di 6.4, potrebbe essere diversamente? \color{black}
 \subsection{Population Analysis}
 
 This section reports results from pre-interaction psychometric instruments, including cultural affinity, BFM, and trust. These measures characterize baseline inter-group differences prior to exposure to the experimental manipulation.
 
 Table~\ref{ch9:tab:intro} reports item-level descriptive statistics ($\mu \pm \sigma$) and inferential tests for the German and Italian cohorts. %\color{red} Ricorda qui brevemente su cosa sono queste statistiche usando la stessa terminologia usata nella sezione "Measuring user's Cultural Affinity and Robot's Cultural Competence". La tabella è molto lontana dal testo, andarla a vedere diverse pagine avanti è faticoso. Se vuoi forzare la posizione di una tabella o figura devi mettere ! Guarda come ho fatto io qui sotto. Forse la stessa cosa andrebbe fatta con diverse tabelle nella tesi che vengono messe molto più avanti del testo. Per favore, ricontrolla tutto. \color{black}
 
-Here, we note that Cultural Affinity represents the degree of closeness between a participant and their national culture. Trust measures the participant's initial level of trust, while BFM assesses the participant's personality traits.  The results are normalized with respect to their scales. The aim is to assess whether the German and Italian populations differ with respect to the measured cultural dimensions, rather than just assuming national culture as a proxy for these differences.
+Here, we note that Cultural Affinity represents the degree of closeness between a participant and their national culture. Trust measures the participant’s initial level of trust, while BFM assesses personality traits. The results are normalized with respect to their respective scales. The aim is to assess whether the German and Italian populations differ along the measured cultural dimensions, rather than assuming national culture as a proxy for these differences.
 
 \begin{table}[!ht]
 \centering
@@ -543,23 +512,15 @@ Trust & $0.650 \pm 0.092$ & $0.671 \pm 0.084$ & 0.9344 & 0.01 & Small \\
 
 Cultural affinity shows the strongest divergence, with higher values in the Italian cohort ($\mu = 0.800 \pm 0.177$) compared to the German cohort ($\mu = 0.614 \pm 0.187$), a difference that is statistically significant ($p < 0.001$, $f = 0.51$). This pattern is consistent across all individual items.
 
-In contrast, BFM personal traits exhibit
-limited cross-cultural separation. 
-%\color{red} anche qui da' informazioni per ricordare che riguarda la personalità \color{black}
+In contrast, BFM personality traits exhibit limited cross-cultural separation. 
 Extraversion, conscientiousness, and openness show no significant differences between groups, with consistently small effect sizes. Agreeableness and neuroticism display weak-to-moderate effects, but with limited statistical robustness across items. 
-
-%\color{red}
-%Non manca il ROSAS?
-%\color{black}
 
 Finally, dispositional trust does not differ meaningfully between cohorts ($p = 0.9344$, $f = 0.01$), indicating comparable baseline attitudes toward automated systems.
 
 \subsection{Conditions Evaluation}
 
 This section presents post-interaction evaluations across the three experimental conditions: B, F and A. 
-%\color{red}Le hai chiamate "conditions" e devi chiamarle così ovunque \color{black}
-The evaluation of the conditions is done throught Cultural Competence, which is a composition of Cultural Closeness, Competence (from RoSaS questionnaire).
-%\color{red}Devi usare il nome usatto del protocollo e delle sue sottoscale, non puoi dire "Metrics include". Devi dire che riporti i risultati del questionario A fatto dopo l'interazione e in particolare delle sue sottoscae. Domanda: è prassi calcolare la media delle sue sottoscale?\color{black}
+The evaluation of the conditions is done through Cultural Competence, which is a composition of Cultural Closeness, Competence (from RoSaS questionnaire).
 
 \begin{table}[!ht]
 \centering
@@ -651,7 +612,8 @@ F--A & 0.06186 & 7.2820 & 6.2883 & \textbf{0.0104} & F \\
 \caption{Pairwise evaluation of conditions for Cultural Closeness and Competence across cohorts.}
 \label{tab:significance_stats}
 \end{table}
-The results indicate a systematic trade-off between perceived cultural closeness and perceived competence. \color{red} Sono scale, hanno un nome, maiuscole ovunque. E verifica che si chiamino proprio così\color{black} At the global level, Condition F yields the highest Cultural Closeness, significantly exceeding both Baseline ($p = 0.00748$) and Adaptation comparisons ($p < 0.001$). Conversely, Condition B achieves the highest Competence ratings, significantly outperforming both F and A. For the composite Average score, no significant difference is observed between B and F, indicating that gains in cultural closeness under F are offset by reduced competence. Cohort-level analysis shows reduced sensitivity in the German sample, where differences between conditions are generally not significant except for the consistent underperformance of A. In contrast, the Italian cohort exhibits stronger differentiation across conditions, with F improving cultural closeness but reducing competence relative to B. Overall, Condition A performs worst across most metrics, while B maximizes perceived competence and F maximizes cultural alignment.
+The results indicate a systematic trade-off between perceived Cultural Closeness and perceived Competence. 
+At the global level, Condition F yields the highest Cultural Closeness, significantly exceeding both Baseline ($p = 0.00748$) and Adaptation comparisons ($p < 0.001$). Conversely, Condition B achieves the highest Competence ratings, significantly outperforming both F and A. For the composite Average score, no significant difference is observed between B and F, indicating that gains in cultural closeness under F are offset by reduced competence. Cohort-level analysis shows reduced sensitivity in the German sample, where differences between conditions are generally not significant except for the consistent underperformance of A. In contrast, the Italian cohort exhibits stronger differentiation across conditions, with F improving cultural closeness but reducing competence relative to B. Overall, Condition A performs worst across most metrics, while B maximizes perceived competence and F maximizes cultural alignment.
 
 \subsection{Proximity Analysis}
 
@@ -839,17 +801,13 @@ Overall, these patterns suggest that different cultural and personality dimensio
 \section{Discussion}
 In this chapter, I presented two sets of results: those of the preliminary online study and those of the main study.
 
-Regarding the preliminary online study, the results indicate that, on average, the two populations—namely Germans and Italians—do not exhibit substantial differences in their perceived affinity with their respective countries. Overall, mild effect sizes were observed for affinity with respect to language and culture, with Italians reporting a stronger sense of affinity than Germans.
+Regarding the preliminary online study, the results indicate that, on average, the two populations—namely Germans and Italians—do not exhibit substantial differences in their perceived affinity with their respective countries. Overall, mild effect sizes were observed for Cultural Affinity with respect to language and culture, with Italians reporting a stronger sense of affinity than Germans.
 
 Negligible effect sizes were also found for the assessment of the preferred interaction distance. However, a discrepancy emerged in the preferences expressed by the Italian participants. While German participants consistently preferred the fourth distance (ordered from the closest to the farthest), Italian participants selected the third distance in the image-based questionnaire and the fifth distance in the video-based questionnaire.
 
 Since the images were presented from a first-person perspective, their results were considered more reliable, as they better approximate the participant's own viewpoint during an interaction. One might argue that, under these circumstances, the third-person videos provide little additional value. However, including a second modality is useful for disambiguating the results and provides an additional source of evidence.
 
-%\color{red}
-%Dato che è la discussion del capitolo, dovresti mettere anche un paragrafo sull'online study.
-%\color{black}
-
-Perceived quality of human--robot interaction is jointly determined by two partially independent dimensions, namely cultural/linguistic alignment and perceived functional competence. The presented dimensions interact in a non-trivial manner across experimental conditions and cultural cohorts, producing systematic trade-offs rather than a single globally optimal configuration.
+Perceived quality of HRI is jointly determined by two partially independent dimensions, namely cultural/linguistic alignment and perceived functional competence. The presented dimensions interact in a non-trivial manner across experimental conditions and cultural cohorts, producing systematic trade-offs rather than a single globally optimal configuration.
 
 At baseline, the two cohorts (Germans and Italians) are broadly comparable in personality structure and dispositional trust, with the primary divergence located in initial cultural affinity. This asymmetry is relevant for interpreting downstream effects, as it introduces a pre-existing bias in the reception of culturally adaptive behaviors, particularly within the Italian sample. Overall, trust and most BFM traits do not exhibit meaningful between-group differences, supporting the assumption of general psychological comparability prior to exposure.
 
